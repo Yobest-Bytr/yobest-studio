@@ -425,8 +425,8 @@ async function fetchVideos() {
     const reactionDiv = document.getElementById('reaction-text');
     const previewGrid = document.getElementById('preview-grid');
     const videoError = document.getElementById('video-error');
-    const API_KEY = 'AIzaSyAHLMunc1uf9O61UxbTGYj4r8cixc13Eq0'; // Updated API key
-    const PLAYLIST_ID = 'UUsV3X3EyEowLEdRW1RileuA'; // Verify this playlist ID on YouTube
+    const API_KEY = 'AIzaSyAHLMunc1uf9O61UxbTGYj4r8cixc13Eq0'; // Provided API key
+    const PLAYLIST_ID = 'UUsV3X3EyEowLEdRW1RileuA'; // Provided playlist ID
 
     if (!reactionDiv || !previewGrid || !videoError) {
         console.error('DOM elements for video display not found in index.html.');
@@ -448,6 +448,7 @@ async function fetchVideos() {
                 throw new Error(`HTTP error! Status: ${response.status}, Message: ${await response.text()}`);
             }
             const data = await response.json();
+            console.log('API Response:', data); // Log the response for debugging
             if (data.items) {
                 videos = videos.concat(data.items);
                 nextPageToken = data.nextPageToken || '';
@@ -455,6 +456,10 @@ async function fetchVideos() {
                 throw new Error(`API error: ${data.error.message || 'Unknown error'}`);
             }
         } while (nextPageToken);
+
+        if (videos.length === 0) {
+            throw new Error('No videos found in the playlist.');
+        }
 
         reactionDiv.textContent = `✅ Loaded ${videos.length} awesome videos!`;
         reactionDiv.classList.remove('animate-loading');
@@ -469,6 +474,11 @@ async function fetchVideos() {
             const videoId = item.snippet.resourceId.videoId;
             const title = item.snippet.title;
             const thumbnail = item.snippet.thumbnails?.maxres?.url || item.snippet.thumbnails?.high?.url || 'https://via.placeholder.com/150';
+
+            if (!videoId || !title || !thumbnail) {
+                console.warn(`Skipping video at index ${index} due to missing data.`);
+                return;
+            }
 
             const card = document.createElement('div');
             card.className = 'video-card animate-card';
