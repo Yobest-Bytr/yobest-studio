@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Communication - Yobest Studio</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2925220406728611"
+            crossorigin="anonymous"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Poppins Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet">
+    <!-- Emoji Picker (using emoji-picker-element) -->
+    <script src="https://cdn.jsdelivr.net/npm/@emoji-mart/data@1.1.2/emoji-mart.data.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emoji-mart/react@1.1.1/dist/index.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/@emoji-mart/react@1.1.1/dist/styles.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header-animate">
+        <div class="container">
+            <h1 class="title-frame"><a href="index.html" class="site-name">Yobest Studio<span class="highlight"></span></a></h1>
+            <nav class="nav-container">
+                <a href="blog.html" class="nav-btn">Blog</a>
+                <a href="contact.html" class="nav-btn">Contact</a>
+                <a href="index.html" class="nav-btn">Home</a>
+                <a href="ai.html" class="nav-btn">AI Tools</a>
+                <a href="communication.html" class="nav-btn">Communication</a>
+                <a href="https://discord.gg/jKASqrc7H3" target="_blank" class="btn socialbtn"><i class="fab fa-discord"></i> Discord</a>
+                <a href="https://x.com/Yobest_BYTR" target="_blank" class="btn socialbtn"><i class="fab fa-x"></i> X</a>
+                <a href="#" onclick="openLogin()" class="btn actionbtn" id="login-btn">Login</a>
+                <img src="https://via.placeholder.com/40" alt="Account" class="account-pic" id="account-pic" style="display: none;" onclick="openAccountSettings()">
+            </nav>
+        </div>
+    </header>
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeLogin()">×</span>
+            <h2 class="title-frame animate-text">Login or Create Account</h2>
+            <form id="auth-form" onsubmit="event.preventDefault(); authUser();">
+                <button type="button" class="btn google-btn animate-btn" onclick="alert('Google Sign-In requires OAuth setup.')"><i class="fab fa-google"></i> Sign in with Google</button>
+                <div class="or-divider">OR</div>
+                <input type="email" id="email" placeholder="Email" required>
+                <input type="password" id="password" placeholder="Password" required>
+                <button type="submit" class="btn actionbtn animate-btn">Sign In / Create</button>
+            </form>
+            <p id="auth-message" class="reaction-text animate-text"></p>
+        </div>
+    </div>
+
+    <!-- Account Settings Modal -->
+    <div id="account-settings-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeAccountSettings()">×</span>
+            <h2 class="title-frame animate-text">Account Settings</h2>
+            <form id="account-form" onsubmit="event.preventDefault(); updateAccount();">
+                <input type="text" id="username" placeholder="Username" value="" required>
+                <input type="file" id="avatar-upload" accept="image/*" onchange="previewAvatar(this)">
+                <img id="avatar-preview" src="https://via.placeholder.com/40" alt="Avatar Preview" class="avatar-preview" style="display: none; width: 40px; height: 40px; border-radius: 50%; margin: 10px 0;">
+                <button type="submit" class="btn actionbtn animate-btn">Save Changes</button>
+            </form>
+            <p id="account-message" class="reaction-text animate-text"></p>
+        </div>
+    </div>
+
+    <!-- Communication Section -->
+    <section class="communication-section animate-section" style="background: linear-gradient(135deg, #1a1a3a, #2a2a5a);">
+        <div class="container">
+            <h2 class="title-frame animate-text">Community Communication</h2>
+            <p id="login-required" class="reaction-text animate-text" style="display: none;">Please log in to communicate.</p>
+            <div id="communication-container" style="display: none;">
+                <div id="communication-messages" class="communication-messages"></div>
+                <div class="communication-input-group">
+                    <input type="text" id="chat-input" placeholder="Type a message..." class="chat-input" spellcheck="false">
+                    <button id="emoji-btn" class="btn-small animate-btn" onclick="toggleEmojiPicker()">😊</button>
+                    <input type="file" id="file-upload" accept="image/*,application/pdf,text/*" onchange="uploadFile(this)" class="btn-small animate-btn" style="padding: 8px;">
+                    <button onclick="sendMessage('chat-input', 'communication-messages')" class="btn actionbtn animate-btn">Send</button>
+                    <button onclick="sendToAI('chat-input', 'communication-messages')" class="btn actionbtn animate-btn">AI</button>
+                </div>
+                <!-- Emoji Picker -->
+                <emoji-picker id="emoji-picker" class="emoji-picker" style="display: none;"></emoji-picker>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ad Section -->
+    <section class="ad-section">
+        <div class="container">
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-2925220406728611"
+                 data-ad-slot="YYYYYYYYYY"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="animate-section">
+        <div class="container">
+            <p class="animate-text">© 2025 Yobest Studio. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // Ensure script.js is loaded before executing these functions
+        window.onload = function() {
+            checkLoginState();
+            loadAccountInfo();
+            trackVisitor();
+
+            // Check login state for communication
+            const loggedInEmail = localStorage.getItem('loggedInEmail');
+            const communicationContainer = document.getElementById('communication-container');
+            const loginRequired = document.getElementById('login-required');
+            if (loggedInEmail) {
+                communicationContainer.style.display = 'block';
+                loginRequired.style.display = 'none';
+                loadCommunicationMessages(); // Load existing messages
+            } else {
+                communicationContainer.style.display = 'none';
+                loginRequired.style.display = 'block';
+            }
+        };
+
+        // Communication Functions
+        function loadCommunicationMessages() {
+            const messagesDiv = document.getElementById('communication-messages');
+            const messages = JSON.parse(localStorage.getItem('communicationMessages')) || [];
+            const accounts = JSON.parse(localStorage.getItem('accounts')) || {};
+            messagesDiv.innerHTML = '';
+            messages.forEach(msg => {
+                const userData = accounts[msg.email] || { username: msg.email.split('@')[0], avatar: 'https://via.placeholder.com/40' };
+                const msgDiv = document.createElement('div');
+                msgDiv.className = 'comment animate-card';
+                msgDiv.innerHTML = `
+                    <img src="${userData.avatar}" alt="${userData.username}" class="comment-avatar">
+                    <div class="comment-content">
+                        <strong>${userData.username}</strong>: ${msg.text}
+                        <div class="comment-meta">
+                            <span>${new Date(msg.timestamp).toLocaleString()}</span>
+                            ${msg.file ? `<a href="${msg.file}" target="_blank" class="file-link">📎 File</a>` : ''}
+                        </div>
+                    </div>
+                `;
+                messagesDiv.appendChild(msgDiv);
+            });
+            messagesDiv.scrollTop = messagesDiv.scrollHeight; // Auto-scroll to the bottom
+        }
+
+        function sendMessage(inputId = 'chat-input', messagesId = 'communication-messages') {
+            const input = document.getElementById(inputId);
+            const messagesDiv = document.getElementById(messagesId);
+            const email = localStorage.getItem('loggedInEmail');
+
+            if (!email) {
+                alert('Please log in to communicate.');
+                return;
+            }
+
+            const messageText = input.value.trim();
+            if (messageText) {
+                const messages = JSON.parse(localStorage.getItem('communicationMessages')) || [];
+                messages.push({
+                    email: email,
+                    text: messageText,
+                    timestamp: new Date().toISOString(),
+                    file: null // Will be updated by uploadFile if a file is uploaded
+                });
+                localStorage.setItem('communicationMessages', JSON.stringify(messages));
+                input.value = '';
+                loadCommunicationMessages();
+            }
+        }
+
+        function toggleEmojiPicker() {
+            const emojiPicker = document.getElementById('emoji-picker');
+            emojiPicker.style.display = emojiPicker.style.display === 'none' ? 'block' : 'none';
+        }
+
+        // Handle emoji selection (using emoji-picker-element)
+        document.addEventListener('DOMContentLoaded', () => {
+            const emojiPicker = document.querySelector('emoji-picker');
+            if (emojiPicker) {
+                emojiPicker.addEventListener('emoji-click', event => {
+                    const input = document.getElementById('chat-input');
+                    if (input) {
+                        input.value += event.detail.emoji.native;
+                    }
+                    toggleEmojiPicker(); // Hide picker after selection
+                });
+            }
+        });
+
+        function uploadFile(input) {
+            const file = input.files[0];
+            if (file && (file.type.startsWith('image/') || file.type === 'application/pdf' || file.type.startsWith('text/'))) {
+                const email = localStorage.getItem('loggedInEmail');
+                if (!email) {
+                    alert('Please log in to upload files.');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const fileUrl = e.target.result; // Base64 or Blob URL for local testing
+                    const messages = JSON.parse(localStorage.getItem('communicationMessages')) || [];
+                    const lastMessage = messages[messages.length - 1];
+                    if (lastMessage && !lastMessage.file) { // Link file to the last message
+                        lastMessage.file = fileUrl;
+                        localStorage.setItem('communicationMessages', JSON.stringify(messages));
+                    } else {
+                        messages.push({
+                            email: email,
+                            text: `File: ${file.name}`,
+                            timestamp: new Date().toISOString(),
+                            file: fileUrl
+                        });
+                        localStorage.setItem('communicationMessages', JSON.stringify(messages));
+                    }
+                    loadCommunicationMessages();
+                    alert(`File (${file.name}) uploaded successfully!`);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                alert('Please upload an image, PDF, or text file.');
+            }
+        }
+    </script>
+</body>
+</html>
