@@ -151,14 +151,20 @@
     <script>
         // Ensure script.js is loaded and DOM is ready before executing functions
         window.onload = function() {
+            console.log('Checking if functions are defined...');
             if (typeof trackVisitor === 'function' && 
                 typeof displayCounters === 'function' && 
                 typeof fetchVideos === 'function') {
+                console.log('All functions defined, executing...');
                 trackVisitor();
                 displayCounters();
                 fetchVideos();
             } else {
-                console.error('One or more functions are not defined. Ensure script.js is loaded correctly.');
+                console.error('One or more functions are not defined. Ensure script.js is loaded correctly. Defined functions:', {
+                    trackVisitor: typeof trackVisitor,
+                    displayCounters: typeof displayCounters,
+                    fetchVideos: typeof fetchVideos
+                });
             }
         };
     </script>
