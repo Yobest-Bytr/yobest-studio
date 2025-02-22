@@ -1,14 +1,15 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Game Details - Yobest Studio</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="/yobest-studio/styles.css">
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2925220406728611"
             crossorigin="anonymous"></script>
     <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-D2F6g7oTPoDZ9cHqnHIqAOcYCLwY1f2/2y3AozlkHOmc+GXhQ+FsPhcip5OS3I2IEaT/jVFdB8w3IVcYQ7T9zA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <!-- Poppins Font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
     <!-- Prism.js for syntax highlighting -->
@@ -20,13 +21,13 @@
     <!-- Header -->
     <header class="header-animate">
         <div class="container">
-            <h1 class="title-frame"><a href="index.html" class="site-name">Yobest Studio<span class="highlight"></span></a></h1>
+            <h1 class="title-frame"><a href="/yobest-studio/index.html" class="site-name">Yobest Studio<span class="highlight"></span></a></h1>
             <nav class="nav-container">
-                <a href="blog.html" class="nav-btn">Blog</a>
-                <a href="contact.html" class="nav-btn">Contact</a>
-                <a href="index.html" class="nav-btn">Home</a>
-                <a href="ai.html" class="nav-btn">AI Tools</a>
-                <a href="communication.html" class="nav-btn">Communication</a>
+                <a href="/yobest-studio/blog.html" class="nav-btn">Blog</a>
+                <a href="/yobest-studio/contact.html" class="nav-btn">Contact</a>
+                <a href="/yobest-studio/index.html" class="nav-btn">Home</a>
+                <a href="/yobest-studio/ai.html" class="nav-btn">AI Tools</a>
+                <a href="/yobest-studio/communication.html" class="nav-btn">Communication</a>
                 <a href="https://discord.gg/jKASqrc7H3" target="_blank" class="btn socialbtn"><i class="fab fa-discord"></i> Discord</a>
                 <a href="https://x.com/Yobest_BYTR" target="_blank" class="btn socialbtn"><i class="fab fa-x"></i> X</a>
             </nav>
@@ -47,7 +48,7 @@
                 <div class="button-group">
                     <a id="download-btn" href="#" class="btn actionbtn animate-btn">Download Game</a>
                     <input type="file" id="game-file-upload" accept=".rar,.rbxl,.rbxlx" onchange="uploadGameFile(this)" class="game-file-upload">
-                    <a href="index.html" class="btn actionbtn animate-btn">Back to Home</a>
+                    <a href="/yobest-studio/index.html" class="btn actionbtn animate-btn">Back to Home</a>
                 </div>
             </div>
             <div class="game-buttons">
@@ -118,9 +119,9 @@
         </div>
     </div>
 
-    <script src="script.ts"></script>
+    <script src="/yobest-studio/script.js"></script>
     <script>
-        // Ensure script.ts is loaded and DOM is ready before executing functions
+        // Ensure script.js is loaded and DOM is ready before executing functions
         // Note: For production, compile script.ts to script.js and reference script.js instead
         window.onload = function(): void {
             console.log('Checking if functions are defined...');
@@ -162,7 +163,7 @@
 
                 // Update download button to redirect to confirm.html
                 const downloadBtn = document.getElementById('download-btn') as HTMLAnchorElement;
-                downloadBtn.href = `confirm.html?videoId=${videoId}&title=${encodeURIComponent(title)}`;
+                downloadBtn.href = `/yobest-studio/confirm.html?videoId=${videoId}&title=${encodeURIComponent(title)}`;
 
                 // Fade in the title
                 gameTitle.classList.add('animate-text');
@@ -233,7 +234,7 @@
                         const card = document.createElement('div');
                         card.className = 'video-card animate-card';
                         card.innerHTML = `
-                            <a href="game.html?id=${index}">
+                            <a href="/yobest-studio/game.html?id=${index}">
                                 <img src="${thumbnail}" alt="${title}">
                                 <h3 class="animate-text">${title}</h3>
                             </a>
@@ -263,13 +264,15 @@
                     const videoId: string | undefined = JSON.parse(localStorage.getItem('channelVideos') || '[]')[gameId ? parseInt(gameId) : -1]?.snippet.resourceId.videoId;
                     if (videoId) {
                         localStorage.setItem(`gameFile_${videoId}`, fileUrl);
-                        const downloadBtn = document.getElementById('download-btn') as HTMLAnchorElement;
+                        const downloadBtn = document.getElementById('download-btn') as HTMLAnchorElement | null;
                         if (downloadBtn) {
                             downloadBtn.href = fileUrl;
                             alert(`Game file (${file.name}) uploaded successfully! Click "Download Game" to access.`);
                         } else {
                             console.error('Download button not found.');
                         }
+                    } else {
+                        console.error('Video ID not found for game upload.');
                     }
                 };
                 reader.readAsDataURL(file);
