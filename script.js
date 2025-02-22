@@ -2,16 +2,24 @@ function sendMessage(inputId = 'chat-input', messagesId = 'communication-message
     const input = document.getElementById(inputId);
     const messagesDiv = document.getElementById(messagesId);
     if (input.value.trim()) {
-        const msg = document.createElement("p");
-        const email = localStorage.getItem('loggedInEmail');
-        if (!email) {
+        const username = localStorage.getItem('loggedInUsername');
+        if (!username) {
             alert('Please log in to send messages.');
             return;
         }
         const accounts = JSON.parse(localStorage.getItem('accounts')) || {};
-        const userData = accounts[email] || { username: email.split('@')[0], avatar: 'https://via.placeholder.com/40' };
-        msg.innerHTML = `<img src="${userData.avatar}" alt="${userData.username}" class="comment-avatar"><strong>${userData.username}</strong>: ${input.value}`;
-        msg.classList.add('animate-text');
+        const userData = accounts[username] || { username: username, avatar: 'https://via.placeholder.com/40' };
+        const msg = document.createElement("div");
+        msg.className = 'comment animate-card';
+        msg.innerHTML = `
+            <img src="${userData.avatar}" alt="${userData.username}" class="comment-avatar">
+            <div class="comment-content">
+                <strong>${userData.username}</strong>: ${input.value}
+                <div class="comment-meta">
+                    <span>${new Date().toLocaleString()}</span>
+                </div>
+            </div>
+        `;
         messagesDiv.appendChild(msg);
         input.value = "";
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
@@ -19,7 +27,7 @@ function sendMessage(inputId = 'chat-input', messagesId = 'communication-message
         // Store message in localStorage for communication page
         const messages = JSON.parse(localStorage.getItem('communicationMessages')) || [];
         messages.push({
-            email: email,
+            username: username,
             text: input.value,
             timestamp: new Date().toISOString(),
             file: null
@@ -42,16 +50,16 @@ function closeLogin() {
 }
 
 function authUser() {
-    const email = document.getElementById('email').value;
+    const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
     const message = document.getElementById('auth-message');
     const users = JSON.parse(localStorage.getItem('users')) || {};
 
-    if (users[email]) {
+    if (users[username]) {
         // Existing user, check password
-        if (users[email].password === password) {
-            localStorage.setItem('loggedInEmail', email);
-            message.textContent = "🎉 Welcome back, " + email + "!";
+        if (users[username].password === password) {
+            localStorage.setItem('loggedInUsername', username);
+            message.textContent = "🎉 Welcome back, " + username + "!";
             message.style.color = '#00d4ff';
             message.classList.add('animate-success');
         } else {
@@ -61,13 +69,10 @@ function authUser() {
             return;
         }
     } else {
-        // New user, create account
-        users[email] = { password: password, created: new Date().toISOString() };
-        localStorage.setItem('users', JSON.stringify(users));
-        localStorage.setItem('loggedInEmail', email);
-        message.textContent = "✅ Account created and logged in as " + email + "!";
-        message.style.color = '#00d4ff';
-        message.classList.add('animate-success');
+        message.textContent = "❌ Username not found. Please create an account or try again.";
+        message.style.color = '#ff3366';
+        message.classList.add('animate-error');
+        return;
     }
 
     setTimeout(() => {
@@ -78,44 +83,17 @@ function authUser() {
 }
 
 function handleGoogleSignIn(response) {
-    const token = response.credential;
-    // Simulate Google Sign-In (replace with actual backend verification)
-    fetch('https://oauth2.googleapis.com/tokeninfo?id_token=' + token)
-        .then(response => response.json())
-        .then(data => {
-            if (data.email) {
-                localStorage.setItem('loggedInEmail', data.email);
-                document.getElementById('auth-message').textContent = "🎉 Welcome back, " + data.email + "!";
-                document.getElementById('auth-message').style.color = '#00d4ff';
-                document.getElementById('auth-message').classList.add('animate-success');
-                setTimeout(() => {
-                    closeLogin();
-                    updateLoginState();
-                    loadAccountInfo();
-                }, 1500);
-            } else {
-                document.getElementById('auth-message').textContent = "❌ Google Sign-In failed!";
-                document.getElementById('auth-message').style.color = '#ff3366';
-                document.getElementById('auth-message').classList.add('animate-error');
-            }
-        })
-        .catch(error => {
-            console.error('Google Sign-In error:', error);
-            document.getElementById('auth-message').textContent = "❌ Google Sign-In error. Please try again.";
-            document.getElementById('auth-message').style.color = '#ff3366';
-            document.getElementById('auth-message').classList.add('animate-error');
-        });
+    // Optional: Keep Google Sign-In if desired, but it’s not used for username/password
+    console.log('Google Sign-In triggered, but username/password login is prioritized.');
 }
-
-// ... (previous functions remain unchanged until checkLoginState) ...
 
 function checkLoginState() {
     console.log('checkLoginState called'); // Debug log to confirm function is loaded
-    const loggedInEmail = localStorage.getItem('loggedInEmail');
+    const loggedInUsername = localStorage.getItem('loggedInUsername');
     const loginBtn = document.getElementById('login-btn');
     const accountPic = document.getElementById('account-pic');
 
-    if (loggedInEmail) {
+    if (loggedInUsername) {
         loginBtn.style.display = 'none';
         accountPic.style.display = 'block';
         accountPic.classList.add('animate-fade-in');
@@ -125,17 +103,15 @@ function checkLoginState() {
     }
 }
 
-// ... (rest of the script remains unchanged) ...
-
 function updateLoginState() {
     checkLoginState();
 }
 
 function openAccountSettings() {
     const modal = document.getElementById('account-settings-modal');
-    const email = localStorage.getItem('loggedInEmail');
+    const username = localStorage.getItem('loggedInUsername');
     const accounts = JSON.parse(localStorage.getItem('accounts')) || {};
-    const userData = accounts[email] || { username: '', avatar: 'https://via.placeholder.com/40' };
+    const userData = accounts[username] || { username: username, avatar: 'https://via.placeholder.com/40' };
 
     document.getElementById('username').value = userData.username || '';
     document.getElementById('avatar-upload').value = '';
@@ -150,6 +126,101 @@ function closeAccountSettings() {
     modal.style.display = 'none';
     modal.classList.remove('animate-modal');
     document.getElementById('account-message').textContent = '';
+}
+
+function openCreateAccount() {
+    document.getElementById('create-account-modal').style.display = 'block';
+    document.getElementById('create-account-modal').classList.add('animate-modal');
+}
+
+function closeCreateAccount() {
+    const modal = document.getElementById('create-account-modal');
+    modal.style.display = 'none';
+    modal.classList.remove('animate-modal');
+    document.getElementById('create-message').textContent = '';
+}
+
+function createAccount() {
+    const username = document.getElementById('new-username').value.trim();
+    const password = document.getElementById('new-password').value;
+    const confirmPassword = document.getElementById('confirm-password').value;
+    const message = document.getElementById('create-message');
+    const users = JSON.parse(localStorage.getItem('users')) || {};
+
+    if (username === '') {
+        message.textContent = "❌ Please enter a username!";
+        message.style.color = '#ff3366';
+        message.classList.add('animate-error');
+        return;
+    }
+
+    if (users[username]) {
+        message.textContent = "❌ Username already exists!";
+        message.style.color = '#ff3366';
+        message.classList.add('animate-error');
+        return;
+    }
+
+    if (password !== confirmPassword) {
+        message.textContent = "❌ Passwords do not match!";
+        message.style.color = '#ff3366';
+        message.classList.add('animate-error');
+        return;
+    }
+
+    if (password.length < 6) {
+        message.textContent = "❌ Password must be at least 6 characters long!";
+        message.style.color = '#ff3366';
+        message.classList.add('animate-error');
+        return;
+    }
+
+    users[username] = { password: password, created: new Date().toISOString() };
+    localStorage.setItem('users', JSON.stringify(users));
+    message.textContent = "✅ Account created successfully! You can now log in.";
+    message.style.color = '#00d4ff';
+    message.classList.add('animate-success');
+
+    setTimeout(() => {
+        closeCreateAccount();
+    }, 1500);
+}
+
+function openForgotPassword() {
+    document.getElementById('forgot-password-modal').style.display = 'block';
+    document.getElementById('forgot-password-modal').classList.add('animate-modal');
+}
+
+function closeForgotPassword() {
+    const modal = document.getElementById('forgot-password-modal');
+    modal.style.display = 'none';
+    modal.classList.remove('animate-modal');
+    document.getElementById('forgot-message').textContent = '';
+}
+
+function resetPassword() {
+    const username = document.getElementById('forgot-username').value.trim();
+    const message = document.getElementById('forgot-message');
+    const users = JSON.parse(localStorage.getItem('users')) || {};
+
+    if (!users[username]) {
+        message.textContent = "❌ Username not found!";
+        message.style.color = '#ff3366';
+        message.classList.add('animate-error');
+        return;
+    }
+
+    // Simulate password reset (generate a temporary password and store it)
+    const tempPassword = Math.random().toString(36).slice(-8); // Generate random 8-character password
+    users[username].password = tempPassword;
+    localStorage.setItem('users', JSON.stringify(users));
+    message.textContent = `✅ Password reset successful! Your new temporary password is: ${tempPassword}. Please log in and update it in Account Settings.`;
+    message.style.color = '#00d4ff';
+    message.classList.add('animate-success');
+
+    setTimeout(() => {
+        closeForgotPassword();
+    }, 3000);
 }
 
 function previewAvatar(input) {
@@ -167,27 +238,35 @@ function previewAvatar(input) {
 }
 
 function updateAccount() {
-    const email = localStorage.getItem('loggedInEmail');
-    const username = document.getElementById('username').value.trim();
+    const username = localStorage.getItem('loggedInUsername');
+    const newUsername = document.getElementById('username').value.trim();
     const fileInput = document.getElementById('avatar-upload');
     const message = document.getElementById('account-message');
     const accounts = JSON.parse(localStorage.getItem('accounts')) || {};
+    const users = JSON.parse(localStorage.getItem('users')) || {};
 
-    if (!username) {
+    if (!newUsername) {
         message.textContent = "❌ Please enter a username!";
         message.style.color = '#ff3366';
         message.classList.add('animate-error');
         return;
     }
 
-    let avatarUrl = accounts[email]?.avatar || 'https://via.placeholder.com/40';
+    if (newUsername !== username && users[newUsername]) {
+        message.textContent = "❌ Username already exists!";
+        message.style.color = '#ff3366';
+        message.classList.add('animate-error');
+        return;
+    }
+
+    let avatarUrl = accounts[username]?.avatar || 'https://via.placeholder.com/40';
     if (fileInput.files && fileInput.files[0]) {
         const file = fileInput.files[0];
         if (file.type.startsWith('image/')) {
             const reader = new FileReader();
             reader.onload = function(e) {
                 avatarUrl = e.target.result; // Store as base64 for local testing
-                saveAccountChanges(email, username, avatarUrl);
+                saveAccountChanges(username, newUsername, avatarUrl);
             };
             reader.readAsDataURL(file);
         } else {
@@ -197,14 +276,32 @@ function updateAccount() {
             return;
         }
     } else {
-        saveAccountChanges(email, username, avatarUrl);
+        saveAccountChanges(username, newUsername, avatarUrl);
     }
 }
 
-function saveAccountChanges(email, username, avatarUrl) {
+function saveAccountChanges(oldUsername, newUsername, avatarUrl) {
     const accounts = JSON.parse(localStorage.getItem('accounts')) || {};
-    accounts[email] = { username, avatar: avatarUrl };
+    const users = JSON.parse(localStorage.getItem('users')) || {};
+
+    // Update accounts
+    if (oldUsername !== newUsername) {
+        accounts[newUsername] = accounts[oldUsername] || { username: newUsername, avatar: avatarUrl };
+        delete accounts[oldUsername];
+    } else {
+        accounts[newUsername] = { username: newUsername, avatar: avatarUrl };
+    }
     localStorage.setItem('accounts', JSON.stringify(accounts));
+
+    // Update users if username changed
+    if (oldUsername !== newUsername) {
+        const userData = users[oldUsername];
+        delete users[oldUsername];
+        users[newUsername] = userData;
+        localStorage.setItem('users', JSON.stringify(users));
+        localStorage.setItem('loggedInUsername', newUsername);
+    }
+
     document.getElementById('account-pic').src = avatarUrl;
     document.getElementById('account-message').textContent = "✅ Account updated successfully!";
     document.getElementById('account-message').style.color = '#00d4ff';
@@ -214,12 +311,12 @@ function saveAccountChanges(email, username, avatarUrl) {
 }
 
 function loadAccountInfo() {
-    const email = localStorage.getItem('loggedInEmail');
+    const username = localStorage.getItem('loggedInUsername');
     const accounts = JSON.parse(localStorage.getItem('accounts')) || {};
-    const userData = accounts[email] || { username: '', avatar: 'https://via.placeholder.com/40' };
+    const userData = accounts[username] || { username: username, avatar: 'https://via.placeholder.com/40' };
 
     document.getElementById('account-pic').src = userData.avatar;
-    document.getElementById('welcome-username').textContent = userData.username || email.split('@')[0];
+    document.getElementById('welcome-username').textContent = userData.username;
     document.getElementById('account-pic').classList.add('animate-fade-in');
 }
 
@@ -230,7 +327,7 @@ function loadSiteComments(videoId) {
     const accounts = JSON.parse(localStorage.getItem('accounts')) || {};
     commentsList.innerHTML = '';
     comments.forEach(comment => {
-        const userData = accounts[comment.email] || { username: comment.email.split('@')[0], avatar: 'https://via.placeholder.com/40' };
+        const userData = accounts[comment.username] || { username: comment.username, avatar: 'https://via.placeholder.com/40' };
         const commentDiv = document.createElement('div');
         commentDiv.className = 'comment animate-card';
         commentDiv.innerHTML = `
@@ -249,9 +346,9 @@ function loadSiteComments(videoId) {
 function postComment() {
     const videoId = JSON.parse(localStorage.getItem('channelVideos'))[new URLSearchParams(window.location.search).get('id')]?.snippet.resourceId.videoId;
     const commentInput = document.getElementById('comment-input');
-    const email = localStorage.getItem('loggedInEmail');
+    const username = localStorage.getItem('loggedInUsername');
 
-    if (!email) {
+    if (!username) {
         alert('Please log in to comment.');
         return;
     }
@@ -260,7 +357,7 @@ function postComment() {
     if (commentText) {
         const comments = JSON.parse(localStorage.getItem(`comments_${videoId}`)) || [];
         comments.push({
-            email: email,
+            username: username,
             text: commentText,
             timestamp: new Date().toISOString()
         });
@@ -302,7 +399,7 @@ function displayCounters() {
 function uploadGameFile(input) {
     const file = input.files[0];
     if (file && (file.type === 'application/x-rar-compressed' || file.name.endsWith('.rbxl') || file.name.endsWith('.rbxlx'))) {
-        const email = localStorage.getItem('loggedInEmail');
+        const username = localStorage.getItem('loggedInUsername');
         const formData = new FormData();
         formData.append('file', file);
 
@@ -310,10 +407,10 @@ function uploadGameFile(input) {
         const reader = new FileReader();
         reader.onload = function(e) {
             const fileUrl = e.target.result; // Base64 or Blob URL for local testing
-            if (email) {
+            if (username) {
                 const scripts = JSON.parse(localStorage.getItem('robloxScripts')) || {};
-                scripts[email] = scripts[email] || {};
-                scripts[email].gameFile = fileUrl;
+                scripts[username] = scripts[username] || {};
+                scripts[username].gameFile = fileUrl;
                 localStorage.setItem('robloxScripts', JSON.stringify(scripts));
                 alert(`Game file (${file.name}) uploaded successfully!`);
             } else {
@@ -343,8 +440,8 @@ function uploadGameFile(input) {
 function uploadCommunicationFile(input) {
     const file = input.files[0];
     if (file && (file.type.startsWith('image/') || file.type === 'application/pdf' || file.type.startsWith('text/'))) {
-        const email = localStorage.getItem('loggedInEmail');
-        if (!email) {
+        const username = localStorage.getItem('loggedInUsername');
+        if (!username) {
             alert('Please log in to upload files.');
             return;
         }
@@ -359,7 +456,7 @@ function uploadCommunicationFile(input) {
                 localStorage.setItem('communicationMessages', JSON.stringify(messages));
             } else {
                 messages.push({
-                    email: email,
+                    username: username,
                     text: `File: ${file.name}`,
                     timestamp: new Date().toISOString(),
                     file: fileUrl
