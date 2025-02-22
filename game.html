@@ -14,9 +14,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
     <!-- Prism.js for syntax highlighting -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet">
-    <!-- Google Sign-In (optional, can be removed) -->
-    <meta name="google-signin-client_id" content="744888685295-d452bl4q9e4shdba3s4mn416uicnohij.apps.googleusercontent.com">
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-lua.min.js"></script>
 </head>
@@ -33,80 +30,9 @@
                 <a href="communication.html" class="nav-btn">Communication</a>
                 <a href="https://discord.gg/jKASqrc7H3" target="_blank" class="btn socialbtn"><i class="fab fa-discord"></i> Discord</a>
                 <a href="https://x.com/Yobest_BYTR" target="_blank" class="btn socialbtn"><i class="fab fa-x"></i> X</a>
-                <a href="#" onclick="openLogin()" class="btn actionbtn" id="login-btn">Login</a>
-                <img src="https://via.placeholder.com/40" alt="Account" class="account-pic" id="account-pic" style="display: none;" onclick="openAccountSettings()">
             </nav>
         </div>
     </header>
-
-    <!-- Login Modal -->
-    <div id="login-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeLogin()">×</span>
-            <h2 class="title-frame animate-text">Login</h2>
-            <!-- Google Sign-In (optional, can be removed) -->
-            <div id="g_id_onload"
-                 data-client_id="744888685295-d452bl4q9e4shdba3s4mn416uicnohij.apps.googleusercontent.com"
-                 data-context="signin"
-                 data-ux_mode="popup"
-                 data-callback="handleGoogleSignIn"
-                 data-auto_prompt="false">
-            </div>
-            <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="outline" data-text="signin_with" data-size="large"></div>
-            <div class="or-divider">OR</div>
-            <form id="auth-form" onsubmit="event.preventDefault(); authUser();">
-                <input type="text" id="username" placeholder="Username" required>
-                <input type="password" id="password" placeholder="Password" required>
-                <button type="submit" class="btn actionbtn animate-btn">Sign In</button>
-                <button type="button" class="btn-small animate-btn" onclick="openCreateAccount()">Create Account</button>
-                <button type="button" class="btn-small animate-btn" onclick="openForgotPassword()">Forgot Password?</button>
-            </form>
-            <p id="auth-message" class="reaction-text animate-text"></p>
-        </div>
-    </div>
-
-    <!-- Create Account Modal -->
-    <div id="create-account-modal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeCreateAccount()">×</span>
-            <h2 class="title-frame animate-text">Create New Account</h2>
-            <form id="create-account-form" onsubmit="event.preventDefault(); createAccount();">
-                <input type="text" id="new-username" placeholder="Username" required>
-                <input type="password" id="new-password" placeholder="Password" required>
-                <input type="password" id="confirm-password" placeholder="Confirm Password" required>
-                <button type="submit" class="btn actionbtn animate-btn">Create Account</button>
-            </form>
-            <p id="create-message" class="reaction-text animate-text"></p>
-        </div>
-    </div>
-
-    <!-- Forgot Password Modal -->
-    <div id="forgot-password-modal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeForgotPassword()">×</span>
-            <h2 class="title-frame animate-text">Forgot Password</h2>
-            <form id="forgot-password-form" onsubmit="event.preventDefault(); resetPassword();">
-                <input type="text" id="forgot-username" placeholder="Username" required>
-                <button type="submit" class="btn actionbtn animate-btn">Reset Password</button>
-            </form>
-            <p id="forgot-message" class="reaction-text animate-text"></p>
-        </div>
-    </div>
-
-    <!-- Account Settings Modal -->
-    <div id="account-settings-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeAccountSettings()">×</span>
-            <h2 class="title-frame animate-text">Account Settings</h2>
-            <form id="account-form" onsubmit="event.preventDefault(); updateAccount();">
-                <input type="text" id="username" placeholder="Username" value="" required>
-                <input type="file" id="avatar-upload" accept="image/*" onchange="previewAvatar(this)">
-                <img id="avatar-preview" src="https://via.placeholder.com/40" alt="Avatar Preview" class="avatar-preview" style="display: none; width: 40px; height: 40px; border-radius: 50%; margin: 10px 0;">
-                <button type="submit" class="btn actionbtn animate-btn">Save Changes</button>
-            </form>
-            <p id="account-message" class="reaction-text animate-text"></p>
-        </div>
-    </div>
 
     <!-- Game Details -->
     <section class="game-details animate-section" style="background: linear-gradient(135deg, #1a1a3a, #2a2a5a);">
@@ -197,119 +123,114 @@
     <script>
         // Ensure script.js is loaded and DOM is ready before executing functions
         window.onload = function() {
-            if (typeof checkLoginState === 'function' && 
-                typeof loadAccountInfo === 'function' && 
-                typeof trackVisitor === 'function' && 
+            if (typeof trackVisitor === 'function' && 
                 typeof trackPageVisitors === 'function' && 
                 typeof displayCounters === 'function') {
-                checkLoginState();
-                loadAccountInfo();
                 trackVisitor();
                 trackPageVisitors();
                 displayCounters();
             } else {
                 console.error('One or more functions are not defined. Ensure script.js is loaded correctly.');
             }
-        };
 
-        // Load game details from localStorage and YouTube API
-        const urlParams = new URLSearchParams(window.location.search);
-        const gameId = urlParams.get('id');
-        const videos = JSON.parse(localStorage.getItem('channelVideos')) || [];
-        const API_KEY = 'AIzaSyAHLMunc1uf9O61UxbTGYj4r8cixc13Eq0';
-        const PLAYLIST_ID = 'UUsV3X3EyEowLEdRW1RileuA'; // Updated playlist ID
+            // Load game details from localStorage and YouTube API
+            const urlParams = new URLSearchParams(window.location.search);
+            const gameId = urlParams.get('id');
+            const videos = JSON.parse(localStorage.getItem('channelVideos')) || [];
+            const API_KEY = 'AIzaSyAHLMunc1uf9O61UxbTGYj4r8cixc13Eq0';
+            const PLAYLIST_ID = 'UUsV3X3EyEowLEdRW1RileuA'; // Updated playlist ID
 
-        if (videos.length > 0 && gameId >= 0 && gameId < videos.length) {
-            const video = videos[gameId];
-            const videoId = video.snippet.resourceId.videoId;
-            const title = video.snippet.title;
-            const description = video.snippet.description || "No description available.";
+            if (videos.length > 0 && gameId >= 0 && gameId < videos.length) {
+                const video = videos[gameId];
+                const videoId = video.snippet.resourceId.videoId;
+                const title = video.snippet.title;
+                const description = video.snippet.description || "No description available.";
 
-            // Set iframe source for direct YouTube viewing
-            document.getElementById('game-title').textContent = title;
-            document.getElementById('game-video').src = `https://www.youtube.com/embed/${videoId}`;
-            document.getElementById('game-description').textContent = description;
+                // Set iframe source for direct YouTube viewing
+                document.getElementById('game-title').textContent = title;
+                document.getElementById('game-video').src = `https://www.youtube.com/embed/${videoId}`;
+                document.getElementById('game-description').textContent = description;
 
-            // Update download button to redirect to confirm.html
-            const downloadBtn = document.getElementById('download-btn');
-            downloadBtn.href = `confirm.html?videoId=${videoId}&title=${encodeURIComponent(title)}`;
+                // Update download button to redirect to confirm.html
+                const downloadBtn = document.getElementById('download-btn');
+                downloadBtn.href = `confirm.html?videoId=${videoId}&title=${encodeURIComponent(title)}`;
 
-            // Fade in the title
-            document.getElementById('game-title').classList.add('animate-text');
+                // Fade in the title
+                document.getElementById('game-title').classList.add('animate-text');
 
-            // Fetch video statistics (likes and views)
-            fetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${videoId}&key=${API_KEY}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.items && data.items.length > 0) {
-                        const stats = data.items[0].statistics;
-                        document.getElementById('likes').innerHTML = `<i class="fas fa-thumbs-up"></i> ${stats.likeCount || 0} Likes`;
-                        document.getElementById('views').innerHTML = `<i class="fas fa-eye"></i> ${stats.viewCount || 0} Views`;
-                    } else {
-                        console.warn('No statistics data found for video:', videoId);
-                        document.getElementById('likes').innerHTML = `<i class="fas fa-thumbs-up"></i> N/A Likes`;
-                        document.getElementById('views').innerHTML = `<i class="fas fa-eye"></i> N/A Views`;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching video stats:', error);
-                    document.getElementById('likes').innerHTML = `<i class="fas fa-thumbs-up"></i> Error`;
-                    document.getElementById('views').innerHTML = `<i class="fas fa-eye"></i> Error`;
-                });
+                // Fetch video statistics (likes and views)
+                fetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${videoId}&key=${API_KEY}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.items && data.items.length > 0) {
+                            const stats = data.items[0].statistics;
+                            document.getElementById('likes').innerHTML = `<i class="fas fa-thumbs-up"></i> ${stats.likeCount || 0} Likes`;
+                            document.getElementById('views').innerHTML = `<i class="fas fa-eye"></i> ${stats.viewCount || 0} Views`;
+                        } else {
+                            console.warn('No statistics data found for video:', videoId);
+                            document.getElementById('likes').innerHTML = `<i class="fas fa-thumbs-up"></i> N/A Likes`;
+                            document.getElementById('views').innerHTML = `<i class="fas fa-eye"></i> N/A Views`;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching video stats:', error);
+                        document.getElementById('likes').innerHTML = `<i class="fas fa-thumbs-up"></i> Error`;
+                        document.getElementById('views').innerHTML = `<i class="fas fa-eye"></i> Error`;
+                    });
 
-            // Load YouTube comments
-            loadYouTubeComments(videoId);
+                // Load YouTube comments
+                loadYouTubeComments(videoId);
 
-            // Load site comments
-            loadSiteComments(videoId);
+                // Load site comments
+                loadSiteComments(videoId);
 
-            // Load or set game file link
-            const gameFile = localStorage.getItem(`gameFile_${videoId}`) || '';
-            if (gameFile) {
-                downloadBtn.href = gameFile;
-            }
-        } else {
-            document.getElementById('game-title').textContent = 'Game Not Found';
-            document.getElementById('game-video').style.display = 'none';
-            document.getElementById('download-btn').style.display = 'none';
-            document.getElementById('game-description').textContent = 'No game data available.';
-            document.getElementById('game-title').classList.add('animate-text');
-        }
-
-        // Load channel videos
-        const videoGrid = document.getElementById('video-grid');
-        if (videoGrid) {
-            videos.forEach((item, index) => {
-                if (index != gameId) { // Exclude the current game video
-                    const videoId = item.snippet.resourceId.videoId;
-                    const title = item.snippet.title;
-                    const thumbnail = item.snippet.thumbnails?.maxres?.url || 'https://via.placeholder.com/150';
-
-                    if (!videoId || !title || !thumbnail) {
-                        console.warn(`Skipping video at index ${index} due to missing data.`);
-                        return;
-                    }
-
-                    const card = document.createElement('div');
-                    card.className = 'video-card animate-card';
-                    card.innerHTML = `
-                        <a href="game.html?id=${index}">
-                            <img src="${thumbnail}" alt="${title}">
-                            <h3 class="animate-text">${title}</h3>
-                        </a>
-                    `;
-                    videoGrid.appendChild(card);
+                // Load or set game file link
+                const gameFile = localStorage.getItem(`gameFile_${videoId}`) || '';
+                if (gameFile) {
+                    downloadBtn.href = gameFile;
                 }
-            });
-        } else {
-            console.error('Video grid element not found in game.html.');
-        }
+            } else {
+                document.getElementById('game-title').textContent = 'Game Not Found';
+                document.getElementById('game-video').style.display = 'none';
+                document.getElementById('download-btn').style.display = 'none';
+                document.getElementById('game-description').textContent = 'No game data available.';
+                document.getElementById('game-title').classList.add('animate-text');
+            }
+
+            // Load channel videos
+            const videoGrid = document.getElementById('video-grid');
+            if (videoGrid) {
+                videos.forEach((item, index) => {
+                    if (index != gameId) { // Exclude the current game video
+                        const videoId = item.snippet.resourceId.videoId;
+                        const title = item.snippet.title;
+                        const thumbnail = item.snippet.thumbnails?.maxres?.url || 'https://via.placeholder.com/150';
+
+                        if (!videoId || !title || !thumbnail) {
+                            console.warn(`Skipping video at index ${index} due to missing data.`);
+                            return;
+                        }
+
+                        const card = document.createElement('div');
+                        card.className = 'video-card animate-card';
+                        card.innerHTML = `
+                            <a href="game.html?id=${index}">
+                                <img src="${thumbnail}" alt="${title}">
+                                <h3 class="animate-text">${title}</h3>
+                            </a>
+                        `;
+                        videoGrid.appendChild(card);
+                    }
+                });
+            } else {
+                console.error('Video grid element not found in game.html.');
+            }
+        };
 
         // Upload game file function (including .rar, .rbxl, and .rbxlx)
         function uploadGameFile(input) {
             const file = input.files[0];
             if (file && (file.type === 'application/x-rar-compressed' || file.name.endsWith('.rbxl') || file.name.endsWith('.rbxlx'))) {
-                const videoId = JSON.parse(localStorage.getItem('channelVideos'))[gameId]?.snippet.resourceId.videoId;
                 const formData = new FormData();
                 formData.append('file', file);
 
@@ -317,6 +238,7 @@
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     const fileUrl = e.target.result; // Base64 or Blob URL for local testing
+                    const videoId = JSON.parse(localStorage.getItem('channelVideos'))[new URLSearchParams(window.location.search).get('id')]?.snippet.resourceId.videoId;
                     localStorage.setItem(`gameFile_${videoId}`, fileUrl);
                     const downloadBtn = document.getElementById('download-btn');
                     if (downloadBtn) {
