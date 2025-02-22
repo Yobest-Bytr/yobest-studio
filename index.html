@@ -192,13 +192,21 @@
 
     <script src="script.js"></script>
     <script>
-        // Ensure script.js is loaded before executing these functions
+        // Ensure script.js is loaded and DOM is ready before executing functions
         window.onload = function() {
-            checkLoginState();
-            loadAccountInfo();
-            trackVisitor();
-            displayCounters();
-            fetchVideos();
+            if (typeof checkLoginState === 'function' && 
+                typeof loadAccountInfo === 'function' && 
+                typeof trackVisitor === 'function' && 
+                typeof displayCounters === 'function' && 
+                typeof fetchVideos === 'function') {
+                checkLoginState();
+                loadAccountInfo();
+                trackVisitor();
+                displayCounters();
+                fetchVideos();
+            } else {
+                console.error('One or more functions are not defined. Ensure script.js is loaded correctly.');
+            }
         };
     </script>
 </body>
