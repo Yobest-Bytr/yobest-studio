@@ -14,9 +14,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
     <!-- Prism.js for syntax highlighting (optional, for AI page) -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet">
-    <!-- Google Sign-In (optional, can be removed if not needed) -->
-    <meta name="google-signin-client_id" content="744888685295-d452bl4q9e4shdba3s4mn416uicnohij.apps.googleusercontent.com">
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-lua.min.js"></script>
 </head>
@@ -33,86 +30,15 @@
                 <a href="communication.html" class="nav-btn">Communication</a>
                 <a href="https://discord.gg/jKASqrc7H3" target="_blank" class="btn socialbtn"><i class="fab fa-discord"></i> Discord</a>
                 <a href="https://x.com/Yobest_BYTR" target="_blank" class="btn socialbtn"><i class="fab fa-x"></i> X</a>
-                <a href="#" onclick="openLogin()" class="btn actionbtn" id="login-btn">Login</a>
-                <img src="https://via.placeholder.com/40" alt="Account" class="account-pic" id="account-pic" style="display: none;" onclick="openAccountSettings()">
             </nav>
         </div>
     </header>
-
-    <!-- Login Modal -->
-    <div id="login-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeLogin()">×</span>
-            <h2 class="title-frame animate-text">Login</h2>
-            <!-- Google Sign-In (optional, can be removed) -->
-            <div id="g_id_onload"
-                 data-client_id="744888685295-d452bl4q9e4shdba3s4mn416uicnohij.apps.googleusercontent.com"
-                 data-context="signin"
-                 data-ux_mode="popup"
-                 data-callback="handleGoogleSignIn"
-                 data-auto_prompt="false">
-            </div>
-            <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="outline" data-text="signin_with" data-size="large"></div>
-            <div class="or-divider">OR</div>
-            <form id="auth-form" onsubmit="event.preventDefault(); authUser();">
-                <input type="text" id="username" placeholder="Username" required>
-                <input type="password" id="password" placeholder="Password" required>
-                <button type="submit" class="btn actionbtn animate-btn">Sign In</button>
-                <button type="button" class="btn-small animate-btn" onclick="openCreateAccount()">Create Account</button>
-                <button type="button" class="btn-small animate-btn" onclick="openForgotPassword()">Forgot Password?</button>
-            </form>
-            <p id="auth-message" class="reaction-text animate-text"></p>
-        </div>
-    </div>
-
-    <!-- Create Account Modal -->
-    <div id="create-account-modal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeCreateAccount()">×</span>
-            <h2 class="title-frame animate-text">Create New Account</h2>
-            <form id="create-account-form" onsubmit="event.preventDefault(); createAccount();">
-                <input type="text" id="new-username" placeholder="Username" required>
-                <input type="password" id="new-password" placeholder="Password" required>
-                <input type="password" id="confirm-password" placeholder="Confirm Password" required>
-                <button type="submit" class="btn actionbtn animate-btn">Create Account</button>
-            </form>
-            <p id="create-message" class="reaction-text animate-text"></p>
-        </div>
-    </div>
-
-    <!-- Forgot Password Modal -->
-    <div id="forgot-password-modal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeForgotPassword()">×</span>
-            <h2 class="title-frame animate-text">Forgot Password</h2>
-            <form id="forgot-password-form" onsubmit="event.preventDefault(); resetPassword();">
-                <input type="text" id="forgot-username" placeholder="Username" required>
-                <button type="submit" class="btn actionbtn animate-btn">Reset Password</button>
-            </form>
-            <p id="forgot-message" class="reaction-text animate-text"></p>
-        </div>
-    </div>
-
-    <!-- Account Settings Modal -->
-    <div id="account-settings-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeAccountSettings()">×</span>
-            <h2 class="title-frame animate-text">Account Settings</h2>
-            <form id="account-form" onsubmit="event.preventDefault(); updateAccount();">
-                <input type="text" id="username" placeholder="Username" value="" required>
-                <input type="file" id="avatar-upload" accept="image/*" onchange="previewAvatar(this)">
-                <img id="avatar-preview" src="https://via.placeholder.com/40" alt="Avatar Preview" class="avatar-preview" style="display: none; width: 40px; height: 40px; border-radius: 50%; margin: 10px 0;">
-                <button type="submit" class="btn actionbtn animate-btn">Save Changes</button>
-            </form>
-            <p id="account-message" class="reaction-text animate-text"></p>
-        </div>
-    </div>
 
     <!-- Hero Section -->
     <section class="hero animate-section" style="background: linear-gradient(135deg, #0a0a2a, #1a1a4a, #2a2a6a);">
         <div class="container">
             <h2 class="animate-text">Welcome to My Roblox World!</h2>
-            <p class="animate-text">Welcome, <span id="welcome-username"></span>! Explore free and paid games crafted by Yobest Studio.</p>
+            <p class="animate-text">Explore free and paid games crafted by Yobest Studio.</p>
             <p class="animate-text">Site Visitors: <span id="site-visitors"></span> | Total Downloads: <span id="total-downloads"></span></p>
             <div class="button-group">
                 <a href="#games" class="btn actionbtn animate-btn">Check Out My Games</a>
@@ -225,16 +151,15 @@
     <script>
         // Ensure script.js is loaded and DOM is ready before executing functions
         window.onload = function() {
-                typeof loadAccountInfo === 'function' && 
-                typeof trackVisitor === 'function' && 
+            if (typeof trackVisitor === 'function' && 
                 typeof displayCounters === 'function' && 
                 typeof fetchVideos === 'function') {
-                checkLoginState();
-                loadAccountInfo();
                 trackVisitor();
                 displayCounters();
                 fetchVideos();
-
+            } else {
+                console.error('One or more functions are not defined. Ensure script.js is loaded correctly.');
+            }
         };
     </script>
 </body>
