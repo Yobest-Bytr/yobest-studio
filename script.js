@@ -507,3 +507,82 @@ async function downloadAsset() {
         status.classList.add('error');
     }
 }
+
+// Fetch YouTube videos for the home page (index.html)
+async function fetchVideos() {
+    const reactionDiv = document.getElementById('reaction-text');
+    const previewGrid = document.getElementById('preview-grid');
+    const videoError = document.getElementById('video-error');
+    const API_KEY = 'AIzaSyChwoHXMqlbmAfeh4lbRUFWx2HjIZ6VV2k';
+    const PLAYLIST_ID = 'UUsV3X3EyEowLEdRW1RileuA';
+
+    if (!reactionDiv || !previewGrid || !videoError) {
+        console.error('DOM elements for video display not found.');
+        return;
+    }
+
+    reactionDiv.textContent = "🔥 Connecting to YouTube HQ...";
+    reactionDiv.classList.add('animate-loading');
+
+    let videos = [];
+    let nextPageToken = '';
+
+    try {
+        do {
+            const response = await fetch(
+                `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${PLAYLIST_ID}&key=${API_KEY}&maxResults=50&pageToken=${nextPageToken}`
+            );
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}, Message: ${await response.text()}`);
+            }
+            const data = await response.json();
+            if (data.items) {
+                videos = videos.concat(data.items);
+                nextPageToken = data.nextPageToken || '';
+            } else if (data.error) {
+                throw new Error(`API error: ${data.error.message || 'Unknown error'}`);
+            }
+        } while (nextPageToken);
+
+        reactionDiv.textContent = `✅ Loaded ${videos.length} awesome videos!`;
+        reactionDiv.classList.remove('animate-loading');
+        reactionDiv.classList.add('animate-success');
+
+        // Clear any previous error or content
+        videoError.style.display = 'none';
+        previewGrid.innerHTML = '';
+
+        // Display videos with animations
+        videos.forEach((item, index) => {
+            const videoId = item.snippet.resourceId.videoId;
+            const title = item.snippet.title;
+            const thumbnail = item.snippet.thumbnails?.maxres?.url || item.snippet.thumbnails?.high?.url || 'https://via.placeholder.com/150';
+
+            const card = document.createElement('div');
+            card.className = 'video-card animate-card';
+            card.innerHTML = `
+                <a href="game.html?id=${index}">
+                    <img src="${thumbnail}" alt="${title}">
+                    <h3 class="animate-text">${title}</h3>
+                </a>
+            `;
+            previewGrid.appendChild(card);
+        });
+
+        // Store videos in localStorage for other pages
+        localStorage.setItem('channelVideos', JSON.stringify(videos));
+    } catch (error) {
+        console.error('Error fetching videos:', error);
+        reactionDiv.textContent = '';
+        reactionDiv.classList.remove('animate-loading');
+        previewGrid.innerHTML = '';
+        videoError.style.display = 'block';
+        videoError.textContent = `Error loading videos. Please check your API key, playlist ID, or network connection. Details: ${error.message}`;
+        videoError.classList.add('animate-error');
+
+        // Additional debugging info
+        console.log('API Key:', API_KEY);
+        console.log('Playlist ID:', PLAYLIST_ID);
+        console.log('Response Status:', response ? response.status : 'No response');
+    }
+}
