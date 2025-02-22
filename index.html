@@ -225,7 +225,6 @@
     <script>
         // Ensure script.js is loaded and DOM is ready before executing functions
         window.onload = function() {
-            if (typeof checkLoginState === 'function' && 
                 typeof loadAccountInfo === 'function' && 
                 typeof trackVisitor === 'function' && 
                 typeof displayCounters === 'function' && 
@@ -235,9 +234,7 @@
                 trackVisitor();
                 displayCounters();
                 fetchVideos();
-            } else {
-                console.error('One or more functions are not defined. Ensure script.js is loaded correctly.');
-            }
+
         };
     </script>
 </body>
