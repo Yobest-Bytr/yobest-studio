@@ -27,6 +27,7 @@
                 <a href="contact.html" class="nav-btn">Contact</a>
                 <a href="index.html" class="nav-btn">Home</a>
                 <a href="ai.html" class="nav-btn">AI Tools</a>
+                <a href="communication.html" class="nav-btn">Communication</a> <!-- New navigation link -->
                 <a href="https://discord.gg/jKASqrc7H3" target="_blank" class="btn socialbtn"><i class="fab fa-discord"></i> Discord</a>
                 <a href="https://x.com/Yobest_BYTR" target="_blank" class="btn socialbtn"><i class="fab fa-x"></i> X</a>
                 <a href="#" onclick="openLogin()" class="btn actionbtn" id="login-btn">Login</a>
@@ -181,16 +182,14 @@
 
     <script src="script.js"></script>
     <script>
-        // Check login state on page load
-        checkLoginState();
-        loadAccountInfo();
-
-        // Track page visit and display counters
-        trackVisitor();
-        displayCounters();
-
-        // Fetch videos for the home page
-        fetchVideos();
+        // Ensure script.js is loaded before executing these functions
+        window.onload = function() {
+            checkLoginState();
+            loadAccountInfo();
+            trackVisitor();
+            displayCounters();
+            fetchVideos();
+        };
     </script>
 </body>
 </html>
