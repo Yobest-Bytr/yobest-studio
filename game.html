@@ -27,6 +27,7 @@
                 <a href="contact.html" class="nav-btn">Contact</a>
                 <a href="index.html" class="nav-btn">Home</a>
                 <a href="ai.html" class="nav-btn">AI Tools</a>
+                <a href="communication.html" class="nav-btn">Communication</a> <!-- New navigation link -->
                 <a href="https://discord.gg/jKASqrc7H3" target="_blank" class="btn socialbtn"><i class="fab fa-discord"></i> Discord</a>
                 <a href="https://x.com/Yobest_BYTR" target="_blank" class="btn socialbtn"><i class="fab fa-x"></i> X</a>
                 <a href="#" onclick="openLogin()" class="btn actionbtn" id="login-btn">Login</a>
@@ -153,21 +154,21 @@
 
     <script src="script.js"></script>
     <script>
-        // Check login state on page load
-        checkLoginState();
-        loadAccountInfo();
-
-        // Track page visit and display counters
-        trackVisitor();
-        trackPageVisitors();
-        displayCounters();
+        // Ensure script.js is loaded before executing these functions
+        window.onload = function() {
+            checkLoginState();
+            loadAccountInfo();
+            trackVisitor();
+            trackPageVisitors();
+            displayCounters();
+        };
 
         // Load game details from localStorage and YouTube API
         const urlParams = new URLSearchParams(window.location.search);
         const gameId = urlParams.get('id');
         const videos = JSON.parse(localStorage.getItem('channelVideos')) || [];
         const API_KEY = 'AIzaSyAHLMunc1uf9O61UxbTGYj4r8cixc13Eq0';
-        const CHANNEL_ID = 'UUsV3X3EyEowLEdRW1RileuA'; // Your YouTube channel ID
+        const PLAYLIST_ID = 'PL123456789012345678'; // Replace with your actual YouTube uploads playlist ID
 
         if (videos.length > 0 && gameId >= 0 && gameId < videos.length) {
             const video = videos[gameId];
