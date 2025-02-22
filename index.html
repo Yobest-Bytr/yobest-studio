@@ -147,10 +147,11 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script src="script.ts"></script>
     <script>
-        // Ensure script.js is loaded and DOM is ready before executing functions
-        window.onload = function() {
+        // Ensure script.ts is loaded and DOM is ready before executing functions
+        // Note: For production, compile script.ts to script.js and reference script.js instead
+        window.onload = function(): void {
             console.log('Checking if functions are defined...');
             if (typeof trackVisitor === 'function' && 
                 typeof displayCounters === 'function' && 
@@ -160,7 +161,7 @@
                 displayCounters();
                 fetchVideos();
             } else {
-                console.error('One or more functions are not defined. Ensure script.js is loaded correctly. Defined functions:', {
+                console.error('One or more functions are not defined. Ensure script.ts is compiled and loaded correctly. Defined functions:', {
                     trackVisitor: typeof trackVisitor,
                     displayCounters: typeof displayCounters,
                     fetchVideos: typeof fetchVideos
