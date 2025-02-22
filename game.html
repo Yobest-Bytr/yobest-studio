@@ -8,6 +8,7 @@
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2925220406728611"
             crossorigin="anonymous"></script>
+    <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <!-- Poppins Font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
@@ -194,6 +195,10 @@
                         const stats = data.items[0].statistics;
                         document.getElementById('likes').innerHTML = `<i class="fas fa-thumbs-up"></i> ${stats.likeCount || 0} Likes`;
                         document.getElementById('views').innerHTML = `<i class="fas fa-eye"></i> ${stats.viewCount || 0} Views`;
+                    } else {
+                        console.warn('No statistics data found for video:', videoId);
+                        document.getElementById('likes').innerHTML = `<i class="fas fa-thumbs-up"></i> N/A Likes`;
+                        document.getElementById('views').innerHTML = `<i class="fas fa-eye"></i> N/A Views`;
                     }
                 })
                 .catch(error => {
@@ -223,23 +228,32 @@
 
         // Load channel videos
         const videoGrid = document.getElementById('video-grid');
-        videos.forEach((item, index) => {
-            if (index != gameId) { // Exclude the current game video
-                const videoId = item.snippet.resourceId.videoId;
-                const title = item.snippet.title;
-                const thumbnail = item.snippet.thumbnails?.maxres?.url || 'https://via.placeholder.com/150';
+        if (videoGrid) {
+            videos.forEach((item, index) => {
+                if (index != gameId) { // Exclude the current game video
+                    const videoId = item.snippet.resourceId.videoId;
+                    const title = item.snippet.title;
+                    const thumbnail = item.snippet.thumbnails?.maxres?.url || 'https://via.placeholder.com/150';
 
-                const card = document.createElement('div');
-                card.className = 'video-card animate-card';
-                card.innerHTML = `
-                    <a href="game.html?id=${index}">
-                        <img src="${thumbnail}" alt="${title}">
-                        <h3 class="animate-text">${title}</h3>
-                    </a>
-                `;
-                videoGrid.appendChild(card);
-            }
-        });
+                    if (!videoId || !title || !thumbnail) {
+                        console.warn(`Skipping video at index ${index} due to missing data.`);
+                        return;
+                    }
+
+                    const card = document.createElement('div');
+                    card.className = 'video-card animate-card';
+                    card.innerHTML = `
+                        <a href="game.html?id=${index}">
+                            <img src="${thumbnail}" alt="${title}">
+                            <h3 class="animate-text">${title}</h3>
+                        </a>
+                    `;
+                    videoGrid.appendChild(card);
+                }
+            });
+        } else {
+            console.error('Video grid element not found in game.html.');
+        }
 
         // Upload game file function (including .rar, .rbxl, and .rbxlx)
         function uploadGameFile(input) {
@@ -255,8 +269,12 @@
                     const fileUrl = e.target.result; // Base64 or Blob URL for local testing
                     localStorage.setItem(`gameFile_${videoId}`, fileUrl);
                     const downloadBtn = document.getElementById('download-btn');
-                    downloadBtn.href = fileUrl;
-                    alert(`Game file (${file.name}) uploaded successfully! Click "Download Game" to access.`);
+                    if (downloadBtn) {
+                        downloadBtn.href = fileUrl;
+                        alert(`Game file (${file.name}) uploaded successfully! Click "Download Game" to access.`);
+                    } else {
+                        console.error('Download button not found.');
+                    }
                 };
                 reader.readAsDataURL(file);
             } else {
