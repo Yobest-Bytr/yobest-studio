@@ -83,73 +83,32 @@
     <script>
         // Ensure script.js is loaded and DOM is ready before executing functions
         window.onload = function() {
+            console.log('Checking if functions are defined...');
             if (typeof trackVisitor === 'function' && 
-                typeof displayCounters === 'function') {
+                typeof displayCounters === 'function' && 
+                typeof loadCommunicationMessages === 'function' && 
+                typeof sendMessage === 'function' && 
+                typeof toggleEmojiPicker === 'function' && 
+                typeof uploadCommunicationFile === 'function') {
+                console.log('All functions defined, executing...');
                 trackVisitor();
                 displayCounters();
+                loadCommunicationMessages();
             } else {
-                console.error('One or more functions are not defined. Ensure script.js is loaded correctly.');
+                console.error('One or more functions are not defined. Ensure script.js is loaded correctly. Defined functions:', {
+                    trackVisitor: typeof trackVisitor,
+                    displayCounters: typeof displayCounters,
+                    loadCommunicationMessages: typeof loadCommunicationMessages,
+                    sendMessage: typeof sendMessage,
+                    toggleEmojiPicker: typeof toggleEmojiPicker,
+                    uploadCommunicationFile: typeof uploadCommunicationFile
+                });
             }
-
-            loadCommunicationMessages();
         };
 
-        // Communication Functions
-        function loadCommunicationMessages() {
-            const messagesDiv = document.getElementById('communication-messages');
-            const messages = JSON.parse(localStorage.getItem('communicationMessages')) || [];
-            messagesDiv.innerHTML = '';
-            messages.forEach(msg => {
-                const msgDiv = document.createElement('div');
-                msgDiv.className = 'comment animate-card';
-                msgDiv.innerHTML = `
-                    <img src="https://via.placeholder.com/40" alt="Anonymous" class="comment-avatar">
-                    <div class="comment-content">
-                        <strong>Anonymous</strong>: ${msg.text}
-                        <div class="comment-meta">
-                            <span>${new Date(msg.timestamp).toLocaleString()}</span>
-                            ${msg.file ? `<a href="${msg.file}" target="_blank" class="file-link">📎 File</a>` : ''}
-                        </div>
-                    </div>
-                `;
-                messagesDiv.appendChild(msgDiv);
-            });
-            messagesDiv.scrollTop = messagesDiv.scrollHeight; // Auto-scroll to the bottom
-        }
-
-        function sendMessage(inputId = 'chat-input', messagesId = 'communication-messages') {
-            const input = document.getElementById(inputId);
-            const messagesDiv = document.getElementById(messagesId);
-
-            if (input.value.trim()) {
-                const msg = document.createElement("div");
-                msg.className = 'comment animate-card';
-                msg.innerHTML = `
-                    <img src="https://via.placeholder.com/40" alt="Anonymous" class="comment-avatar">
-                    <div class="comment-content">
-                        <strong>Anonymous</strong>: ${input.value}
-                        <div class="comment-meta">
-                            <span>${new Date().toLocaleString()}</span>
-                        </div>
-                    </div>
-                `;
-                messagesDiv.appendChild(msg);
-                input.value = "";
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
-
-                // Store message in localStorage for communication page
-                const messages = JSON.parse(localStorage.getItem('communicationMessages')) || [];
-                messages.push({
-                    text: input.value,
-                    timestamp: new Date().toISOString(),
-                    file: null
-                });
-                localStorage.setItem('communicationMessages', JSON.stringify(messages));
-            }
-        }
-
-        function toggleEmojiPicker() {
-            const emojiPicker = document.getElementById('emoji-picker');
+        // Communication Functions (already defined in script.js, but included here for completeness)
+        function toggleEmojiPicker(): void {
+            const emojiPicker = document.getElementById('emoji-picker') as HTMLElement;
             emojiPicker.style.display = emojiPicker.style.display === 'none' ? 'block' : 'none';
         }
 
@@ -157,43 +116,15 @@
         document.addEventListener('DOMContentLoaded', () => {
             const emojiPicker = document.querySelector('emoji-picker');
             if (emojiPicker) {
-                emojiPicker.addEventListener('emoji-click', event => {
-                    const input = document.getElementById('chat-input');
+                emojiPicker.addEventListener('emoji-click', (event: any) => {
+                    const input = document.getElementById('chat-input') as HTMLInputElement;
                     if (input) {
                         input.value += event.detail.emoji.native;
                     }
-                    toggleEmojiPicker(); // Hide picker after selection
+                    toggleEmojiPicker();
                 });
             }
         });
-
-        function uploadCommunicationFile(input) {
-            const file = input.files[0];
-            if (file && (file.type.startsWith('image/') || file.type === 'application/pdf' || file.type.startsWith('text/'))) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const fileUrl = e.target.result; // Base64 or Blob URL for local testing
-                    const messages = JSON.parse(localStorage.getItem('communicationMessages')) || [];
-                    const lastMessage = messages[messages.length - 1];
-                    if (lastMessage && !lastMessage.file) { // Link file to the last message
-                        lastMessage.file = fileUrl;
-                        localStorage.setItem('communicationMessages', JSON.stringify(messages));
-                    } else {
-                        messages.push({
-                            text: `File: ${file.name}`,
-                            timestamp: new Date().toISOString(),
-                            file: fileUrl
-                        });
-                        localStorage.setItem('communicationMessages', JSON.stringify(messages));
-                    }
-                    loadCommunicationMessages();
-                    alert(`File (${file.name}) uploaded successfully!`);
-                };
-                reader.readAsDataURL(file);
-            } else {
-                alert('Please upload an image, PDF, or text file.');
-            }
-        }
     </script>
 </body>
 </html>
