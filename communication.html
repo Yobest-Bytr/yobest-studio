@@ -14,9 +14,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
     <!-- Prism.js for syntax highlighting -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet">
-    <!-- Google Sign-In (optional, can be removed) -->
-    <meta name="google-signin-client_id" content="744888685295-d452bl4q9e4shdba3s4mn416uicnohij.apps.googleusercontent.com">
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <!-- Emoji Picker (using emoji-picker-element) -->
     <script src="https://cdn.jsdelivr.net/npm/@emoji-mart/data@1.1.2/emoji-mart.data.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@emoji-mart/react@1.1.1/dist/index.min.js"></script>
@@ -37,87 +34,15 @@
                 <a href="communication.html" class="nav-btn">Communication</a>
                 <a href="https://discord.gg/jKASqrc7H3" target="_blank" class="btn socialbtn"><i class="fab fa-discord"></i> Discord</a>
                 <a href="https://x.com/Yobest_BYTR" target="_blank" class="btn socialbtn"><i class="fab fa-x"></i> X</a>
-                <a href="#" onclick="openLogin()" class="btn actionbtn" id="login-btn">Login</a>
-                <img src="https://via.placeholder.com/40" alt="Account" class="account-pic" id="account-pic" style="display: none;" onclick="openAccountSettings()">
             </nav>
         </div>
     </header>
-
-    <!-- Login Modal -->
-    <div id="login-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeLogin()">×</span>
-            <h2 class="title-frame animate-text">Login</h2>
-            <!-- Google Sign-In (optional, can be removed) -->
-            <div id="g_id_onload"
-                 data-client_id="744888685295-d452bl4q9e4shdba3s4mn416uicnohij.apps.googleusercontent.com"
-                 data-context="signin"
-                 data-ux_mode="popup"
-                 data-callback="handleGoogleSignIn"
-                 data-auto_prompt="false">
-            </div>
-            <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="outline" data-text="signin_with" data-size="large"></div>
-            <div class="or-divider">OR</div>
-            <form id="auth-form" onsubmit="event.preventDefault(); authUser();">
-                <input type="text" id="username" placeholder="Username" required>
-                <input type="password" id="password" placeholder="Password" required>
-                <button type="submit" class="btn actionbtn animate-btn">Sign In</button>
-                <button type="button" class="btn-small animate-btn" onclick="openCreateAccount()">Create Account</button>
-                <button type="button" class="btn-small animate-btn" onclick="openForgotPassword()">Forgot Password?</button>
-            </form>
-            <p id="auth-message" class="reaction-text animate-text"></p>
-        </div>
-    </div>
-
-    <!-- Create Account Modal -->
-    <div id="create-account-modal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeCreateAccount()">×</span>
-            <h2 class="title-frame animate-text">Create New Account</h2>
-            <form id="create-account-form" onsubmit="event.preventDefault(); createAccount();">
-                <input type="text" id="new-username" placeholder="Username" required>
-                <input type="password" id="new-password" placeholder="Password" required>
-                <input type="password" id="confirm-password" placeholder="Confirm Password" required>
-                <button type="submit" class="btn actionbtn animate-btn">Create Account</button>
-            </form>
-            <p id="create-message" class="reaction-text animate-text"></p>
-        </div>
-    </div>
-
-    <!-- Forgot Password Modal -->
-    <div id="forgot-password-modal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeForgotPassword()">×</span>
-            <h2 class="title-frame animate-text">Forgot Password</h2>
-            <form id="forgot-password-form" onsubmit="event.preventDefault(); resetPassword();">
-                <input type="text" id="forgot-username" placeholder="Username" required>
-                <button type="submit" class="btn actionbtn animate-btn">Reset Password</button>
-            </form>
-            <p id="forgot-message" class="reaction-text animate-text"></p>
-        </div>
-    </div>
-
-    <!-- Account Settings Modal -->
-    <div id="account-settings-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeAccountSettings()">×</span>
-            <h2 class="title-frame animate-text">Account Settings</h2>
-            <form id="account-form" onsubmit="event.preventDefault(); updateAccount();">
-                <input type="text" id="username" placeholder="Username" value="" required>
-                <input type="file" id="avatar-upload" accept="image/*" onchange="previewAvatar(this)">
-                <img id="avatar-preview" src="https://via.placeholder.com/40" alt="Avatar Preview" class="avatar-preview" style="display: none; width: 40px; height: 40px; border-radius: 50%; margin: 10px 0;">
-                <button type="submit" class="btn actionbtn animate-btn">Save Changes</button>
-            </form>
-            <p id="account-message" class="reaction-text animate-text"></p>
-        </div>
-    </div>
 
     <!-- Communication Section -->
     <section class="communication-section animate-section" style="background: linear-gradient(135deg, #1a1a3a, #2a2a5a);">
         <div class="container">
             <h2 class="title-frame animate-text">Community Communication</h2>
-            <p id="login-required" class="reaction-text animate-text" style="display: none;">Please log in to communicate.</p>
-            <div id="communication-container" style="display: none;">
+            <div id="communication-container">
                 <div id="communication-messages" class="communication-messages"></div>
                 <div class="communication-input-group">
                     <input type="text" id="chat-input" placeholder="Type a message..." class="chat-input" spellcheck="false">
@@ -158,46 +83,29 @@
     <script>
         // Ensure script.js is loaded and DOM is ready before executing functions
         window.onload = function() {
-            if (typeof checkLoginState === 'function' && 
-                typeof loadAccountInfo === 'function' && 
-                typeof trackVisitor === 'function' && 
+            if (typeof trackVisitor === 'function' && 
                 typeof displayCounters === 'function') {
-                checkLoginState();
-                loadAccountInfo();
                 trackVisitor();
                 displayCounters();
             } else {
                 console.error('One or more functions are not defined. Ensure script.js is loaded correctly.');
             }
 
-            // Check login state for communication
-            const loggedInUsername = localStorage.getItem('loggedInUsername');
-            const communicationContainer = document.getElementById('communication-container');
-            const loginRequired = document.getElementById('login-required');
-            if (loggedInUsername) {
-                communicationContainer.style.display = 'block';
-                loginRequired.style.display = 'none';
-                loadCommunicationMessages(); // Load existing messages
-            } else {
-                communicationContainer.style.display = 'none';
-                loginRequired.style.display = 'block';
-            }
+            loadCommunicationMessages();
         };
 
         // Communication Functions
         function loadCommunicationMessages() {
             const messagesDiv = document.getElementById('communication-messages');
             const messages = JSON.parse(localStorage.getItem('communicationMessages')) || [];
-            const accounts = JSON.parse(localStorage.getItem('accounts')) || {};
             messagesDiv.innerHTML = '';
             messages.forEach(msg => {
-                const userData = accounts[msg.username] || { username: msg.username, avatar: 'https://via.placeholder.com/40' };
                 const msgDiv = document.createElement('div');
                 msgDiv.className = 'comment animate-card';
                 msgDiv.innerHTML = `
-                    <img src="${userData.avatar}" alt="${userData.username}" class="comment-avatar">
+                    <img src="https://via.placeholder.com/40" alt="Anonymous" class="comment-avatar">
                     <div class="comment-content">
-                        <strong>${userData.username}</strong>: ${msg.text}
+                        <strong>Anonymous</strong>: ${msg.text}
                         <div class="comment-meta">
                             <span>${new Date(msg.timestamp).toLocaleString()}</span>
                             ${msg.file ? `<a href="${msg.file}" target="_blank" class="file-link">📎 File</a>` : ''}
@@ -212,25 +120,31 @@
         function sendMessage(inputId = 'chat-input', messagesId = 'communication-messages') {
             const input = document.getElementById(inputId);
             const messagesDiv = document.getElementById(messagesId);
-            const username = localStorage.getItem('loggedInUsername');
 
-            if (!username) {
-                alert('Please log in to communicate.');
-                return;
-            }
+            if (input.value.trim()) {
+                const msg = document.createElement("div");
+                msg.className = 'comment animate-card';
+                msg.innerHTML = `
+                    <img src="https://via.placeholder.com/40" alt="Anonymous" class="comment-avatar">
+                    <div class="comment-content">
+                        <strong>Anonymous</strong>: ${input.value}
+                        <div class="comment-meta">
+                            <span>${new Date().toLocaleString()}</span>
+                        </div>
+                    </div>
+                `;
+                messagesDiv.appendChild(msg);
+                input.value = "";
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
-            const messageText = input.value.trim();
-            if (messageText) {
+                // Store message in localStorage for communication page
                 const messages = JSON.parse(localStorage.getItem('communicationMessages')) || [];
                 messages.push({
-                    username: username,
-                    text: messageText,
+                    text: input.value,
                     timestamp: new Date().toISOString(),
-                    file: null // Will be updated by uploadCommunicationFile if a file is uploaded
+                    file: null
                 });
                 localStorage.setItem('communicationMessages', JSON.stringify(messages));
-                input.value = '';
-                loadCommunicationMessages();
             }
         }
 
@@ -256,12 +170,6 @@
         function uploadCommunicationFile(input) {
             const file = input.files[0];
             if (file && (file.type.startsWith('image/') || file.type === 'application/pdf' || file.type.startsWith('text/'))) {
-                const username = localStorage.getItem('loggedInUsername');
-                if (!username) {
-                    alert('Please log in to upload files.');
-                    return;
-                }
-
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     const fileUrl = e.target.result; // Base64 or Blob URL for local testing
@@ -272,7 +180,6 @@
                         localStorage.setItem('communicationMessages', JSON.stringify(messages));
                     } else {
                         messages.push({
-                            username: username,
                             text: `File: ${file.name}`,
                             timestamp: new Date().toISOString(),
                             file: fileUrl
