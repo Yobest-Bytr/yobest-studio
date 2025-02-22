@@ -1,8 +1,6 @@
-// Type definitions for function parameters and return types
-function sendMessage(inputId: string = 'chat-input', messagesId: string = 'communication-messages'): void {
-    const input = document.getElementById(inputId) as HTMLInputElement | null;
-    const messagesDiv = document.getElementById(messagesId) as HTMLElement | null;
-
+function sendMessage(inputId = 'chat-input', messagesId = 'communication-messages') {
+    const input = document.getElementById(inputId);
+    const messagesDiv = document.getElementById(messagesId);
     if (input && messagesDiv && input.value.trim()) {
         const msg = document.createElement("div");
         msg.className = 'comment animate-card';
@@ -18,110 +16,105 @@ function sendMessage(inputId: string = 'chat-input', messagesId: string = 'commu
         messagesDiv.appendChild(msg);
         input.value = "";
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
-
-        // Store message in localStorage for communication page
-        const messages = JSON.parse(localStorage.getItem('communicationMessages') || '[]') as Array<{ text: string, timestamp: string, file: string | null }>;
+        const messages = JSON.parse(localStorage.getItem('communicationMessages') || '[]');
         messages.push({
             text: input.value,
             timestamp: new Date().toISOString(),
             file: null
         });
         localStorage.setItem('communicationMessages', JSON.stringify(messages));
-    } else {
+    }
+    else {
         console.error('Input or messages div not found or input is empty.');
     }
 }
-
-// Track visitor and download counts
-function trackVisitor(): void {
+function trackVisitor() {
     console.log('trackVisitor called');
-    let visitors: number = parseInt(localStorage.getItem('siteVisitors') || '0') || 0;
+    let visitors = parseInt(localStorage.getItem('siteVisitors') || '0') || 0;
     visitors++;
     localStorage.setItem('siteVisitors', visitors.toString());
 }
-
-function trackPageVisitors(): void {
+function trackPageVisitors() {
     console.log('trackPageVisitors called');
-    const pageVisitorsKey: string = `pageVisitors_game_${new URLSearchParams(window.location.search).get('id') || '0'}`;
-    let visitors: number = parseInt(localStorage.getItem(pageVisitorsKey) || '0') || 0;
+    const pageVisitorsKey = `pageVisitors_game_${new URLSearchParams(window.location.search).get('id') || '0'}`;
+    let visitors = parseInt(localStorage.getItem(pageVisitorsKey) || '0') || 0;
     visitors++;
     localStorage.setItem(pageVisitorsKey, visitors.toString());
-    const pageVisitorsElement = document.getElementById('page-visitors') as HTMLElement | null;
+    const pageVisitorsElement = document.getElementById('page-visitors');
     if (pageVisitorsElement) {
         pageVisitorsElement.textContent = visitors.toString();
-    } else {
+    }
+    else {
         console.error('Page visitors element not found.');
     }
 }
-
-function trackDownload(): void {
+function trackDownload() {
     console.log('trackDownload called');
-    let downloads: number = parseInt(localStorage.getItem('totalDownloads') || '0') || 0;
+    let downloads = parseInt(localStorage.getItem('totalDownloads') || '0') || 0;
     downloads++;
     localStorage.setItem('totalDownloads', downloads.toString());
 }
-
-function displayCounters(): void {
+function displayCounters() {
     console.log('displayCounters called');
-    const siteVisitors: number = parseInt(localStorage.getItem('siteVisitors') || '0') || 0;
-    const downloads: number = parseInt(localStorage.getItem('totalDownloads') || '0') || 0;
-    const siteVisitorsElement = document.getElementById('site-visitors') as HTMLElement | null;
-    const totalDownloadsElement = document.getElementById('total-downloads') as HTMLElement | null;
-    if (siteVisitorsElement) siteVisitorsElement.textContent = siteVisitors.toString();
-    if (totalDownloadsElement) totalDownloadsElement.textContent = downloads.toString();
+    const siteVisitors = parseInt(localStorage.getItem('siteVisitors') || '0') || 0;
+    const downloads = parseInt(localStorage.getItem('totalDownloads') || '0') || 0;
+    const siteVisitorsElement = document.getElementById('site-visitors');
+    const totalDownloadsElement = document.getElementById('total-downloads');
+    if (siteVisitorsElement)
+        siteVisitorsElement.textContent = siteVisitors.toString();
+    if (totalDownloadsElement)
+        totalDownloadsElement.textContent = downloads.toString();
     if (!siteVisitorsElement || !totalDownloadsElement) {
         console.error('Counter elements not found.');
     }
 }
-
-// Upload game file function (for game.html and ai.html, including .rar, .rbxl, and .rbxlx)
-function uploadGameFile(input: HTMLInputElement): void {
+function uploadGameFile(input) {
     console.log('uploadGameFile called');
-    const file: File | null = input.files?.[0] || null;
+    const file = input.files?.[0] || null;
     if (file && (file.type === 'application/x-rar-compressed' || file.name.endsWith('.rbxl') || file.name.endsWith('.rbxlx'))) {
         const formData = new FormData();
         formData.append('file', file);
-
-        // Simulate file upload (replace with actual backend endpoint)
         const reader = new FileReader();
-        reader.onload = function(e: ProgressEvent<FileReader>): void {
-            const fileUrl: string = e.target?.result as string; // Base64 or Blob URL for local testing
-            const urlParams: URLSearchParams = new URLSearchParams(window.location.search);
-            const gameId: string | null = urlParams.get('id');
-            const videoId: string | undefined = JSON.parse(localStorage.getItem('channelVideos') || '[]')[gameId ? parseInt(gameId) : -1]?.snippet.resourceId.videoId;
+        reader.onload = function (e) {
+            const fileUrl = e.target?.result;
+            const urlParams = new URLSearchParams(window.location.search);
+            const gameId = urlParams.get('id');
+            const videoId = JSON.parse(localStorage.getItem('channelVideos') || '[]')[gameId ? parseInt(gameId) : -1]?.snippet.resourceId.videoId;
             if (videoId) {
                 localStorage.setItem(`gameFile_${videoId}`, fileUrl);
-                const downloadBtn = document.getElementById('download-btn') as HTMLAnchorElement | null;
+                const downloadBtn = document.getElementById('download-btn');
                 if (downloadBtn) {
                     downloadBtn.href = fileUrl;
                     alert(`Game file (${file.name}) uploaded successfully! Click "Download Game" to access.`);
-                } else {
+                }
+                else {
                     console.error('Download button not found.');
                 }
-            } else {
+            }
+            else {
                 console.error('Video ID not found for game upload.');
             }
         };
         reader.readAsDataURL(file);
-    } else {
+    }
+    else {
         alert('Please upload a .rar, .rbxl, or .rbxlx file.');
     }
 }
-
-// Upload communication file function (for communication.html)
-function uploadCommunicationFile(input: HTMLInputElement): void {
+function uploadCommunicationFile(input) {
     console.log('uploadCommunicationFile called');
-    const file: File | null = input.files?.[0] || null;
+    const file = input.files?.[0] || null;
     if (file && (file.type.startsWith('image/') || file.type === 'application/pdf' || file.type.startsWith('text/'))) {
         const reader = new FileReader();
-        reader.onload = function(e: ProgressEvent<FileReader>): void {
-            const fileUrl: string = e.target?.result as string; // Base64 or Blob URL for local testing
-            const messages: Array<{ text: string, timestamp: string, file: string | null }> = JSON.parse(localStorage.getItem('communicationMessages') || '[]');
+        reader.onload = function (e) {
+            const fileUrl = e.target?.result;
+            const messages = JSON.parse(localStorage.getItem('communicationMessages') || '[]');
             const lastMessage = messages[messages.length - 1];
-            if (lastMessage && !lastMessage.file) { // Link file to the last message
+            if (lastMessage && !lastMessage.file) {
                 lastMessage.file = fileUrl;
                 localStorage.setItem('communicationMessages', JSON.stringify(messages));
-            } else {
+            }
+            else {
                 messages.push({
                     text: `File: ${file.name}`,
                     timestamp: new Date().toISOString(),
@@ -133,24 +126,22 @@ function uploadCommunicationFile(input: HTMLInputElement): void {
             alert(`File (${file.name}) uploaded successfully!`);
         };
         reader.readAsDataURL(file);
-    } else {
+    }
+    else {
         alert('Please upload an image, PDF, or text file.');
     }
 }
-
-// Fetch YouTube comments with replies, likes, and dates (for game.html)
-async function loadYouTubeComments(videoId: string): Promise<void> {
+async function loadYouTubeComments(videoId) {
     console.log('loadYouTubeComments called for videoId:', videoId);
-    const commentsList = document.getElementById('youtube-comments-list') as HTMLElement | null;
+    const commentsList = document.getElementById('youtube-comments-list');
     if (!commentsList) {
         console.error('YouTube comments list element not found.');
         return;
     }
-    const API_KEY: string = 'AIzaSyAHLMunc1uf9O61UxbTGYj4r8cixc13Eq0';
+    const API_KEY = 'AIzaSyAHLMunc1uf9O61UxbTGYj4r8cixc13Eq0';
     try {
-        let allComments: any[] = [];
-        let nextPageToken: string | undefined = '';
-
+        let allComments = [];
+        let nextPageToken = '';
         do {
             const response = await fetch(`https://www.googleapis.com/youtube/v3/commentThreads?part=snippet,replies&videoId=${videoId}&key=${API_KEY}&maxResults=20&pageToken=${nextPageToken}`);
             if (!response.ok) {
@@ -160,16 +151,16 @@ async function loadYouTubeComments(videoId: string): Promise<void> {
             if (data.items) {
                 allComments = allComments.concat(data.items);
                 nextPageToken = data.nextPageToken;
-            } else if (data.error) {
+            }
+            else if (data.error) {
                 throw new Error(`API error: ${data.error.message || 'Unknown error'}`);
             }
         } while (nextPageToken);
-
         commentsList.innerHTML = '';
         allComments.forEach(item => {
             const comment = item.snippet.topLevelComment.snippet;
-            const commentLikes: number = comment.likeCount || 0;
-            const commentDislikes: number = 0; // Dislikes are no longer available via API as of 2021
+            const commentLikes = comment.likeCount || 0;
+            const commentDislikes = 0;
             const commentDiv = document.createElement('div');
             commentDiv.className = 'comment animate-card';
             commentDiv.innerHTML = `
@@ -184,13 +175,11 @@ async function loadYouTubeComments(videoId: string): Promise<void> {
                 </div>
             `;
             commentsList.appendChild(commentDiv);
-
-            // Handle replies
             if (item.replies && item.replies.comments) {
                 item.replies.comments.forEach(reply => {
                     const replySnippet = reply.snippet;
-                    const replyLikes: number = reply.snippet.likeCount || 0;
-                    const replyDislikes: number = 0; // Dislikes are no longer available
+                    const replyLikes = reply.snippet.likeCount || 0;
+                    const replyDislikes = 0;
                     const replyDiv = document.createElement('div');
                     replyDiv.className = 'comment reply animate-card';
                     replyDiv.innerHTML = `
@@ -208,21 +197,20 @@ async function loadYouTubeComments(videoId: string): Promise<void> {
                 });
             }
         });
-    } catch (error) {
+    }
+    catch (error) {
         console.error('Error fetching YouTube comments:', error);
         commentsList.innerHTML = '<p class="animate-error">Error loading YouTube comments. Please ensure the video ID, API key, and playlist ID are correct.</p>';
     }
 }
-
-// Communication Functions
-function loadCommunicationMessages(): void {
+function loadCommunicationMessages() {
     console.log('loadCommunicationMessages called');
-    const messagesDiv = document.getElementById('communication-messages') as HTMLElement | null;
+    const messagesDiv = document.getElementById('communication-messages');
     if (!messagesDiv) {
         console.error('Communication messages div not found.');
         return;
     }
-    const messages = JSON.parse(localStorage.getItem('communicationMessages') || '[]') as Array<{ text: string, timestamp: string, file: string | null }>;
+    const messages = JSON.parse(localStorage.getItem('communicationMessages') || '[]');
     messagesDiv.innerHTML = '';
     messages.forEach(msg => {
         const msgDiv = document.createElement('div');
@@ -239,18 +227,16 @@ function loadCommunicationMessages(): void {
         `;
         messagesDiv.appendChild(msgDiv);
     });
-    messagesDiv.scrollTop = messagesDiv.scrollHeight; // Auto-scroll to the bottom
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
 }
-
-// Comment Functions (for game.html)
-function loadSiteComments(videoId: string): void {
+function loadSiteComments(videoId) {
     console.log('loadSiteComments called for videoId:', videoId);
-    const commentsList = document.getElementById('site-comments-list') as HTMLElement | null;
+    const commentsList = document.getElementById('site-comments-list');
     if (!commentsList) {
         console.error('Site comments list element not found.');
         return;
     }
-    const comments = JSON.parse(localStorage.getItem(`comments_${videoId}`) || '[]') as Array<{ text: string, timestamp: string }>;
+    const comments = JSON.parse(localStorage.getItem(`comments_${videoId}`) || '[]');
     commentsList.innerHTML = '';
     comments.forEach(comment => {
         const commentDiv = document.createElement('div');
@@ -267,19 +253,17 @@ function loadSiteComments(videoId: string): void {
         commentsList.appendChild(commentDiv);
     });
 }
-
-function postComment(): void {
+function postComment() {
     console.log('postComment called');
     const videoId = JSON.parse(localStorage.getItem('channelVideos') || '[]')[new URLSearchParams(window.location.search).get('id') || '0']?.snippet.resourceId.videoId;
-    const commentInput = document.getElementById('comment-input') as HTMLInputElement | null;
+    const commentInput = document.getElementById('comment-input');
     if (!commentInput) {
         console.error('Comment input element not found.');
         return;
     }
-
     const commentText = commentInput.value.trim();
     if (commentText) {
-        const comments = JSON.parse(localStorage.getItem(`comments_${videoId || 'default'}`) || '[]') as Array<{ text: string, timestamp: string }>;
+        const comments = JSON.parse(localStorage.getItem(`comments_${videoId || 'default'}`) || '[]');
         comments.push({
             text: commentText,
             timestamp: new Date().toISOString()
@@ -289,14 +273,11 @@ function postComment(): void {
         loadSiteComments(videoId || 'default');
     }
 }
-
-// AI Functions (for ai.html and communication page)
-let currentCategory: string = '';
-
-function setCategory(category: string): void {
+let currentCategory = '';
+function setCategory(category) {
     console.log('setCategory called with:', category);
     currentCategory = category;
-    const input = document.getElementById('script-input') as HTMLInputElement | null || document.getElementById('chat-input') as HTMLInputElement | null;
+    const input = document.getElementById('script-input') || document.getElementById('chat-input');
     if (!input) {
         console.error('Input element not found.');
         return;
@@ -314,22 +295,20 @@ function setCategory(category: string): void {
     }
     input.focus();
 }
-
-function sendToAI(inputId: string = 'script-input', responseId: string = 'ai-response'): void {
+function sendToAI(inputId = 'script-input', responseId = 'ai-response') {
     console.log('sendToAI called with inputId:', inputId, 'responseId:', responseId);
-    const input = document.getElementById(inputId) as HTMLInputElement | null;
-    const responseDiv = document.getElementById(responseId) as HTMLElement | null;
+    const input = document.getElementById(inputId);
+    const responseDiv = document.getElementById(responseId);
     if (!input || !responseDiv) {
         console.error(`${inputId} or ${responseId} element not found.`);
         return;
     }
-
-    const question: string = input.value.trim();
+    const question = input.value.trim();
     if (question) {
         responseDiv.textContent = "Thinking...";
         responseDiv.classList.add('animate-loading');
         setTimeout(() => {
-            let response: string;
+            let response;
             switch (currentCategory) {
                 case 'Build':
                     response = `To add background music to your Roblox experience:\n1. Use a `Sound` object: \n   - Insert a `Sound` into a part or Workspace.\n   - Set the `SoundId` to a Roblox audio asset ID (e.g., "rbxassetid://123456789").\n   - Play it with `sound:Play()` in a Lua script.\n   Example:\n   ```lua\n   local sound = Instance.new("Sound")\n   sound.SoundId = "rbxassetid://123456789"\n   sound.Parent = game.Workspace\n   sound:Play()\n   ```\n2. Ensure the audio asset is uploaded to Roblox and you have permissions.`;
@@ -346,92 +325,76 @@ function sendToAI(inputId: string = 'script-input', responseId: string = 'ai-res
             responseDiv.innerHTML = `<pre class="language-lua"><code>${Prism.highlight(response, Prism.languages.lua, 'lua')}</code></pre>`;
             responseDiv.classList.remove('animate-loading');
             responseDiv.classList.add('animate-success');
-        }, 2000); // Simulate AI processing delay
-    } else {
+        }, 2000);
+    }
+    else {
         responseDiv.textContent = "Please enter a question or message!";
         responseDiv.classList.add('animate-error');
         setTimeout(() => responseDiv.textContent = '', 3000);
     }
 }
-
-// Fetch YouTube videos for the home page (index.html) and game.html
-async function fetchVideos(): Promise<void> {
+async function fetchVideos() {
     console.log('fetchVideos called');
-    const reactionDiv = document.getElementById('reaction-text') as HTMLElement | null;
-    const previewGrid = document.getElementById('preview-grid') as HTMLElement | null;
-    const videoError = document.getElementById('video-error') as HTMLElement | null;
+    const reactionDiv = document.getElementById('reaction-text');
+    const previewGrid = document.getElementById('preview-grid');
+    const videoError = document.getElementById('video-error');
     if (!reactionDiv || !previewGrid || !videoError) {
         console.error('DOM elements for video display not found in index.html or game.html.');
         return;
     }
-    const API_KEY: string = 'AIzaSyAHLMunc1uf9O61UxbTGYj4r8cixc13Eq0'; // Provided API key
-    const PLAYLIST_ID: string = 'UUsV3X3EyEowLEdRW1RileuA'; // Updated playlist ID
-
+    const API_KEY = 'AIzaSyAHLMunc1uf9O61UxbTGYj4r8cixc13Eq0';
+    const PLAYLIST_ID = 'UUsV3X3EyEowLEdRW1RileuA';
     reactionDiv.textContent = "🔥 Connecting to YouTube HQ...";
     reactionDiv.classList.add('animate-loading');
-
-    let videos: any[] = [];
-    let nextPageToken: string | undefined = '';
-
+    let videos = [];
+    let nextPageToken = '';
     try {
-        // If PLAYLIST_ID is a channel ID, fetch the uploads playlist dynamically
         if (PLAYLIST_ID.startsWith('UU')) {
-            const channelResponse = await fetch(
-                `https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${PLAYLIST_ID}&key=${API_KEY}`
-            );
+            const channelResponse = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${PLAYLIST_ID}&key=${API_KEY}`);
             if (!channelResponse.ok) {
                 throw new Error(`HTTP error fetching channel! Status: ${channelResponse.status}, Message: ${await channelResponse.text()}`);
             }
             const channelData = await channelResponse.json();
             if (channelData.items && channelData.items.length > 0) {
-                const uploadsPlaylistId: string = channelData.items[0].contentDetails.relatedPlaylists.uploads;
+                const uploadsPlaylistId = channelData.items[0].contentDetails.relatedPlaylists.uploads;
                 console.log('Using uploads playlist ID:', uploadsPlaylistId);
-                PLAYLIST_ID = uploadsPlaylistId; // Update PLAYLIST_ID to the uploads playlist
-            } else {
+                PLAYLIST_ID = uploadsPlaylistId;
+            }
+            else {
                 throw new Error('Channel not found or no uploads playlist available.');
             }
         }
-
         do {
-            const response = await fetch(
-                `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${PLAYLIST_ID}&key=${API_KEY}&maxResults=50&pageToken=${nextPageToken}`
-            );
+            const response = await fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${PLAYLIST_ID}&key=${API_KEY}&maxResults=50&pageToken=${nextPageToken}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}, Message: ${await response.text()}`);
             }
             const data = await response.json();
-            console.log('API Response:', data); // Log the response for debugging
+            console.log('API Response:', data);
             if (data.items) {
                 videos = videos.concat(data.items);
                 nextPageToken = data.nextPageToken;
-            } else if (data.error) {
+            }
+            else if (data.error) {
                 throw new Error(`API error: ${data.error.message || 'Unknown error'}`);
             }
         } while (nextPageToken);
-
         if (videos.length === 0) {
             throw new Error('No videos found in the playlist. Please verify the PLAYLIST_ID.');
         }
-
         reactionDiv.textContent = `✅ Loaded ${videos.length} awesome videos!`;
         reactionDiv.classList.remove('animate-loading');
         reactionDiv.classList.add('animate-success');
-
-        // Clear any previous error or content
         videoError.style.display = 'none';
         previewGrid.innerHTML = '';
-
-        // Display videos with animations
-        videos.forEach((item: any, index: number) => {
-            const videoId: string = item.snippet.resourceId.videoId;
-            const title: string = item.snippet.title;
-            const thumbnail: string = item.snippet.thumbnails?.maxres?.url || item.snippet.thumbnails?.high?.url || 'https://via.placeholder.com/150';
-
+        videos.forEach((item, index) => {
+            const videoId = item.snippet.resourceId.videoId;
+            const title = item.snippet.title;
+            const thumbnail = item.snippet.thumbnails?.maxres?.url || item.snippet.thumbnails?.high?.url || 'https://via.placeholder.com/150';
             if (!videoId || !title || !thumbnail) {
                 console.warn(`Skipping video at index ${index} due to missing data.`);
                 return;
             }
-
             const card = document.createElement('div');
             card.className = 'video-card animate-card';
             card.innerHTML = `
@@ -442,10 +405,9 @@ async function fetchVideos(): Promise<void> {
             `;
             previewGrid.appendChild(card);
         });
-
-        // Store videos in localStorage for other pages
         localStorage.setItem('channelVideos', JSON.stringify(videos));
-    } catch (error) {
+    }
+    catch (error) {
         console.error('Error fetching videos:', error);
         reactionDiv.textContent = '';
         reactionDiv.classList.remove('animate-loading');
@@ -453,31 +415,25 @@ async function fetchVideos(): Promise<void> {
         videoError.style.display = 'block';
         videoError.textContent = `Error loading videos. Please check your API key, playlist ID, or network connection. Details: ${error.message}`;
         videoError.classList.add('animate-error');
-
-        // Additional debugging info
         console.log('API Key:', API_KEY);
         console.log('Playlist ID:', PLAYLIST_ID);
         console.log('Response Status:', response ? response.status : 'No response');
     }
 }
-
-// Add at the end of script.ts for events
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOMContentLoaded event fired');
-    // Keyboard event for Enter key in communication
-    const chatInput = document.getElementById('chat-input') as HTMLInputElement | null;
+    const chatInput = document.getElementById('chat-input');
     if (chatInput) {
         console.log('Chat input found, adding keypress listener');
-        chatInput.addEventListener('keypress', (e: KeyboardEvent) => {
+        chatInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 sendMessage('chat-input', 'communication-messages');
             }
         });
-    } else {
+    }
+    else {
         console.error('Chat input element not found.');
     }
-
-    // Mouse event for hover on video cards (enhance existing hover in styles.css)
     const videoCards = document.querySelectorAll('.video-card');
     videoCards.forEach(card => {
         card.addEventListener('mouseenter', () => card.classList.add('hovered'));
