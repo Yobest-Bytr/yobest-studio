@@ -14,6 +14,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
     <!-- Prism.js for syntax highlighting -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet">
+    <!-- Google Sign-In -->
+    <meta name="google-signin-client_id" content="744888685295-d452bl4q9e4shdba3s4mn416uicnohij.apps.googleusercontent.com">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-lua.min.js"></script>
 </head>
@@ -27,7 +30,7 @@
                 <a href="contact.html" class="nav-btn">Contact</a>
                 <a href="index.html" class="nav-btn">Home</a>
                 <a href="ai.html" class="nav-btn">AI Tools</a>
-                <a href="communication.html" class="nav-btn">Communication</a> <!-- New navigation link -->
+                <a href="communication.html" class="nav-btn">Communication</a>
                 <a href="https://discord.gg/jKASqrc7H3" target="_blank" class="btn socialbtn"><i class="fab fa-discord"></i> Discord</a>
                 <a href="https://x.com/Yobest_BYTR" target="_blank" class="btn socialbtn"><i class="fab fa-x"></i> X</a>
                 <a href="#" onclick="openLogin()" class="btn actionbtn" id="login-btn">Login</a>
@@ -41,9 +44,16 @@
         <div class="modal-content">
             <span class="close-btn" onclick="closeLogin()">×</span>
             <h2 class="title-frame animate-text">Login or Create Account</h2>
+            <div id="g_id_onload"
+                 data-client_id="744888685295-d452bl4q9e4shdba3s4mn416uicnohij.apps.googleusercontent.com"
+                 data-context="signin"
+                 data-ux_mode="popup"
+                 data-callback="handleGoogleSignIn"
+                 data-auto_prompt="false">
+            </div>
+            <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="outline" data-text="signin_with" data-size="large"></div>
+            <div class="or-divider">OR</div>
             <form id="auth-form" onsubmit="event.preventDefault(); authUser();">
-                <button type="button" class="btn google-btn animate-btn" onclick="alert('Google Sign-In requires OAuth setup.')"><i class="fab fa-google"></i> Sign in with Google</button>
-                <div class="or-divider">OR</div>
                 <input type="email" id="email" placeholder="Email" required>
                 <input type="password" id="password" placeholder="Password" required>
                 <button type="submit" class="btn actionbtn animate-btn">Sign In / Create</button>
@@ -168,7 +178,7 @@
         const gameId = urlParams.get('id');
         const videos = JSON.parse(localStorage.getItem('channelVideos')) || [];
         const API_KEY = 'AIzaSyAHLMunc1uf9O61UxbTGYj4r8cixc13Eq0';
-        const PLAYLIST_ID = 'PL123456789012345678'; // Replace with your actual YouTube uploads playlist ID
+        const PLAYLIST_ID = 'UUsV3X3EyEowLEdRW1RileuA'; // Updated playlist ID
 
         if (videos.length > 0 && gameId >= 0 && gameId < videos.length) {
             const video = videos[gameId];
