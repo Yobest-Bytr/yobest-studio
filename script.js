@@ -425,7 +425,7 @@ async function fetchVideos() {
     const reactionDiv = document.getElementById('reaction-text');
     const previewGrid = document.getElementById('preview-grid');
     const videoError = document.getElementById('video-error');
-    const API_KEY = 'AIzaSyAHLMunc1uf9O61UxbTGYj4r8cixc13Eq0'; // Verify this key in Google Cloud Console
+    const API_KEY = 'AIzaSyAHLMunc1uf9O61UxbTGYj4r8cixc13Eq0'; // Updated API key
     const PLAYLIST_ID = 'UUsV3X3EyEowLEdRW1RileuA'; // Verify this playlist ID on YouTube
 
     if (!reactionDiv || !previewGrid || !videoError) {
