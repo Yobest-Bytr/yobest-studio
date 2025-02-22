@@ -298,14 +298,14 @@ async function loadYouTubeComments(videoId) {
         do {
             const response = await fetch(`https://www.googleapis.com/youtube/v3/commentThreads?part=snippet,replies&videoId=${videoId}&key=${API_KEY}&maxResults=20&pageToken=${nextPageToken}`);
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                throw new Error(`HTTP error! status: ${response.status}, Message: ${await response.text()}`);
             }
             const data = await response.json();
             if (data.items) {
                 allComments = allComments.concat(data.items);
                 nextPageToken = data.nextPageToken || '';
             } else if (data.error) {
-                throw new Error(`API error: ${data.error.message}`);
+                throw new Error(`API error: ${data.error.message || 'Unknown error'}`);
             }
         } while (nextPageToken);
 
@@ -354,18 +354,18 @@ async function loadYouTubeComments(videoId) {
         });
     } catch (error) {
         console.error('Error fetching YouTube comments:', error);
-        commentsList.innerHTML = '<p class="animate-error">Error loading YouTube comments.</p>';
+        commentsList.innerHTML = '<p class="animate-error">Error loading YouTube comments. Please ensure the video ID, API key, and playlist ID are correct.</p>';
     }
 }
 
-// AI Functions (for ai.html)
+// AI Functions (for ai.html and communication page)
 let currentCategory = '';
 
 function setCategory(category) {
     currentCategory = category;
-    const input = document.getElementById('script-input');
+    const input = document.getElementById('script-input') || document.getElementById('chat-input'); // Support both AI and communication
     if (!input) {
-        console.error('Script input element not found.');
+        console.error('Input element not found.');
         return;
     }
     switch (category) {
@@ -382,11 +382,11 @@ function setCategory(category) {
     input.focus();
 }
 
-function sendToAI() {
-    const input = document.getElementById('script-input');
-    const responseDiv = document.getElementById('ai-response');
+function sendToAI(inputId = 'script-input', responseId = 'ai-response') {
+    const input = document.getElementById(inputId);
+    const responseDiv = document.getElementById(responseId);
     if (!input || !responseDiv) {
-        console.error('AI input or response element not found.');
+        console.error(`${inputId} or ${responseId} element not found.`);
         return;
     }
 
@@ -407,14 +407,14 @@ function sendToAI() {
                     response = `Limited avatar items in Roblox:\n- Limited items are rare, time-limited, or have low stock, increasing their value.\n- Tips to sell them:\n  1. List on the Roblox marketplace with a competitive price.\n  2. Promote via Roblox groups, Discord, or Twitter.\n  3. Use scarcity (e.g., “Only 100 left!”) to drive demand.\n  Example Lua script to check item ownership:\n  ```lua\n  local MarketplaceService = game:GetService("MarketplaceService")\n  local player = game.Players.LocalPlayer\n  local itemId = 123456789 -- Replace with your asset ID\n  if MarketplaceService:PlayerOwnsAsset(player, itemId) then\n      print("Player owns the limited item!")\n  end\n  ````;
                     break;
                 default:
-                    response = `I'm here to help with Roblox! Specify a category (Build, Grow, Monetize) or ask a detailed question.`;
+                    response = `I'm here to help with Roblox and general questions! Specify a category (Build, Grow, Monetize) or ask anything.`;
             }
             responseDiv.innerHTML = `<pre class="language-lua"><code>${Prism.highlight(response, Prism.languages.lua, 'lua')}</code></pre>`;
             responseDiv.classList.remove('animate-loading');
             responseDiv.classList.add('animate-success');
         }, 2000); // Simulate AI processing delay
     } else {
-        responseDiv.textContent = "Please enter a question!";
+        responseDiv.textContent = "Please enter a question or message!";
         responseDiv.classList.add('animate-error');
         setTimeout(() => responseDiv.textContent = '', 3000);
     }
@@ -426,7 +426,7 @@ async function fetchVideos() {
     const previewGrid = document.getElementById('preview-grid');
     const videoError = document.getElementById('video-error');
     const API_KEY = 'AIzaSyAHLMunc1uf9O61UxbTGYj4r8cixc13Eq0'; // Provided API key
-    const PLAYLIST_ID = 'UUsV3X3EyEowLEdRW1RileuA'; // Provided playlist ID
+    const PLAYLIST_ID = 'PL123456789012345678'; // Replace with your actual YouTube uploads playlist ID
 
     if (!reactionDiv || !previewGrid || !videoError) {
         console.error('DOM elements for video display not found in index.html.');
@@ -458,7 +458,7 @@ async function fetchVideos() {
         } while (nextPageToken);
 
         if (videos.length === 0) {
-            throw new Error('No videos found in the playlist.');
+            throw new Error('No videos found in the playlist. Please verify the PLAYLIST_ID.');
         }
 
         reactionDiv.textContent = `✅ Loaded ${videos.length} awesome videos!`;
