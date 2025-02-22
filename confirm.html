@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirm Subscription - Yobest Studio</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Google AdSense (Replace with your client ID after approval) -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header-animate">
+        <div class="container">
+            <h1 class="title-frame"><a href="index.html" class="site-name">Yobest Studio<span class="highlight"></span></a></h1>
+            <nav class="nav-container">
+                <a href="blog.html" class="nav-btn">Blog</a>
+                <a href="contact.html" class="nav-btn">Contact</a>
+                <a href="index.html" class="nav-btn">Home</a>
+                <a href="ai.html" class="nav-btn">AI Tools</a>
+                <a href="roblox-apis.html" class="nav-btn">Roblox APIs</a>
+                <a href="https://discord.gg/jKASqrc7H3" target="_blank" class="btn socialbtn"><i class="fab fa-discord"></i> Discord</a>
+                <a href="https://x.com/Yobest_BYTR" target="_blank" class="btn socialbtn"><i class="fab fa-x"></i> X</a>
+                <a href="#" onclick="openLogin()" class="btn actionbtn" id="login-btn">Login</a>
+                <img src="https://via.placeholder.com/40" alt="Account" class="account-pic" id="account-pic" style="display: none;" onclick="openAccountSettings()">
+            </nav>
+        </div>
+    </header>
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeLogin()">×</span>
+            <h2 class="title-frame animate-text">Login or Create Account</h2>
+            <form id="auth-form" onsubmit="event.preventDefault(); authUser();">
+                <button type="button" class="btn google-btn animate-btn" onclick="alert('Google Sign-In requires OAuth setup.')"><i class="fab fa-google"></i> Sign in with Google</button>
+                <div class="or-divider">OR</div>
+                <input type="email" id="email" placeholder="Email" required>
+                <input type="password" id="password" placeholder="Password" required>
+                <button type="submit" class="btn actionbtn animate-btn">Sign In / Create</button>
+            </form>
+            <p id="auth-message" class="reaction-text animate-text"></p>
+        </div>
+    </div>
+
+    <!-- Account Settings Modal -->
+    <div id="account-settings-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeAccountSettings()">×</span>
+            <h2 class="title-frame animate-text">Account Settings</h2>
+            <form id="account-form" onsubmit="event.preventDefault(); updateAccount();">
+                <input type="text" id="username" placeholder="Username" value="" required>
+                <input type="file" id="avatar-upload" accept="image/*" onchange="previewAvatar(this)">
+                <img id="avatar-preview" src="https://via.placeholder.com/40" alt="Avatar Preview" class="avatar-preview" style="display: none; width: 40px; height: 40px; border-radius: 50%; margin: 10px 0;">
+                <button type="submit" class="btn actionbtn animate-btn">Save Changes</button>
+            </form>
+            <p id="account-message" class="reaction-text animate-text"></p>
+        </div>
+    </div>
+
+    <!-- Confirm Section -->
+    <section class="confirm-section animate-section" style="background: linear-gradient(135deg, #1a1a3a, #2a2a5a);">
+        <div class="container">
+            <h2 class="title-frame animate-text">Download Confirmation</h2>
+            <p id="confirm-title" class="reaction-text animate-text">Access Locked<br>Complete the steps to continue</p>
+            <div class="confirmation-tasks" id="tasks-container">
+                <div class="task-card">
+                    <div class="task-content">
+                        <span class="icon"><i class="fab fa-youtube"></i></span>
+                        <span>Subscribe on YouTube</span>
+                    </div>
+                    <input type="checkbox" id="subscribe-check" class="task-checkbox">
+                </div>
+                <div class="task-card">
+                    <div class="task-content">
+                        <span class="icon"><i class="fab fa-youtube"></i></span>
+                        <span>Like & Comment on YouTube</span>
+                    </div>
+                    <input type="checkbox" id="like-comment-check" class="task-checkbox">
+                </div>
+                <div class="task-card">
+                    <div class="task-content">
+                        <span class="icon"><i class="fab fa-x"></i></span>
+                        <span>Follow on Twitter</span>
+                    </div>
+                    <input type="checkbox" id="twitter-follow-check" class="task-checkbox">
+                </div>
+            </div>
+            <div id="success-message" class="success-message" style="display: none;">
+                <div class="task-card completed">
+                    <div class="task-content">
+                        <span class="icon"><i class="fas fa-check"></i></span>
+                        <span>All steps have been completed</span>
+                    </div>
+                    <span class="checkmark">✓</span>
+                </div>
+                <p class="success-text animate-text">Well done, now you can proceed to the next page</p>
+                <div class="button-group">
+                    <button id="confirm-btn" class="btn success-btn animate-btn">Go to Destination <i class="fas fa-arrow-right"></i></button>
+                </div>
+            </div>
+            <div id="loading-spinner" class="loading-spinner" style="display: none;">
+                <div class="spinner"></div>
+                <p class="animate-text">Waiting for step completion...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ad Section -->
+    <section class="ad-section">
+        <div class="container">
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+                 data-ad-slot="YYYYYYYYYY"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="animate-section">
+        <div class="container">
+            <p class="animate-text">© 2025 Yobest Studio. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // Check login state on page load
+        checkLoginState();
+        loadAccountInfo();
+
+        // Track page visit
+        trackVisitor();
+
+        // Get video details from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const videoId = urlParams.get('videoId');
+        const title = decodeURIComponent(urlParams.get('title') || 'Unknown Video');
+
+        // Update page content
+        document.getElementById('confirm-title').innerHTML = `Access Locked<br>Complete the steps to continue for "${title}"`;
+
+        // Handle checkbox changes, success state, and loading
+        const checkboxes = [
+            document.getElementById('subscribe-check'),
+            document.getElementById('like-comment-check'),
+            document.getElementById('twitter-follow-check')
+        ];
+        const tasksContainer = document.getElementById('tasks-container');
+        const successMessage = document.getElementById('success-message');
+        const loadingSpinner = document.getElementById('loading-spinner');
+        const confirmBtn = document.getElementById('confirm-btn');
+
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                const allChecked = checkboxes.every(cb => cb.checked);
+                if (allChecked) {
+                    tasksContainer.style.display = 'none';
+                    successMessage.style.display = 'block';
+                    loadingSpinner.style.display = 'none';
+                    confirmBtn.disabled = false;
+                    successMessage.classList.add('animate-success');
+                } else {
+                    tasksContainer.style.display = 'block';
+                    successMessage.style.display = 'none';
+                    loadingSpinner.style.display = 'none';
+                    confirmBtn.disabled = true;
+                }
+            });
+        });
+
+        // Handle confirm button click with loading spinner
+        confirmBtn.addEventListener('click', () => {
+            if (checkboxes.every(cb => cb.checked)) {
+                tasksContainer.style.display = 'none';
+                successMessage.style.display = 'none';
+                loadingSpinner.style.display = 'block';
+                loadingSpinner.classList.add('animate-loading');
+
+                // Simulate a delay for loading (e.g., 2 seconds)
+                setTimeout(() => {
+                    // Redirect to GitHub with the specific .rar file URL
+                    const encodedTitle = encodeURIComponent(title.replace(/\s+/g, ' ').trim());
+                    const githubFileUrl = `https://github.com/Yobest-Bytr/BYTR-games/blob/main/${encodedTitle}.rar`;
+                    window.location.href = githubFileUrl;
+                    trackDownload(); // Track the download
+                    loadingSpinner.classList.remove('animate-loading');
+                }, 2000); // 2-second delay for loading effect
+            } else {
+                alert('Please complete all tasks before proceeding.');
+            }
+        });
+
+        // Alert about manual verification (simulated, not automatic)
+        alert('Please manually complete the tasks (subscribe, like/comment on YouTube, follow on Twitter) as automatic verification requires backend setup.');
+    </script>
+</body>
+</html>

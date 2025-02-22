@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yobest Studio - Epic Roblox Games</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Google AdSense (Replace with your client ID after approval) -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"
+            crossorigin="anonymous"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Poppins Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
+    <!-- Prism.js for syntax highlighting (optional, for future AI page) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-lua.min.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header-animate">
+        <div class="container">
+            <h1 class="title-frame"><a href="index.html" class="site-name">Yobest Studio<span class="highlight"></span></a></h1>
+            <nav class="nav-container">
+                <a href="blog.html" class="nav-btn">Blog</a>
+                <a href="contact.html" class="nav-btn">Contact</a>
+                <a href="index.html" class="nav-btn">Home</a>
+                <a href="ai.html" class="nav-btn">AI Tools</a>
+                <a href="roblox-apis.html" class="nav-btn">Roblox APIs</a>
+                <a href="https://discord.gg/jKASqrc7H3" target="_blank" class="btn socialbtn"><i class="fab fa-discord"></i> Discord</a>
+                <a href="https://x.com/Yobest_BYTR" target="_blank" class="btn socialbtn"><i class="fab fa-x"></i> X</a>
+                <a href="#" onclick="openLogin()" class="btn actionbtn" id="login-btn">Login</a>
+                <img src="https://via.placeholder.com/40" alt="Account" class="account-pic" id="account-pic" style="display: none;" onclick="openAccountSettings()">
+            </nav>
+        </div>
+    </header>
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeLogin()">×</span>
+            <h2 class="title-frame animate-text">Login or Create Account</h2>
+            <form id="auth-form" onsubmit="event.preventDefault(); authUser();">
+                <button type="button" class="btn google-btn animate-btn" onclick="alert('Google Sign-In requires OAuth setup.')"><i class="fab fa-google"></i> Sign in with Google</button>
+                <div class="or-divider">OR</div>
+                <input type="email" id="email" placeholder="Email" required>
+                <input type="password" id="password" placeholder="Password" required>
+                <button type="submit" class="btn actionbtn animate-btn">Sign In / Create</button>
+            </form>
+            <p id="auth-message" class="reaction-text animate-text"></p>
+        </div>
+    </div>
+
+    <!-- Account Settings Modal -->
+    <div id="account-settings-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeAccountSettings()">×</span>
+            <h2 class="title-frame animate-text">Account Settings</h2>
+            <form id="account-form" onsubmit="event.preventDefault(); updateAccount();">
+                <input type="text" id="username" placeholder="Username" value="" required>
+                <input type="file" id="avatar-upload" accept="image/*" onchange="previewAvatar(this)">
+                <img id="avatar-preview" src="https://via.placeholder.com/40" alt="Avatar Preview" class="avatar-preview" style="display: none; width: 40px; height: 40px; border-radius: 50%; margin: 10px 0;">
+                <button type="submit" class="btn actionbtn animate-btn">Save Changes</button>
+            </form>
+            <p id="account-message" class="reaction-text animate-text"></p>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero animate-section" style="background: linear-gradient(135deg, #0a0a2a, #1a1a4a, #2a2a6a);">
+        <div class="container">
+            <h2 class="animate-text">Welcome to My Roblox World!</h2>
+            <p class="animate-text">Welcome, <span id="welcome-username"></span>! Explore free and paid games crafted by Yobest Studio.</p>
+            <p class="animate-text">Site Visitors: <span id="site-visitors"></span> | Total Downloads: <span id="total-downloads"></span></p>
+            <div class="button-group">
+                <a href="#games" class="btn actionbtn animate-btn">Check Out My Games</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sidebar Ad -->
+    <aside class="sidebar-ad">
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+             data-ad-slot="YYYYYYYYYY"
+             data-ad-format="vertical"
+             data-full-width-responsive="true"></ins>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </aside>
+
+    <!-- Game Previews Section -->
+    <section id="games" class="game-previews animate-section">
+        <div class="container">
+            <h2 class="title-frame animate-text">Game Previews</h2>
+            <div id="reaction-text" class="reaction-text animate-text"></div>
+            <div class="video-grid" id="preview-grid">
+                <!-- Videos will be inserted here dynamically -->
+            </div>
+            <p id="video-error" class="reaction-text animate-text" style="display: none;">Error loading videos. Please check your API key, playlist ID, or network connection.</p>
+        </div>
+    </section>
+
+    <!-- Downloads Section -->
+    <section class="downloads animate-section">
+        <div class="container">
+            <h2 class="title-frame animate-text">Downloads</h2>
+            <p class="animate-text">Get my games directly! Links coming soon.</p>
+            <div class="button-group">
+                <a href="#" class="btn actionbtn animate-btn">Stay Tuned</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog Teaser -->
+    <section class="blog-teaser animate-section">
+        <div class="container">
+            <h2 class="title-frame animate-text">Latest Blog Posts</h2>
+            <div class="blog-grid">
+                <article class="animate-card">
+                    <h3 class="animate-text">New Game Release!</h3>
+                    <p class="animate-text">Check out my latest creation and what inspired it.</p>
+                    <div class="button-group">
+                        <a href="blog.html" class="btn-small animate-btn">Read More</a>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- Inline Ad -->
+    <section class="ad-section">
+        <div class="container">
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+                 data-ad-slot="YYYYYYYYYY"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="animate-section">
+        <div class="container">
+            <p class="animate-text">© 2025 Yobest Studio. All Rights Reserved.</p>
+            <div class="social-links">
+                <a href="https://www.youtube.com/@YobestRobloxStudio" target="_blank" class="btn socialbtn animate-btn"><i class="fab fa-youtube"></i> YouTube</a>
+                <a href="https://discord.gg/jKASqrc7H3" target="_blank" class="btn socialbtn animate-btn"><i class="fab fa-discord"></i> Discord</a>
+                <a href="https://x.com/Yobest_BYTR" target="_blank" class="btn socialbtn animate-btn"><i class="fab fa-x"></i> X</a>
+            </div>
+            <!-- Footer Ad -->
+            <div class="footer-ad">
+                <ins class="adsbygoogle"
+                     style="display:block"
+                     data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+                     data-ad-slot="YYYYYYYYYY"
+                     data-ad-format="horizontal"
+                     data-full-width-responsive="true"></ins>
+                <script>
+                    (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Chat Box -->
+    <div id="chat-box" class="animate-section">
+        <h3 class="animate-text"><i class="fas fa-comments"></i> Community Chat</h3>
+        <div id="chat-messages"></div>
+        <div class="button-group">
+            <input type="text" id="chat-input" placeholder="Say something..." class="chat-input">
+            <button onclick="sendMessage()" class="btn actionbtn animate-btn">Send</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Check login state on page load
+        checkLoginState();
+        loadAccountInfo();
+
+        // Track page visit and display counters
+        trackVisitor();
+        displayCounters();
+
+        // API Key and Playlist ID with reaction texts
+        const API_KEY = 'AIzaSyAHLMunc1uf9O61UxbTGYj4r8cixc13Eq0';
+        const PLAYLIST_ID = 'UUsV3X3EyEowLEdRW1RileuA';
+        const reactionDiv = document.getElementById('reaction-text');
+        const previewGrid = document.getElementById('preview-grid');
+        const videoError = document.getElementById('video-error');
+
+        reactionDiv.textContent = "🔥 Connecting to YouTube HQ...";
+
+        // Fetch videos with detailed error handling, validation, and logging
+        async function fetchVideos() {
+            let videos = [];
+            let nextPageToken = '';
+
+            try {
+                reactionDiv.textContent = "🎮 Loading epic games from Yobest!";
+                reactionDiv.classList.add('animate-loading');
+                do {
+                    const response = await fetch(
+                        `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${PLAYLIST_ID}&key=${API_KEY}&maxResults=50&pageToken=${nextPageToken}`
+                    );
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}, Message: ${await response.text()}`);
+                    }
+                    const data = await response.json();
+                    if (data.items) {
+                        videos = videos.concat(data.items);
+                    } else if (data.error) {
+                        throw new Error(`API error: ${data.error.message || 'Unknown error'}`);
+                    }
+                    nextPageToken = data.nextPageToken || '';
+                } while (nextPageToken);
+
+                reactionDiv.textContent = "✅ Loaded " + videos.length + " awesome videos!";
+                reactionDiv.classList.remove('animate-loading');
+                reactionDiv.classList.add('animate-success');
+
+                // Clear any previous error message
+                videoError.style.display = 'none';
+                previewGrid.innerHTML = '';
+
+                // Display videos with animations
+                videos.forEach((item, index) => {
+                    const videoId = item.snippet.resourceId.videoId;
+                    const title = item.snippet.title;
+                    const thumbnail = item.snippet.thumbnails?.maxres?.url || 'https://via.placeholder.com/150';
+
+                    const card = document.createElement('div');
+                    card.className = 'video-card animate-card';
+                    card.innerHTML = `
+                        <a href="game.html?id=${index}">
+                            <img src="${thumbnail}" alt="${title}">
+                            <h3 class="animate-text">${title}</h3>
+                        </a>
+                    `;
+                    previewGrid.appendChild(card);
+                });
+
+                // Store videos in localStorage
+                localStorage.setItem('channelVideos', JSON.stringify(videos));
+            } catch (error) {
+                console.error('Error fetching videos:', error);
+                reactionDiv.textContent = '';
+                reactionDiv.classList.remove('animate-loading');
+                previewGrid.innerHTML = '';
+                videoError.style.display = 'block';
+                videoError.textContent = `Error loading videos. Please check your API key, playlist ID, or network connection. Details: ${error.message}`;
+                videoError.classList.add('animate-error');
+
+                // Additional debugging info
+                console.log('API Key:', API_KEY);
+                console.log('Playlist ID:', PLAYLIST_ID);
+                console.log('Response Status:', response ? response.status : 'No response');
+            }
+        }
+
+        // Call fetchVideos on page load with delay for animation
+        setTimeout(fetchVideos, 500);
+    </script>
+</body>
+</html>

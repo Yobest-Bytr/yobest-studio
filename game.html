@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Details - Yobest Studio</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Google AdSense (Replace with your client ID after approval) -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Poppins Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-lua.min.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header-animate">
+        <div class="container">
+            <h1 class="title-frame"><a href="index.html" class="site-name">Yobest Studio<span class="highlight"></span></a></h1>
+            <nav class="nav-container">
+                <a href="blog.html" class="nav-btn">Blog</a>
+                <a href="contact.html" class="nav-btn">Contact</a>
+                <a href="index.html" class="nav-btn">Home</a>
+                <a href="ai.html" class="nav-btn">AI Tools</a>
+                <a href="roblox-apis.html" class="nav-btn">Roblox APIs</a>
+                <a href="https://discord.gg/jKASqrc7H3" target="_blank" class="btn socialbtn"><i class="fab fa-discord"></i> Discord</a>
+                <a href="https://x.com/Yobest_BYTR" target="_blank" class="btn socialbtn"><i class="fab fa-x"></i> X</a>
+                <a href="#" onclick="openLogin()" class="btn actionbtn" id="login-btn">Login</a>
+                <img src="https://via.placeholder.com/40" alt="Account" class="account-pic" id="account-pic" style="display: none;" onclick="openAccountSettings()">
+            </nav>
+        </div>
+    </header>
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeLogin()">×</span>
+            <h2 class="title-frame animate-text">Login or Create Account</h2>
+            <form id="auth-form" onsubmit="event.preventDefault(); authUser();">
+                <button type="button" class="btn google-btn animate-btn" onclick="alert('Google Sign-In requires OAuth setup.')"><i class="fab fa-google"></i> Sign in with Google</button>
+                <div class="or-divider">OR</div>
+                <input type="email" id="email" placeholder="Email" required>
+                <input type="password" id="password" placeholder="Password" required>
+                <button type="submit" class="btn actionbtn animate-btn">Sign In / Create</button>
+            </form>
+            <p id="auth-message" class="reaction-text animate-text"></p>
+        </div>
+    </div>
+
+    <!-- Account Settings Modal -->
+    <div id="account-settings-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeAccountSettings()">×</span>
+            <h2 class="title-frame animate-text">Account Settings</h2>
+            <form id="account-form" onsubmit="event.preventDefault(); updateAccount();">
+                <input type="text" id="username" placeholder="Username" value="" required>
+                <input type="file" id="avatar-upload" accept="image/*" onchange="previewAvatar(this)">
+                <img id="avatar-preview" src="https://via.placeholder.com/40" alt="Avatar Preview" class="avatar-preview" style="display: none; width: 40px; height: 40px; border-radius: 50%; margin: 10px 0;">
+                <button type="submit" class="btn actionbtn animate-btn">Save Changes</button>
+            </form>
+            <p id="account-message" class="reaction-text animate-text"></p>
+        </div>
+    </div>
+
+    <!-- Game Details -->
+    <section class="game-details animate-section" style="background: linear-gradient(135deg, #1a1a3a, #2a2a5a);">
+        <div class="container">
+            <h2 id="game-title" class="title-frame animate-text">Loading...</h2>
+            <div class="video-container">
+                <iframe id="game-video" width="100%" height="315" frameborder="0" allowfullscreen></iframe>
+                <div class="video-stats">
+                    <span id="likes"><i class="fas fa-thumbs-up"></i> Loading likes...</span>
+                    <span id="views"><i class="fas fa-eye"></i> Loading views...</span>
+                </div>
+                <p id="game-description" class="reaction-text animate-text">Loading description...</p>
+                <div class="button-group">
+                    <a id="download-btn" href="#" class="btn actionbtn animate-btn">Download Game</a>
+                    <input type="file" id="game-file-upload" accept=".rar,.rbxl,.rbxlx" onchange="uploadGameFile(this)" class="game-file-upload">
+                    <a href="index.html" class="btn actionbtn animate-btn">Back to Home</a>
+                </div>
+            </div>
+            <div class="game-buttons">
+                <a href="https://discord.gg/jKASqrc7H3" target="_blank" class="btn socialbtn animate-btn"><i class="fab fa-discord"></i> Discord</a>
+                <a href="https://x.com/Yobest_BYTR" target="_blank" class="btn socialbtn animate-btn"><i class="fab fa-x"></i> X</a>
+            </div>
+            <!-- Comments Section -->
+            <div class="comments-section">
+                <h3 class="title-frame animate-text">Comments</h3>
+                <div class="comments-container">
+                    <div class="youtube-comments">
+                        <h4 class="animate-text">YouTube Comments</h4>
+                        <div id="youtube-comments-list"></div>
+                    </div>
+                    <div class="site-comments">
+                        <h4 class="animate-text">Site Comments</h4>
+                        <div id="site-comments-list"></div>
+                        <div class="button-group">
+                            <input type="text" id="comment-input" placeholder="Add a comment..." class="chat-input" required>
+                            <button onclick="postComment()" class="btn actionbtn animate-btn">Post</button>
+                        </div>
+                    </div>
+                </div>
+                <p class="animate-text">Page Visitors: <span id="page-visitors"></span></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Channel Videos Section -->
+    <section class="channel-videos animate-section">
+        <div class="container">
+            <h2 class="title-frame animate-text">More from Yobest Studio</h2>
+            <div class="video-grid" id="video-grid">
+                <!-- Videos will be inserted here dynamically -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Ad Section -->
+    <section class="ad-section">
+        <div class="container">
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+                 data-ad-slot="YYYYYYYYYY"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="animate-section">
+        <div class="container">
+            <p class="animate-text">© 2025 Yobest Studio. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Chat Box -->
+    <div id="chat-box" class="animate-section">
+        <h3 class="animate-text"><i class="fas fa-comments"></i> Community Chat</h3>
+        <div id="chat-messages"></div>
+        <div class="button-group">
+            <input type="text" id="chat-input" placeholder="Say something..." class="chat-input">
+            <button onclick="sendMessage()" class="btn actionbtn animate-btn">Send</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Check login state on page load
+        checkLoginState();
+        loadAccountInfo();
+
+        // Track page visit and display counters
+        trackVisitor();
+        trackPageVisitors();
+        displayCounters();
+
+        // Load game details from localStorage and YouTube API
+        const urlParams = new URLSearchParams(window.location.search);
+        const gameId = urlParams.get('id');
+        const videos = JSON.parse(localStorage.getItem('channelVideos')) || [];
+        const API_KEY = 'AIzaSyChwoHXMqlbmAfeh4lbRUFWx2HjIZ6VV2k';
+        const CHANNEL_ID = 'UUsV3X3EyEowLEdRW1RileuA'; // Your YouTube channel ID
+
+        if (videos.length > 0 && gameId >= 0 && gameId < videos.length) {
+            const video = videos[gameId];
+            const videoId = video.snippet.resourceId.videoId;
+            const title = video.snippet.title;
+            const description = video.snippet.description || "No description available.";
+
+            // Set iframe source for direct YouTube viewing
+            document.getElementById('game-title').textContent = title;
+            document.getElementById('game-video').src = `https://www.youtube.com/embed/${videoId}`;
+            document.getElementById('game-description').textContent = description;
+
+            // Update download button to redirect to confirm.html
+            const downloadBtn = document.getElementById('download-btn');
+            downloadBtn.href = `confirm.html?videoId=${videoId}&title=${encodeURIComponent(title)}`;
+
+            // Fade in the title
+            document.getElementById('game-title').classList.add('animate-text');
+
+            // Fetch video statistics (likes and views)
+            fetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${videoId}&key=${API_KEY}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.items && data.items.length > 0) {
+                        const stats = data.items[0].statistics;
+                        document.getElementById('likes').innerHTML = `<i class="fas fa-thumbs-up"></i> ${stats.likeCount || 0} Likes`;
+                        document.getElementById('views').innerHTML = `<i class="fas fa-eye"></i> ${stats.viewCount || 0} Views`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching video stats:', error);
+                    document.getElementById('likes').innerHTML = `<i class="fas fa-thumbs-up"></i> Error`;
+                    document.getElementById('views').innerHTML = `<i class="fas fa-eye"></i> Error`;
+                });
+
+            // Load YouTube comments
+            loadYouTubeComments(videoId);
+
+            // Load site comments
+            loadSiteComments(videoId);
+
+            // Load or set game file link
+            const gameFile = localStorage.getItem(`gameFile_${videoId}`) || '';
+            if (gameFile) {
+                downloadBtn.href = gameFile;
+            }
+        } else {
+            document.getElementById('game-title').textContent = 'Game Not Found';
+            document.getElementById('game-video').style.display = 'none';
+            document.getElementById('download-btn').style.display = 'none';
+            document.getElementById('game-description').textContent = 'No game data available.';
+            document.getElementById('game-title').classList.add('animate-text');
+        }
+
+        // Load channel videos
+        const videoGrid = document.getElementById('video-grid');
+        videos.forEach((item, index) => {
+            if (index != gameId) { // Exclude the current game video
+                const videoId = item.snippet.resourceId.videoId;
+                const title = item.snippet.title;
+                const thumbnail = item.snippet.thumbnails?.maxres?.url || 'https://via.placeholder.com/150';
+
+                const card = document.createElement('div');
+                card.className = 'video-card animate-card';
+                card.innerHTML = `
+                    <a href="game.html?id=${index}">
+                        <img src="${thumbnail}" alt="${title}">
+                        <h3 class="animate-text">${title}</h3>
+                    </a>
+                `;
+                videoGrid.appendChild(card);
+            }
+        });
+
+        // Upload game file function (including .rar, .rbxl, and .rbxlx)
+        function uploadGameFile(input) {
+            const file = input.files[0];
+            if (file && (file.type === 'application/x-rar-compressed' || file.name.endsWith('.rbxl') || file.name.endsWith('.rbxlx'))) {
+                const videoId = JSON.parse(localStorage.getItem('channelVideos'))[gameId]?.snippet.resourceId.videoId;
+                const formData = new FormData();
+                formData.append('file', file);
+
+                // Simulate file upload (replace with actual backend endpoint)
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const fileUrl = e.target.result; // Base64 or Blob URL for local testing
+                    localStorage.setItem(`gameFile_${videoId}`, fileUrl);
+                    const downloadBtn = document.getElementById('download-btn');
+                    downloadBtn.href = fileUrl;
+                    alert(`Game file (${file.name}) uploaded successfully! Click "Download Game" to access.`);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                alert('Please upload a .rar, .rbxl, or .rbxlx file.');
+            }
+        }
+    </script>
+</body>
+</html>
