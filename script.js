@@ -508,3 +508,23 @@ async function fetchVideos() {
         console.log('Response Status:', response ? response.status : 'No response');
     }
 }
+
+// Add to script.js (append at the end)
+document.addEventListener('DOMContentLoaded', () => {
+    // Keyboard event for Enter key in communication
+    const chatInput = document.getElementById('chat-input');
+    if (chatInput) {
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage('chat-input', 'communication-messages');
+            }
+        });
+    }
+
+    // Mouse event for hover on video cards (enhance existing hover in styles.css)
+    const videoCards = document.querySelectorAll('.video-card');
+    videoCards.forEach(card => {
+        card.addEventListener('mouseenter', () => card.classList.add('hovered'));
+        card.addEventListener('mouseleave', () => card.classList.remove('hovered'));
+    });
+});
