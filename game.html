@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -121,7 +122,6 @@
     <script src="/yobest-studio/script.js"></script>
     <script>
         // Ensure script.js is loaded and DOM is ready before executing functions
-        // Note: For production, compile script.ts to script.js and reference script.js instead
         window.onload = function(): void {
             console.log('Checking if functions are defined...');
             if (typeof trackVisitor === 'function' && 
@@ -132,7 +132,7 @@
                 trackPageVisitors();
                 displayCounters();
             } else {
-                console.error('One or more functions are not defined. Ensure script.ts is compiled and loaded correctly. Defined functions:', {
+                console.error('One or more functions are not defined. Ensure script.js is loaded correctly. Defined functions:', {
                     trackVisitor: typeof trackVisitor,
                     trackPageVisitors: typeof trackPageVisitors,
                     displayCounters: typeof displayCounters
