@@ -26,7 +26,6 @@
                 <a href="contact.html" class="nav-btn">Contact</a>
                 <a href="index.html" class="nav-btn">Home</a>
                 <a href="ai.html" class="nav-btn">AI Tools</a>
-                <a href="roblox-apis.html" class="nav-btn">Roblox APIs</a>
                 <a href="https://discord.gg/jKASqrc7H3" target="_blank" class="btn socialbtn"><i class="fab fa-discord"></i> Discord</a>
                 <a href="https://x.com/Yobest_BYTR" target="_blank" class="btn socialbtn"><i class="fab fa-x"></i> X</a>
                 <a href="#" onclick="openLogin()" class="btn actionbtn" id="login-btn">Login</a>
@@ -137,6 +136,10 @@
         function setCategory(category) {
             currentCategory = category;
             const input = document.getElementById('script-input');
+            if (!input) {
+                console.error('Script input element not found.');
+                return;
+            }
             switch (category) {
                 case 'Build':
                     input.value = 'How do I add background music to my experience?';
@@ -152,13 +155,18 @@
         }
 
         function sendToAI() {
-            const input = document.getElementById('script-input').value.trim();
+            const input = document.getElementById('script-input');
             const responseDiv = document.getElementById('ai-response');
-            if (input) {
+            if (!input || !responseDiv) {
+                console.error('AI input or response element not found.');
+                return;
+            }
+
+            const question = input.value.trim();
+            if (question) {
                 responseDiv.textContent = "Thinking...";
                 responseDiv.classList.add('animate-loading');
                 setTimeout(() => {
-                    // Placeholder AI response (simulate Grok-like Roblox AI)
                     let response;
                     switch (currentCategory) {
                         case 'Build':
