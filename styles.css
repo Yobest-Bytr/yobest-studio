@@ -1148,3 +1148,60 @@ code.language-lua {
     from { transform: rotate(0deg); opacity: 0; }
     to { transform: rotate(360deg); opacity: 1; }
 }
+
+/* ... (previous styles remain unchanged) ... */
+
+/* Communication Section */
+.communication-section {
+    padding: 60px 0;
+    text-align: center;
+    background: linear-gradient(135deg, #1a1a3a, #2a2a5a);
+    animation: sectionFade 1s ease-in-out;
+}
+
+.communication-messages {
+    max-width: 800px;
+    margin: 20px auto;
+    height: 400px;
+    overflow-y: auto;
+    background: #1a1a3a;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.2);
+    animation: fadeIn 1s ease-in-out;
+}
+
+.communication-input-group {
+    max-width: 800px;
+    margin: 20px auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    animation: slideIn 1s ease-in-out;
+}
+
+.file-link {
+    color: #00d4ff;
+    text-decoration: none;
+    margin-left: 10px;
+    transition: color 0.3s, transform 0.3s;
+}
+
+.file-link:hover {
+    color: #ff00ff;
+    transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+}
+
+.emoji-picker {
+    position: absolute;
+    z-index: 1000;
+    background: #1a1a3a;
+    border: 2px solid #00d4ff;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* ... (rest of the styles remain unchanged) ... */
