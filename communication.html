@@ -14,10 +14,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
     <!-- Prism.js for syntax highlighting -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet">
+    <!-- Google Sign-In -->
+    <meta name="google-signin-client_id" content="744888685295-d452bl4q9e4shdba3s4mn416uicnohij.apps.googleusercontent.com">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <!-- Emoji Picker (using emoji-picker-element) -->
     <script src="https://cdn.jsdelivr.net/npm/@emoji-mart/data@1.1.2/emoji-mart.data.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@emoji-mart/react@1.1.1/dist/index.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/@emoji-mart/react@1.1.1/dist/styles.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-lua.min.js"></script>
 </head>
 <body>
     <!-- Header -->
@@ -43,9 +48,16 @@
         <div class="modal-content">
             <span class="close-btn" onclick="closeLogin()">×</span>
             <h2 class="title-frame animate-text">Login or Create Account</h2>
+            <div id="g_id_onload"
+                 data-client_id="744888685295-d452bl4q9e4shdba3s4mn416uicnohij.apps.googleusercontent.com"
+                 data-context="signin"
+                 data-ux_mode="popup"
+                 data-callback="handleGoogleSignIn"
+                 data-auto_prompt="false">
+            </div>
+            <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="outline" data-text="signin_with" data-size="large"></div>
+            <div class="or-divider">OR</div>
             <form id="auth-form" onsubmit="event.preventDefault(); authUser();">
-                <button type="button" class="btn google-btn animate-btn" onclick="alert('Google Sign-In requires OAuth setup.')"><i class="fab fa-google"></i> Sign in with Google</button>
-                <div class="or-divider">OR</div>
                 <input type="email" id="email" placeholder="Email" required>
                 <input type="password" id="password" placeholder="Password" required>
                 <button type="submit" class="btn actionbtn animate-btn">Sign In / Create</button>
