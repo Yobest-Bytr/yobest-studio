@@ -31,12 +31,14 @@ function sendMessage(inputId = 'chat-input', messagesId = 'communication-message
 
 // Track visitor and download counts
 function trackVisitor() {
+    console.log('trackVisitor called');
     let visitors = parseInt(localStorage.getItem('siteVisitors')) || 0;
     visitors++;
     localStorage.setItem('siteVisitors', visitors);
 }
 
 function trackPageVisitors() {
+    console.log('trackPageVisitors called');
     const pageVisitorsKey = `pageVisitors_game_${new URLSearchParams(window.location.search).get('id')}`;
     let visitors = parseInt(localStorage.getItem(pageVisitorsKey)) || 0;
     visitors++;
@@ -45,12 +47,14 @@ function trackPageVisitors() {
 }
 
 function trackDownload() {
+    console.log('trackDownload called');
     let downloads = parseInt(localStorage.getItem('totalDownloads')) || 0;
     downloads++;
     localStorage.setItem('totalDownloads', downloads);
 }
 
 function displayCounters() {
+    console.log('displayCounters called');
     const siteVisitors = parseInt(localStorage.getItem('siteVisitors')) || 0;
     const downloads = parseInt(localStorage.getItem('totalDownloads')) || 0;
     document.getElementById('site-visitors').textContent = siteVisitors;
@@ -59,6 +63,7 @@ function displayCounters() {
 
 // Upload game file function (for game.html and ai.html, including .rar, .rbxl, and .rbxlx)
 function uploadGameFile(input) {
+    console.log('uploadGameFile called');
     const file = input.files[0];
     if (file && (file.type === 'application/x-rar-compressed' || file.name.endsWith('.rbxl') || file.name.endsWith('.rbxlx'))) {
         const formData = new FormData();
@@ -86,6 +91,7 @@ function uploadGameFile(input) {
 
 // Upload communication file function (for communication.html)
 function uploadCommunicationFile(input) {
+    console.log('uploadCommunicationFile called');
     const file = input.files[0];
     if (file && (file.type.startsWith('image/') || file.type === 'application/pdf' || file.type.startsWith('text/'))) {
         const reader = new FileReader();
@@ -115,6 +121,7 @@ function uploadCommunicationFile(input) {
 
 // Fetch YouTube comments with replies, likes, and dates (for game.html)
 async function loadYouTubeComments(videoId) {
+    console.log('loadYouTubeComments called for videoId:', videoId);
     const commentsList = document.getElementById('youtube-comments-list');
     const API_KEY = 'AIzaSyAHLMunc1uf9O61UxbTGYj4r8cixc13Eq0';
     try {
@@ -186,6 +193,7 @@ async function loadYouTubeComments(videoId) {
 
 // Communication Functions
 function loadCommunicationMessages() {
+    console.log('loadCommunicationMessages called');
     const messagesDiv = document.getElementById('communication-messages');
     const messages = JSON.parse(localStorage.getItem('communicationMessages')) || [];
     messagesDiv.innerHTML = '';
@@ -207,10 +215,51 @@ function loadCommunicationMessages() {
     messagesDiv.scrollTop = messagesDiv.scrollHeight; // Auto-scroll to the bottom
 }
 
+// Comment Functions (for game.html)
+function loadSiteComments(videoId) {
+    console.log('loadSiteComments called for videoId:', videoId);
+    const commentsList = document.getElementById('site-comments-list');
+    const comments = JSON.parse(localStorage.getItem(`comments_${videoId}`)) || [];
+    commentsList.innerHTML = '';
+    comments.forEach(comment => {
+        const commentDiv = document.createElement('div');
+        commentDiv.className = 'comment animate-card';
+        commentDiv.innerHTML = `
+            <img src="https://via.placeholder.com/40" alt="Anonymous" class="comment-avatar">
+            <div class="comment-content">
+                <strong>Anonymous</strong>: ${comment.text}
+                <div class="comment-meta">
+                    <span>${new Date(comment.timestamp).toLocaleString()}</span>
+                </div>
+            </div>
+        `;
+        commentsList.appendChild(commentDiv);
+    });
+}
+
+function postComment() {
+    console.log('postComment called');
+    const videoId = JSON.parse(localStorage.getItem('channelVideos'))[new URLSearchParams(window.location.search).get('id')]?.snippet.resourceId.videoId;
+    const commentInput = document.getElementById('comment-input');
+
+    const commentText = commentInput.value.trim();
+    if (commentText) {
+        const comments = JSON.parse(localStorage.getItem(`comments_${videoId}`)) || [];
+        comments.push({
+            text: commentText,
+            timestamp: new Date().toISOString()
+        });
+        localStorage.setItem(`comments_${videoId}`, JSON.stringify(comments));
+        commentInput.value = '';
+        loadSiteComments(videoId);
+    }
+}
+
 // AI Functions (for ai.html and communication page)
 let currentCategory = '';
 
 function setCategory(category) {
+    console.log('setCategory called with:', category);
     currentCategory = category;
     const input = document.getElementById('script-input') || document.getElementById('chat-input'); // Support both AI and communication
     if (!input) {
@@ -232,6 +281,7 @@ function setCategory(category) {
 }
 
 function sendToAI(inputId = 'script-input', responseId = 'ai-response') {
+    console.log('sendToAI called with inputId:', inputId, 'responseId:', responseId);
     const input = document.getElementById(inputId);
     const responseDiv = document.getElementById(responseId);
     if (!input || !responseDiv) {
@@ -271,6 +321,7 @@ function sendToAI(inputId = 'script-input', responseId = 'ai-response') {
 
 // Fetch YouTube videos for the home page (index.html) and game.html
 async function fetchVideos() {
+    console.log('fetchVideos called');
     const reactionDiv = document.getElementById('reaction-text');
     const previewGrid = document.getElementById('preview-grid');
     const videoError = document.getElementById('video-error');
@@ -378,9 +429,11 @@ async function fetchVideos() {
 
 // Add at the end of script.js for events
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOMContentLoaded event fired');
     // Keyboard event for Enter key in communication
     const chatInput = document.getElementById('chat-input');
     if (chatInput) {
+        console.log('Chat input found, adding keypress listener');
         chatInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 sendMessage('chat-input', 'communication-messages');
