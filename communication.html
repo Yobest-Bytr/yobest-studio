@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -82,7 +81,8 @@
     <script src="script.js"></script>
     <script>
         // Ensure script.js is loaded and DOM is ready before executing functions
-        window.onload = function() {
+        // Note: For production, compile script.ts to script.js and reference script.js instead
+        window.onload = function(): void {
             console.log('Checking if functions are defined...');
             if (typeof trackVisitor === 'function' && 
                 typeof displayCounters === 'function' && 
@@ -95,7 +95,7 @@
                 displayCounters();
                 loadCommunicationMessages();
             } else {
-                console.error('One or more functions are not defined. Ensure script.js is loaded correctly. Defined functions:', {
+                console.error('One or more functions are not defined. Ensure script.ts is compiled and loaded correctly. Defined functions:', {
                     trackVisitor: typeof trackVisitor,
                     displayCounters: typeof displayCounters,
                     loadCommunicationMessages: typeof loadCommunicationMessages,
@@ -106,7 +106,7 @@
             }
         };
 
-        // Communication Functions (already defined in script.js, but included here for completeness)
+        // Communication Functions (already defined in script.ts, but included here for completeness)
         function toggleEmojiPicker(): void {
             const emojiPicker = document.getElementById('emoji-picker') as HTMLElement;
             emojiPicker.style.display = emojiPicker.style.display === 'none' ? 'block' : 'none';
