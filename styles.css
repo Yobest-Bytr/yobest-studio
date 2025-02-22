@@ -1204,4 +1204,10 @@ code.language-lua {
     animation: fadeIn 0.5s ease-in-out;
 }
 
+/* Add to styles.css */
+.video-card.hovered {
+    transform: scale(1.1) !important;
+    box-shadow: 0 0 20px rgba(255, 0, 255, 0.7) !important;
+    animation: pulse 1s infinite;
+}
 /* ... (rest of the styles remain unchanged) ... */
