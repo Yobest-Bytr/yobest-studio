@@ -14,7 +14,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
     <!-- Prism.js for syntax highlighting -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet">
-    <!-- Google Sign-In -->
+    <!-- Google Sign-In (optional, can be removed) -->
     <meta name="google-signin-client_id" content="744888685295-d452bl4q9e4shdba3s4mn416uicnohij.apps.googleusercontent.com">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <!-- Emoji Picker (using emoji-picker-element) -->
@@ -47,7 +47,8 @@
     <div id="login-modal" class="modal">
         <div class="modal-content">
             <span class="close-btn" onclick="closeLogin()">×</span>
-            <h2 class="title-frame animate-text">Login or Create Account</h2>
+            <h2 class="title-frame animate-text">Login</h2>
+            <!-- Google Sign-In (optional, can be removed) -->
             <div id="g_id_onload"
                  data-client_id="744888685295-d452bl4q9e4shdba3s4mn416uicnohij.apps.googleusercontent.com"
                  data-context="signin"
@@ -58,11 +59,41 @@
             <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="outline" data-text="signin_with" data-size="large"></div>
             <div class="or-divider">OR</div>
             <form id="auth-form" onsubmit="event.preventDefault(); authUser();">
-                <input type="email" id="email" placeholder="Email" required>
+                <input type="text" id="username" placeholder="Username" required>
                 <input type="password" id="password" placeholder="Password" required>
-                <button type="submit" class="btn actionbtn animate-btn">Sign In / Create</button>
+                <button type="submit" class="btn actionbtn animate-btn">Sign In</button>
+                <button type="button" class="btn-small animate-btn" onclick="openCreateAccount()">Create Account</button>
+                <button type="button" class="btn-small animate-btn" onclick="openForgotPassword()">Forgot Password?</button>
             </form>
             <p id="auth-message" class="reaction-text animate-text"></p>
+        </div>
+    </div>
+
+    <!-- Create Account Modal -->
+    <div id="create-account-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeCreateAccount()">×</span>
+            <h2 class="title-frame animate-text">Create New Account</h2>
+            <form id="create-account-form" onsubmit="event.preventDefault(); createAccount();">
+                <input type="text" id="new-username" placeholder="Username" required>
+                <input type="password" id="new-password" placeholder="Password" required>
+                <input type="password" id="confirm-password" placeholder="Confirm Password" required>
+                <button type="submit" class="btn actionbtn animate-btn">Create Account</button>
+            </form>
+            <p id="create-message" class="reaction-text animate-text"></p>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div id="forgot-password-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeForgotPassword()">×</span>
+            <h2 class="title-frame animate-text">Forgot Password</h2>
+            <form id="forgot-password-form" onsubmit="event.preventDefault(); resetPassword();">
+                <input type="text" id="forgot-username" placeholder="Username" required>
+                <button type="submit" class="btn actionbtn animate-btn">Reset Password</button>
+            </form>
+            <p id="forgot-message" class="reaction-text animate-text"></p>
         </div>
     </div>
 
@@ -91,7 +122,7 @@
                 <div class="communication-input-group">
                     <input type="text" id="chat-input" placeholder="Type a message..." class="chat-input" spellcheck="false">
                     <button id="emoji-btn" class="btn-small animate-btn" onclick="toggleEmojiPicker()">😊</button>
-                    <input type="file" id="file-upload" accept="image/*,application/pdf,text/*" onchange="uploadFile(this)" class="btn-small animate-btn" style="padding: 8px;">
+                    <input type="file" id="file-upload" accept="image/*,application/pdf,text/*" onchange="uploadCommunicationFile(this)" class="btn-small animate-btn" style="padding: 8px;">
                     <button onclick="sendMessage('chat-input', 'communication-messages')" class="btn actionbtn animate-btn">Send</button>
                     <button onclick="sendToAI('chat-input', 'communication-messages')" class="btn actionbtn animate-btn">AI</button>
                 </div>
@@ -125,17 +156,25 @@
 
     <script src="script.js"></script>
     <script>
-        // Ensure script.js is loaded before executing these functions
+        // Ensure script.js is loaded and DOM is ready before executing functions
         window.onload = function() {
-            checkLoginState();
-            loadAccountInfo();
-            trackVisitor();
+            if (typeof checkLoginState === 'function' && 
+                typeof loadAccountInfo === 'function' && 
+                typeof trackVisitor === 'function' && 
+                typeof displayCounters === 'function') {
+                checkLoginState();
+                loadAccountInfo();
+                trackVisitor();
+                displayCounters();
+            } else {
+                console.error('One or more functions are not defined. Ensure script.js is loaded correctly.');
+            }
 
             // Check login state for communication
-            const loggedInEmail = localStorage.getItem('loggedInEmail');
+            const loggedInUsername = localStorage.getItem('loggedInUsername');
             const communicationContainer = document.getElementById('communication-container');
             const loginRequired = document.getElementById('login-required');
-            if (loggedInEmail) {
+            if (loggedInUsername) {
                 communicationContainer.style.display = 'block';
                 loginRequired.style.display = 'none';
                 loadCommunicationMessages(); // Load existing messages
@@ -152,7 +191,7 @@
             const accounts = JSON.parse(localStorage.getItem('accounts')) || {};
             messagesDiv.innerHTML = '';
             messages.forEach(msg => {
-                const userData = accounts[msg.email] || { username: msg.email.split('@')[0], avatar: 'https://via.placeholder.com/40' };
+                const userData = accounts[msg.username] || { username: msg.username, avatar: 'https://via.placeholder.com/40' };
                 const msgDiv = document.createElement('div');
                 msgDiv.className = 'comment animate-card';
                 msgDiv.innerHTML = `
@@ -173,9 +212,9 @@
         function sendMessage(inputId = 'chat-input', messagesId = 'communication-messages') {
             const input = document.getElementById(inputId);
             const messagesDiv = document.getElementById(messagesId);
-            const email = localStorage.getItem('loggedInEmail');
+            const username = localStorage.getItem('loggedInUsername');
 
-            if (!email) {
+            if (!username) {
                 alert('Please log in to communicate.');
                 return;
             }
@@ -184,10 +223,10 @@
             if (messageText) {
                 const messages = JSON.parse(localStorage.getItem('communicationMessages')) || [];
                 messages.push({
-                    email: email,
+                    username: username,
                     text: messageText,
                     timestamp: new Date().toISOString(),
-                    file: null // Will be updated by uploadFile if a file is uploaded
+                    file: null // Will be updated by uploadCommunicationFile if a file is uploaded
                 });
                 localStorage.setItem('communicationMessages', JSON.stringify(messages));
                 input.value = '';
@@ -214,11 +253,11 @@
             }
         });
 
-        function uploadFile(input) {
+        function uploadCommunicationFile(input) {
             const file = input.files[0];
             if (file && (file.type.startsWith('image/') || file.type === 'application/pdf' || file.type.startsWith('text/'))) {
-                const email = localStorage.getItem('loggedInEmail');
-                if (!email) {
+                const username = localStorage.getItem('loggedInUsername');
+                if (!username) {
                     alert('Please log in to upload files.');
                     return;
                 }
@@ -233,7 +272,7 @@
                         localStorage.setItem('communicationMessages', JSON.stringify(messages));
                     } else {
                         messages.push({
-                            email: email,
+                            username: username,
                             text: `File: ${file.name}`,
                             timestamp: new Date().toISOString(),
                             file: fileUrl
