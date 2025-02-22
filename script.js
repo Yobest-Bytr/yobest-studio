@@ -107,7 +107,10 @@ function handleGoogleSignIn(response) {
         });
 }
 
+// ... (previous functions remain unchanged until checkLoginState) ...
+
 function checkLoginState() {
+    console.log('checkLoginState called'); // Debug log to confirm function is loaded
     const loggedInEmail = localStorage.getItem('loggedInEmail');
     const loginBtn = document.getElementById('login-btn');
     const accountPic = document.getElementById('account-pic');
@@ -121,6 +124,8 @@ function checkLoginState() {
         accountPic.style.display = 'none';
     }
 }
+
+// ... (rest of the script remains unchanged) ...
 
 function updateLoginState() {
     checkLoginState();
