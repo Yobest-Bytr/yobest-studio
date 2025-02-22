@@ -290,7 +290,7 @@ function uploadGameFile(input) {
 // Fetch YouTube comments with replies, likes, and dates (for game.html)
 async function loadYouTubeComments(videoId) {
     const commentsList = document.getElementById('youtube-comments-list');
-    const API_KEY = 'AIzaSyChwoHXMqlbmAfeh4lbRUFWx2HjIZ6VV2k';
+    const API_KEY = 'AIzaSyAHLMunc1uf9O61UxbTGYj4r8cixc13Eq0';
     try {
         let allComments = [];
         let nextPageToken = '';
@@ -358,12 +358,16 @@ async function loadYouTubeComments(videoId) {
     }
 }
 
-// AI and Roblox Script Functions (for ai.html)
+// AI Functions (for ai.html)
 let currentCategory = '';
 
 function setCategory(category) {
     currentCategory = category;
     const input = document.getElementById('script-input');
+    if (!input) {
+        console.error('Script input element not found.');
+        return;
+    }
     switch (category) {
         case 'Build':
             input.value = 'How do I add background music to my experience?';
@@ -379,13 +383,18 @@ function setCategory(category) {
 }
 
 function sendToAI() {
-    const input = document.getElementById('script-input').value.trim();
+    const input = document.getElementById('script-input');
     const responseDiv = document.getElementById('ai-response');
-    if (input) {
+    if (!input || !responseDiv) {
+        console.error('AI input or response element not found.');
+        return;
+    }
+
+    const question = input.value.trim();
+    if (question) {
         responseDiv.textContent = "Thinking...";
         responseDiv.classList.add('animate-loading');
         setTimeout(() => {
-            // Placeholder AI response (simulate Grok-like Roblox AI)
             let response;
             switch (currentCategory) {
                 case 'Build':
@@ -411,113 +420,16 @@ function sendToAI() {
     }
 }
 
-// Roblox APIs Functions (for roblox-apis.html)
-async function checkPlaceId() {
-    const placeId = document.getElementById('place-id').value.trim();
-    const status = document.getElementById('place-status');
-    const setDefaultBtn = document.getElementById('set-default-btn');
-
-    if (!placeId) {
-        status.textContent = "❌ Please enter a Place ID!";
-        status.classList.remove('success', 'error');
-        status.classList.add('error');
-        setDefaultBtn.style.display = 'none';
-        return;
-    }
-
-    try {
-        // Simulate Roblox API check (replace with actual Roblox Open Cloud or Developer API endpoint)
-        const response = await fetch(`https://api.roblox.com/universes/get-universe-containing-place?placeId=${placeId}`);
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        const data = await response.json();
-        if (data && data.universeId) {
-            status.textContent = "✅ Valid Place ID!";
-            status.classList.remove('error');
-            status.classList.add('success');
-            setDefaultBtn.style.display = 'block';
-        } else {
-            throw new Error('Invalid Place ID');
-        }
-    } catch (error) {
-        console.error('Error checking Place ID:', error);
-        status.textContent = `❌ Invalid Place ID or API error: ${error.message}`;
-        status.classList.remove('success');
-        status.classList.add('error');
-        setDefaultBtn.style.display = 'none';
-    }
-}
-
-function setDefaultPlace() {
-    const placeId = document.getElementById('place-id').value.trim();
-    const status = document.getElementById('place-status');
-    if (placeId) {
-        // Simulate setting default place (replace with actual Roblox API call, e.g., Roblox Developer API)
-        status.textContent = `✅ Place ID ${placeId} set as default!`;
-        status.classList.remove('error');
-        status.classList.add('success');
-        alert(`Place ID ${placeId} has been set as the default place. (This is a simulation; actual API integration required.)`);
-    } else {
-        status.textContent = "❌ No Place ID provided!";
-        status.classList.remove('success');
-        status.classList.add('error');
-    }
-}
-
-async function downloadAsset() {
-    const assetId = document.getElementById('asset-id').value.trim();
-    const status = document.getElementById('asset-status');
-
-    if (!assetId) {
-        status.textContent = "❌ Please enter an Asset ID!";
-        status.classList.remove('success', 'error');
-        status.classList.add('error');
-        return;
-    }
-
-    try {
-        // Simulate Roblox asset download (replace with actual Roblox Marketplace API endpoint)
-        const response = await fetch(`https://api.roblox.com/marketplace/productinfo?assetId=${assetId}`);
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        const data = await response.json();
-        if (data && data.AssetId) {
-            const assetUrl = `https://www.roblox.com/library/${assetId}`;
-            const blob = await fetch(assetUrl).then(res => res.blob());
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `asset_${assetId}.rbxm`; // Roblox model file extension
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-            status.textContent = `✅ Asset ID ${assetId} downloaded successfully!`;
-            status.classList.remove('error');
-            status.classList.add('success');
-        } else {
-            throw new Error('Invalid Asset ID');
-        }
-    } catch (error) {
-        console.error('Error downloading asset:', error);
-        status.textContent = `❌ Invalid Asset ID or API error: ${error.message}`;
-        status.classList.remove('success');
-        status.classList.add('error');
-    }
-}
-
 // Fetch YouTube videos for the home page (index.html)
 async function fetchVideos() {
     const reactionDiv = document.getElementById('reaction-text');
     const previewGrid = document.getElementById('preview-grid');
     const videoError = document.getElementById('video-error');
-    const API_KEY = 'AIzaSyChwoHXMqlbmAfeh4lbRUFWx2HjIZ6VV2k';
-    const PLAYLIST_ID = 'UUsV3X3EyEowLEdRW1RileuA';
+    const API_KEY = 'AIzaSyAHLMunc1uf9O61UxbTGYj4r8cixc13Eq0'; // Verify this key in Google Cloud Console
+    const PLAYLIST_ID = 'UUsV3X3EyEowLEdRW1RileuA'; // Verify this playlist ID on YouTube
 
     if (!reactionDiv || !previewGrid || !videoError) {
-        console.error('DOM elements for video display not found.');
+        console.error('DOM elements for video display not found in index.html.');
         return;
     }
 
