@@ -123,20 +123,26 @@
     <script>
         // Ensure script.js is loaded and DOM is ready before executing functions
         window.onload = function() {
+            console.log('Checking if functions are defined...');
             if (typeof trackVisitor === 'function' && 
                 typeof trackPageVisitors === 'function' && 
                 typeof displayCounters === 'function') {
+                console.log('All functions defined, executing...');
                 trackVisitor();
                 trackPageVisitors();
                 displayCounters();
             } else {
-                console.error('One or more functions are not defined. Ensure script.js is loaded correctly.');
+                console.error('One or more functions are not defined. Ensure script.js is loaded correctly. Defined functions:', {
+                    trackVisitor: typeof trackVisitor,
+                    trackPageVisitors: typeof trackPageVisitors,
+                    displayCounters: typeof displayCounters
+                });
             }
 
             // Load game details from localStorage and YouTube API
             const urlParams = new URLSearchParams(window.location.search);
             const gameId = urlParams.get('id');
-            const videos = JSON.parse(localStorage.getItem('channelVideos')) || [];
+            const videos = JSON.parse(localStorage.getItem('channelVideos') || '[]');
             const API_KEY = 'AIzaSyAHLMunc1uf9O61UxbTGYj4r8cixc13Eq0';
             const PLAYLIST_ID = 'UUsV3X3EyEowLEdRW1RileuA'; // Updated playlist ID
 
@@ -229,6 +235,7 @@
 
         // Upload game file function (including .rar, .rbxl, and .rbxlx)
         function uploadGameFile(input) {
+            console.log('uploadGameFile called');
             const file = input.files[0];
             if (file && (file.type === 'application/x-rar-compressed' || file.name.endsWith('.rbxl') || file.name.endsWith('.rbxlx'))) {
                 const formData = new FormData();
