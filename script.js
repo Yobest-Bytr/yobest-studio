@@ -1,13 +1,30 @@
-function sendMessage() {
-    const input = document.getElementById("chat-input");
-    const messages = document.getElementById("chat-messages");
+function sendMessage(inputId = 'chat-input', messagesId = 'communication-messages') {
+    const input = document.getElementById(inputId);
+    const messagesDiv = document.getElementById(messagesId);
     if (input.value.trim()) {
         const msg = document.createElement("p");
-        msg.textContent = `You: ${input.value}`;
+        const email = localStorage.getItem('loggedInEmail');
+        if (!email) {
+            alert('Please log in to send messages.');
+            return;
+        }
+        const accounts = JSON.parse(localStorage.getItem('accounts')) || {};
+        const userData = accounts[email] || { username: email.split('@')[0], avatar: 'https://via.placeholder.com/40' };
+        msg.innerHTML = `<img src="${userData.avatar}" alt="${userData.username}" class="comment-avatar"><strong>${userData.username}</strong>: ${input.value}`;
         msg.classList.add('animate-text');
-        messages.appendChild(msg);
+        messagesDiv.appendChild(msg);
         input.value = "";
-        messages.scrollTop = messages.scrollHeight;
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+        // Store message in localStorage for communication page
+        const messages = JSON.parse(localStorage.getItem('communicationMessages')) || [];
+        messages.push({
+            email: email,
+            text: input.value,
+            timestamp: new Date().toISOString(),
+            file: null
+        });
+        localStorage.setItem('communicationMessages', JSON.stringify(messages));
     }
 }
 
@@ -58,6 +75,36 @@ function authUser() {
         updateLoginState();
         loadAccountInfo();
     }, 1500);
+}
+
+function handleGoogleSignIn(response) {
+    const token = response.credential;
+    // Simulate Google Sign-In (replace with actual backend verification)
+    fetch('https://oauth2.googleapis.com/tokeninfo?id_token=' + token)
+        .then(response => response.json())
+        .then(data => {
+            if (data.email) {
+                localStorage.setItem('loggedInEmail', data.email);
+                document.getElementById('auth-message').textContent = "🎉 Welcome back, " + data.email + "!";
+                document.getElementById('auth-message').style.color = '#00d4ff';
+                document.getElementById('auth-message').classList.add('animate-success');
+                setTimeout(() => {
+                    closeLogin();
+                    updateLoginState();
+                    loadAccountInfo();
+                }, 1500);
+            } else {
+                document.getElementById('auth-message').textContent = "❌ Google Sign-In failed!";
+                document.getElementById('auth-message').style.color = '#ff3366';
+                document.getElementById('auth-message').classList.add('animate-error');
+            }
+        })
+        .catch(error => {
+            console.error('Google Sign-In error:', error);
+            document.getElementById('auth-message').textContent = "❌ Google Sign-In error. Please try again.";
+            document.getElementById('auth-message').style.color = '#ff3366';
+            document.getElementById('auth-message').classList.add('animate-error');
+        });
 }
 
 function checkLoginState() {
@@ -287,6 +334,42 @@ function uploadGameFile(input) {
     }
 }
 
+// Upload communication file function (for communication.html)
+function uploadCommunicationFile(input) {
+    const file = input.files[0];
+    if (file && (file.type.startsWith('image/') || file.type === 'application/pdf' || file.type.startsWith('text/'))) {
+        const email = localStorage.getItem('loggedInEmail');
+        if (!email) {
+            alert('Please log in to upload files.');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const fileUrl = e.target.result; // Base64 or Blob URL for local testing
+            const messages = JSON.parse(localStorage.getItem('communicationMessages')) || [];
+            const lastMessage = messages[messages.length - 1];
+            if (lastMessage && !lastMessage.file) { // Link file to the last message
+                lastMessage.file = fileUrl;
+                localStorage.setItem('communicationMessages', JSON.stringify(messages));
+            } else {
+                messages.push({
+                    email: email,
+                    text: `File: ${file.name}`,
+                    timestamp: new Date().toISOString(),
+                    file: fileUrl
+                });
+                localStorage.setItem('communicationMessages', JSON.stringify(messages));
+            }
+            loadCommunicationMessages();
+            alert(`File (${file.name}) uploaded successfully!`);
+        };
+        reader.readAsDataURL(file);
+    } else {
+        alert('Please upload an image, PDF, or text file.');
+    }
+}
+
 // Fetch YouTube comments with replies, likes, and dates (for game.html)
 async function loadYouTubeComments(videoId) {
     const commentsList = document.getElementById('youtube-comments-list');
@@ -420,16 +503,16 @@ function sendToAI(inputId = 'script-input', responseId = 'ai-response') {
     }
 }
 
-// Fetch YouTube videos for the home page (index.html)
+// Fetch YouTube videos for the home page (index.html) and game.html
 async function fetchVideos() {
     const reactionDiv = document.getElementById('reaction-text');
     const previewGrid = document.getElementById('preview-grid');
     const videoError = document.getElementById('video-error');
     const API_KEY = 'AIzaSyAHLMunc1uf9O61UxbTGYj4r8cixc13Eq0'; // Provided API key
-    const PLAYLIST_ID = 'PL123456789012345678'; // Replace with your actual YouTube uploads playlist ID
+    const PLAYLIST_ID = 'UUsV3X3EyEowLEdRW1RileuA'; // Updated playlist ID
 
     if (!reactionDiv || !previewGrid || !videoError) {
-        console.error('DOM elements for video display not found in index.html.');
+        console.error('DOM elements for video display not found in index.html or game.html.');
         return;
     }
 
@@ -440,6 +523,24 @@ async function fetchVideos() {
     let nextPageToken = '';
 
     try {
+        // If PLAYLIST_ID is a channel ID, fetch the uploads playlist dynamically
+        if (PLAYLIST_ID.startsWith('UU')) {
+            const channelResponse = await fetch(
+                `https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${PLAYLIST_ID}&key=${API_KEY}`
+            );
+            if (!channelResponse.ok) {
+                throw new Error(`HTTP error fetching channel! Status: ${channelResponse.status}, Message: ${await channelResponse.text()}`);
+            }
+            const channelData = await channelResponse.json();
+            if (channelData.items && channelData.items.length > 0) {
+                const uploadsPlaylistId = channelData.items[0].contentDetails.relatedPlaylists.uploads;
+                console.log('Using uploads playlist ID:', uploadsPlaylistId);
+                PLAYLIST_ID = uploadsPlaylistId; // Update PLAYLIST_ID to the uploads playlist
+            } else {
+                throw new Error('Channel not found or no uploads playlist available.');
+            }
+        }
+
         do {
             const response = await fetch(
                 `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${PLAYLIST_ID}&key=${API_KEY}&maxResults=50&pageToken=${nextPageToken}`
@@ -509,7 +610,7 @@ async function fetchVideos() {
     }
 }
 
-// Add to script.js (append at the end)
+// Add at the end of script.js for events
 document.addEventListener('DOMContentLoaded', () => {
     // Keyboard event for Enter key in communication
     const chatInput = document.getElementById('chat-input');
