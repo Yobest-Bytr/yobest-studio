@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yobest Studio - Epic Roblox Games</title>
+    <link rel="stylesheet" href="styles.css">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2925220406728611" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-kqNfk8EL0Vsx5pqskqQ57pq+BwR55rYwtVmswqLxMQ52R9ETg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-lua.min.js"></script>
+</head>
+<body>
+    <header class="header-animate">
+        <div class="container">
+            <h1 class="title-frame"><a href="index.html" class="site-name">Yobest Studio<span class="highlight"></span></a></h1>
+            <nav class="nav-container">
+                <a href="blog.html" class="nav-btn">Blog</a>
+                <a href="contact.html" class="nav-btn">Contact</a>
+                <a href="index.html" class="nav-btn">Home</a>
+                <a href="ai.html" class="nav-btn">AI Tools</a>
+                <a href="https://discord.gg/jKASqrc7H3" target="_blank" class="btn socialbtn"><i class="fab fa-discord"></i> Discord</a>
+                <a href="https://x.com/Yobest_BYTR" target="_blank" class="btn socialbtn"><i class="fab fa-x"></i> X</a>
+                <a href="#" id="login-btn" class="btn socialbtn" onclick="toggleLoginForm()">Login</a>
+                <a href="#" id="account-btn" class="btn socialbtn" onclick="toggleAccountForm()" style="display: none;">Account</a>
+            </nav>
+        </div>
+    </header>
+
+    <div id="login-form" class="modal">
+        <div class="modal-content auth-modal">
+            <span class="close-btn" onclick="document.getElementById('login-form').style.display='none'">×</span>
+            <h2 class="modal-title">Login</h2>
+            <form id="login-form-content" onsubmit="handleLogin(event)">
+                <input type="email" id="email-login" placeholder="Email" required class="auth-input">
+                <input type="password" id="password-login" placeholder="Password" required class="auth-input">
+                <button type="submit" class="btn actionbtn">Login</button>
+                <p class="or-divider">OR</p>
+                <a href="#" class="btn google-btn"><i class="fab fa-google"></i> Login with Google</a>
+                <p class="auth-link">Not registered? <a href="#" onclick="toggleSignupForm()">Sign Up</a></p>
+                <div id="login-error" class="reaction-text" style="display: none; color: #ff0000;"></div>
+            </form>
+        </div>
+    </div>
+
+    <div id="signup-form" class="modal" style="display: none;">
+        <div class="modal-content auth-modal">
+            <span class="close-btn" onclick="document.getElementById('signup-form').style.display='none'">×</span>
+            <h2 class="modal-title">Sign Up</h2>
+            <form id="signup-form-content" onsubmit="handleSignup(event)">
+                <input type="email" id="email-signup" placeholder="Email" required class="auth-input">
+                <input type="password" id="password-signup" placeholder="Password" required class="auth-input">
+                <input type="password" id="confirm-password" placeholder="Confirm Password" required class="auth-input">
+                <button type="submit" class="btn actionbtn">Sign Up</button>
+                <p class="auth-link">Already registered? <a href="#" onclick="toggleLoginForm()">Login</a></p>
+                <div id="signup-error" class="reaction-text" style="display: none; color: #ff0000;"></div>
+            </form>
+        </div>
+    </div>
+
+    <div id="account-form" class="modal" style="display: none;">
+        <div class="modal-content auth-modal">
+            <span class="close-btn" onclick="document.getElementById('account-form').style.display='none'">×</span>
+            <h2 class="modal-title">Account</h2>
+            <form id="account-form-content" onsubmit="updateAccount(event)">
+                <input type="email" id="email-account" placeholder="Email" required class="auth-input">
+                <input type="password" id="password-account" placeholder="New Password" required class="auth-input">
+                <button type="submit" class="btn actionbtn">Update Account</button>
+                <button type="button" onclick="viewAccountInfo()" class="btn actionbtn">View Info</button>
+                <button type="button" onclick="logout()" class="btn actionbtn">Logout</button>
+                <div id="account-error" class="reaction-text" style="display: none; color: #ff0000;"></div>
+            </form>
+        </div>
+    </div>
+
+    <section class="hero animate-section" style="background: linear-gradient(135deg, #0a0a2a, #1a1a4a, #2a2a6a);">
+        <div class="container">
+            <h2 class="animate-text">Welcome to My Roblox World!</h2>
+            <p class="animate-text">Explore free and paid games crafted by Yobest Studio.</p>
+            <p class="animate-text">Site Visitors: <span id="site-visitors"></span> | Total Downloads: <span id="total-downloads"></span></p>
+            <div class="button-group">
+                <a href="#games" class="btn actionbtn animate-btn">Check Out My Games</a>
+            </div>
+        </div>
+    </section>
+
+    <aside class="sidebar-ad">
+        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-2925220406728611" data-ad-slot="YYYYYYYYYY" data-ad-format="vertical" data-full-width-responsive="true"></ins>
+        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </aside>
+
+    <section id="games" class="game-previews animate-section">
+        <div class="container">
+            <h2 class="title-frame animate-text">Game Previews</h2>
+            <div id="reaction-text" class="reaction-text animate-text"></div>
+            <div class="video-grid" id="preview-grid"></div>
+            <p id="video-error" class="reaction-text animate-text" style="display: none; color: #ff0000;"></p>
+        </div>
+    </section>
+
+    <section class="downloads animate-section">
+        <div class="container">
+            <h2 class="title-frame animate-text">Downloads</h2>
+            <p class="animate-text">Get my games directly! Links coming soon.</p>
+            <div class="button-group">
+                <a href="#" class="btn actionbtn animate-btn">Stay Tuned</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="blog-teaser animate-section">
+        <div class="container">
+            <h2 class="title-frame animate-text">Latest Blog Posts</h2>
+            <div class="blog-grid">
+                <article class="animate-card">
+                    <h3 class="animate-text">New Game Release!</h3>
+                    <p class="animate-text">Check out my latest creation and what inspired it.</p>
+                    <div class="button-group">
+                        <a href="blog.html" class="btn-small animate-btn">Read More</a>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="ad-section">
+        <div class="container">
+            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-2925220406728611" data-ad-slot="YYYYYYYYYY" data-ad-format="auto" data-full-width-responsive="true"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+    </section>
+
+    <footer class="animate-section">
+        <div class="container">
+            <p class="animate-text">© 2025 Yobest Studio. All Rights Reserved.</p>
+            <div class="social-links">
+                <a href="https://www.youtube.com/channel/UCsV3X3EyEowLEdRW1RileuA" target="_blank" class="btn socialbtn animate-btn"><i class="fab fa-youtube"></i> YouTube</a>
+                <a href="https://discord.gg/jKASqrc7H3" target="_blank" class="btn socialbtn animate-btn"><i class="fab fa-discord"></i> Discord</a>
+                <a href="https://x.com/Yobest_BYTR" target="_blank" class="btn socialbtn animate-btn"><i class="fab fa-x"></i> X</a>
+            </div>
+            <div class="footer-ad">
+                <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-2925220406728611" data-ad-slot="YYYYYYYYYY" data-ad-format="horizontal" data-full-width-responsive="true"></ins>
+                <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+            </div>
+        </div>
+    </footer>
+
+    <div id="chat-box" class="animate-section">
+        <h3 class="animate-text"><i class="fas fa-comments"></i> Community Chat</h3>
+        <div id="chat-messages"></div>
+        <div class="button-group">
+            <input type="text" id="chat-input" placeholder="Say something..." class="chat-input">
+            <button class="send-btn" onclick="sendMessage()">Send</button>
+        </div>
+        <div id="chat-error" class="reaction-text" style="display: none; color: #ff0000;"></div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            trackVisitor();
+            displayCounters();
+            fetchVideos();
+            updateNavButtons();
+        });
+
+        async function fetchVideos() {
+            const reactionDiv = document.getElementById('reaction-text');
+            const previewGrid = document.getElementById('preview-grid');
+            const errorDiv = document.getElementById('video-error');
+            const API_KEY = 'AIzaSyChwoHXMqlbmAfeh4lbRUFWx2HjIZ6VV2k'; // Replace with your actual YouTube API key
+            const CHANNEL_ID = 'UCsV3X3EyEowLEdRW1RileuA'; // Your channel ID
+            const CACHE_EXPIRY = 24 * 60 * 60 * 1000; // Cache for 24 hours
+
+            if (!reactionDiv || !previewGrid || !errorDiv) return;
+
+            reactionDiv.textContent = 'Fetching videos...';
+
+            // Check cache first
+            const cachedData = JSON.parse(localStorage.getItem('videoCache') || '{}');
+            const now = Date.now();
+            if (cachedData.videos && cachedData.timestamp && (now - cachedData.timestamp < CACHE_EXPIRY)) {
+                reactionDiv.textContent = `Loaded ${cachedData.videos.length} videos from cache!`;
+                renderVideos(cachedData.videos);
+                localStorage.setItem('channelVideos', JSON.stringify(cachedData.videos));
+                return;
+            }
+
+            try {
+                // Get uploads playlist ID from channel
+                const channelResponse = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${CHANNEL_ID}&key=${API_KEY}`);
+                if (!channelResponse.ok) throw new Error(`Channel fetch failed: ${channelResponse.statusText}`);
+                const channelData = await channelResponse.json();
+                if (channelData.error || !channelData.items.length) throw new Error('Invalid channel ID or API key');
+                const playlistId = channelData.items[0].contentDetails.relatedPlaylists.uploads;
+
+                // Fetch all videos from the uploads playlist
+                let videos = [];
+                let nextPageToken = '';
+                do {
+                    const response = await fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${playlistId}&key=${API_KEY}&maxResults=50&pageToken=${nextPageToken}`);
+                    if (!response.ok) throw new Error(`Playlist fetch failed: ${response.statusText}`);
+                    const data = await response.json();
+                    if (data.error) throw new Error(data.error.message);
+                    videos = videos.concat(data.items.filter(item => item.snippet.resourceId.kind === 'youtube#video')); // Filter only videos
+                    nextPageToken = data.nextPageToken || '';
+                } while (nextPageToken);
+
+                if (!videos.length) throw new Error('No videos found in the channel uploads.');
+
+                // Store in cache and localStorage
+                const cacheData = { videos, timestamp: now };
+                localStorage.setItem('videoCache', JSON.stringify(cacheData));
+                localStorage.setItem('channelVideos', JSON.stringify(videos));
+
+                reactionDiv.textContent = `Loaded ${videos.length} videos!`;
+                renderVideos(videos);
+            } catch (error) {
+                reactionDiv.textContent = '';
+                errorDiv.textContent = `Error: ${error.message}. Check API key, channel ID, or network connection.`;
+                errorDiv.style.display = 'block';
+            }
+        }
+
+        function renderVideos(videos) {
+            const previewGrid = document.getElementById('preview-grid');
+            previewGrid.innerHTML = videos.map((item, index) => `
+                <div class="video-card animate-card" data-index="${index}">
+                    <a href="game.html?id=${index}">
+                        <img src="${item.snippet.thumbnails?.medium?.url || 'https://via.placeholder.com/150'}" alt="${item.snippet.title}">
+                        <div class="video-stats">
+                            <p><i class="fas fa-eye"></i> Loading views...</p>
+                            <p><i class="fas fa-thumbs-up"></i> Loading likes...</p>
+                            <p><i class="fas fa-thumbs-down"></i> Loading dislikes...</p>
+                        </div>
+                        <h3 class="animate-text">${item.snippet.title}</h3>
+                    </a>
+                </div>
+            `).join('');
+            loadVideoStats(videos);
+        }
+
+        async function loadVideoStats(videos) {
+            const API_KEY = 'AIzaSyChwoHXMqlbmAfeh4lbRUFWx2HjIZ6VV2k'; // Replace with your actual YouTube API key
+            for (const video of videos) {
+                const videoId = video.snippet.resourceId.videoId;
+                try {
+                    const response = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${videoId}&key=${API_KEY}`);
+                    if (!response.ok) throw new Error(`HTTP error: ${response.status} - ${response.statusText}`);
+                    const data = await response.json();
+                    if (data.error) throw new Error(`API error: ${data.error.message}`);
+                    if (data.items && data.items.length > 0) {
+                        const stats = data.items[0].statistics;
+                        const videoCard = document.querySelector(`.video-card[data-index="${videos.indexOf(video)}"] .video-stats`);
+                        if (videoCard) {
+                            videoCard.querySelector('p:nth-child(1)').innerHTML = `<i class="fas fa-eye"></i> ${stats.viewCount || 0} Views`;
+                            videoCard.querySelector('p:nth-child(2)').innerHTML = `<i class="fas fa-thumbs-up"></i> ${stats.likeCount || 0} Likes`;
+                            // Handle dislikes (YouTube no longer provides public dislike counts)
+                            videoCard.querySelector('p:nth-child(3)').innerHTML = `<i class="fas fa-thumbs-down"></i> N/A`;
+                        }
+                    } else {
+                        console.error(`No statistics found for video ${videoId}`);
+                    }
+                } catch (error) {
+                    console.error(`Error loading stats for video ${videoId}:`, error);
+                    const videoCard = document.querySelector(`.video-card[data-index="${videos.indexOf(video)}"] .video-stats`);
+                    if (videoCard) {
+                        videoCard.querySelector('p:nth-child(1)').innerHTML = `<i class="fas fa-eye"></i> Failed to load views`;
+                        videoCard.querySelector('p:nth-child(2)').innerHTML = `<i class="fas fa-thumbs-up"></i> Failed to load likes`;
+                        videoCard.querySelector('p:nth-child(3)').innerHTML = `<i class="fas fa-thumbs-down"></i> N/A`;
+                    }
+                }
+            }
+        }
+
+        function trackVisitor() {
+            let visitors = parseInt(localStorage.getItem('siteVisitors') || '0') + 1;
+            localStorage.setItem('siteVisitors', visitors.toString());
+            const siteVisitorsElement = document.getElementById('site-visitors');
+            if (siteVisitorsElement) siteVisitorsElement.textContent = visitors;
+        }
+
+        function displayCounters() {
+            const siteVisitorsElement = document.getElementById('site-visitors');
+            const totalDownloadsElement = document.getElementById('total-downloads');
+            if (siteVisitorsElement) siteVisitorsElement.textContent = localStorage.getItem('siteVisitors') || '0';
+            if (totalDownloadsElement) totalDownloadsElement.textContent = localStorage.getItem('totalDownloads') || '0';
+        }
+
+        function updateNavButtons() {
+            const loginBtn = document.getElementById('login-btn');
+            const accountBtn = document.getElementById('account-btn');
+            if (isLoggedIn) {
+                loginBtn.style.display = 'none';
+                accountBtn.style.display = 'inline-block';
+            } else {
+                loginBtn.style.display = 'inline-block';
+                accountBtn.style.display = 'none';
+            }
+        }
+
+        function toggleLoginForm() {
+            document.getElementById('login-form').style.display = 'block';
+            document.getElementById('signup-form').style.display = 'none';
+            document.getElementById('account-form').style.display = 'none';
+        }
+
+        function toggleSignupForm() {
+            document.getElementById('signup-form').style.display = 'block';
+            document.getElementById('login-form').style.display = 'none';
+            document.getElementById('account-form').style.display = 'none';
+        }
+
+        function toggleAccountForm() {
+            if (isLoggedIn) {
+                document.getElementById('account-form').style.display = 'block';
+                document.getElementById('login-form').style.display = 'none';
+                document.getElementById('signup-form').style.display = 'none';
+                document.getElementById('email-account').value = currentUser.email;
+            } else {
+                toggleLoginForm();
+            }
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('email-login').value;
+            const password = document.getElementById('password-login').value;
+            const errorDiv = document.getElementById('login-error');
+            const users = JSON.parse(localStorage.getItem('users') || '{}');
+            if (users[email] && users[email].password === password) {
+                isLoggedIn = true;
+                currentUser = { email };
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                document.getElementById('login-form').style.display = 'none';
+                updateNavButtons();
+                alert('Login successful!');
+            } else {
+                errorDiv.textContent = 'Invalid email or password.';
+                errorDiv.style.display = 'block';
+                setTimeout(() => errorDiv.style.display = 'none', 3000);
+            }
+        }
+
+        function handleSignup(event) {
+            event.preventDefault();
+            const email = document.getElementById('email-signup').value;
+            const password = document.getElementById('password-signup').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            const errorDiv = document.getElementById('signup-error');
+            if (password !== confirmPassword) {
+                errorDiv.textContent = 'Passwords do not match.';
+                errorDiv.style.display = 'block';
+                setTimeout(() => errorDiv.style.display = 'none', 3000);
+                return;
+            }
+            const users = JSON.parse(localStorage.getItem('users') || '{}');
+            if (users[email]) {
+                errorDiv.textContent = 'Email already registered.';
+                errorDiv.style.display = 'block';
+                setTimeout(() => errorDiv.style.display = 'none', 3000);
+            } else {
+                users[email] = { password };
+                localStorage.setItem('users', JSON.stringify(users));
+                document.getElementById('signup-form').style.display = 'none';
+                toggleLoginForm();
+                alert('Signup successful! Please login.');
+            }
+        }
+
+        function updateAccount(event) {
+            event.preventDefault();
+            const email = document.getElementById('email-account').value;
+            const password = document.getElementById('password-account').value;
+            const errorDiv = document.getElementById('account-error');
+            if (!currentUser) {
+                errorDiv.textContent = 'Please login first.';
+                errorDiv.style.display = 'block';
+                setTimeout(() => errorDiv.style.display = 'none', 3000);
+                return;
+            }
+            const users = JSON.parse(localStorage.getItem('users') || '{}');
+            if (email !== currentUser.email && users[email]) {
+                errorDiv.textContent = 'Email already in use.';
+                errorDiv.style.display = 'block';
+                setTimeout(() => errorDiv.style.display = 'none', 3000);
+                return;
+            }
+            delete users[currentUser.email];
+            users[email] = { password };
+            localStorage.setItem('users', JSON.stringify(users));
+            currentUser = { email };
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            errorDiv.textContent = 'Account updated successfully!';
+            errorDiv.style.color = '#00ff00';
+            errorDiv.style.display = 'block';
+            setTimeout(() => { errorDiv.style.display = 'none'; errorDiv.style.color = '#ff0000'; }, 3000);
+        }
+
+        function viewAccountInfo() {
+            const errorDiv = document.getElementById('account-error');
+            if (currentUser) {
+                alert(`Account Info:\nEmail: ${currentUser.email}`);
+            } else {
+                errorDiv.textContent = 'Please login first.';
+                errorDiv.style.display = 'block';
+                setTimeout(() => errorDiv.style.display = 'none', 3000);
+            }
+        }
+
+        function logout() {
+            isLoggedIn = false;
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            document.getElementById('account-form').style.display = 'none';
+            updateNavButtons();
+            alert('Logged out successfully.');
+        }
+
+        function sendMessage(inputId = 'chat-input', messagesId = 'chat-messages') {
+            const input = document.getElementById(inputId);
+            const messagesDiv = document.getElementById(messagesId);
+            const errorDiv = document.getElementById('chat-error');
+            if (input.value.trim()) {
+                const msg = document.createElement('div');
+                msg.className = 'comment animate-card';
+                msg.innerHTML = `
+                    <img src="https://via.placeholder.com/40" alt="User" class="comment-avatar">
+                    <div class="comment-content">
+                        <strong>${isLoggedIn && currentUser ? currentUser.email : 'Anonymous'}</strong>: ${input.value}
+                        <div class="comment-meta">
+                            <span>${new Date().toLocaleString()}</span>
+                        </div>
+                    </div>
+                `;
+                messagesDiv.appendChild(msg);
+                input.value = '';
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            } else {
+                errorDiv.textContent = 'Please enter a message.';
+                errorDiv.style.display = 'block';
+                setTimeout(() => errorDiv.style.display = 'none', 3000);
+            }
+        }
+    </script>
+</body>
+</html>

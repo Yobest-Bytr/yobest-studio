@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Details - Yobest Studio</title>
+    <link rel="stylesheet" href="styles.css">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2925220406728611" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-kqNfk8EL0Vsx5pqskqQ57pq+BwR55rYwtVmswqLxMQ52R9ETg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-lua.min.js"></script>
+</head>
+<body>
+    <header class="header-animate">
+        <div class="container">
+            <h1 class="title-frame"><a href="index.html" class="site-name">Yobest Studio<span class="highlight"></span></a></h1>
+            <nav class="nav-container">
+                <a href="blog.html" class="nav-btn">Blog</a>
+                <a href="contact.html" class="nav-btn">Contact</a>
+                <a href="index.html" class="nav-btn">Home</a>
+                <a href="ai.html" class="nav-btn">AI Tools</a>
+                <a href="https://discord.gg/jKASqrc7H3" target="_blank" class="btn socialbtn"><i class="fab fa-discord"></i> Discord</a>
+                <a href="https://x.com/Yobest_BYTR" target="_blank" class="btn socialbtn"><i class="fab fa-x"></i> X</a>
+                <a href="#" id="login-btn" class="btn socialbtn" onclick="toggleLoginForm()">Login</a>
+                <a href="#" id="account-btn" class="btn socialbtn" onclick="toggleAccountForm()" style="display: none;">Account</a>
+            </nav>
+        </div>
+    </header>
+
+    <div id="login-form" class="modal">
+        <div class="modal-content auth-modal">
+            <span class="close-btn" onclick="document.getElementById('login-form').style.display='none'">×</span>
+            <h2 class="modal-title">Login</h2>
+            <form id="login-form-content" onsubmit="handleLogin(event)">
+                <input type="email" id="email-login" placeholder="Email" required class="auth-input">
+                <input type="password" id="password-login" placeholder="Password" required class="auth-input">
+                <button type="submit" class="btn actionbtn">Login</button>
+                <p class="or-divider">OR</p>
+                <a href="#" class="btn google-btn"><i class="fab fa-google"></i> Login with Google</a>
+                <p class="auth-link">Not registered? <a href="#" onclick="toggleSignupForm()">Sign Up</a></p>
+                <div id="login-error" class="reaction-text" style="display: none; color: #ff0000;"></div>
+            </form>
+        </div>
+    </div>
+
+    <div id="signup-form" class="modal" style="display: none;">
+        <div class="modal-content auth-modal">
+            <span class="close-btn" onclick="document.getElementById('signup-form').style.display='none'">×</span>
+            <h2 class="modal-title">Sign Up</h2>
+            <form id="signup-form-content" onsubmit="handleSignup(event)">
+                <input type="email" id="email-signup" placeholder="Email" required class="auth-input">
+                <input type="password" id="password-signup" placeholder="Password" required class="auth-input">
+                <input type="password" id="confirm-password" placeholder="Confirm Password" required class="auth-input">
+                <button type="submit" class="btn actionbtn">Sign Up</button>
+                <p class="auth-link">Already registered? <a href="#" onclick="toggleLoginForm()">Login</a></p>
+                <div id="signup-error" class="reaction-text" style="display: none; color: #ff0000;"></div>
+            </form>
+        </div>
+    </div>
+
+    <div id="account-form" class="modal" style="display: none;">
+        <div class="modal-content auth-modal">
+            <span class="close-btn" onclick="document.getElementById('account-form').style.display='none'">×</span>
+            <h2 class="modal-title">Account</h2>
+            <form id="account-form-content" onsubmit="updateAccount(event)">
+                <input type="email" id="email-account" placeholder="Email" required class="auth-input">
+                <input type="password" id="password-account" placeholder="New Password" required class="auth-input">
+                <button type="submit" class="btn actionbtn">Update Account</button>
+                <button type="button" onclick="viewAccountInfo()" class="btn actionbtn">View Info</button>
+                <button type="button" onclick="logout()" class="btn actionbtn">Logout</button>
+                <div id="account-error" class="reaction-text" style="display: none; color: #ff0000;"></div>
+            </form>
+        </div>
+    </div>
+
+    <section class="game-details animate-section" style="background: linear-gradient(135deg, #1a1a3a, #2a2a5a);">
+        <div class="container">
+            <h2 id="game-title" class="title-frame animate-text">Loading...</h2>
+            <div class="video-container">
+                <iframe id="game-video" width="100%" height="315" frameborder="0" allowfullscreen></iframe>
+                <div class="video-stats">
+                    <span id="likes"><i class="fas fa-thumbs-up"></i> Loading likes...</span>
+                    <span id="views"><i class="fas fa-eye"></i> Loading views...</span>
+                </div>
+                <p id="game-description" class="reaction-text animate-text">Loading description...</p>
+                <div class="button-group">
+                    <a id="download-btn" href="#" class="btn actionbtn animate-btn">Verify & Download Game</a>
+                    <a href="index.html" class="btn actionbtn animate-btn">Back to Home</a>
+                </div>
+                <div id="game-error" class="reaction-text" style="display: none; color: #ff0000;"></div>
+            </div>
+            <div class="game-buttons">
+                <a href="https://discord.gg/jKASqrc7H3" target="_blank" class="btn socialbtn animate-btn"><i class="fab fa-discord"></i> Discord</a>
+                <a href="https://x.com/Yobest_BYTR" target="_blank" class="btn socialbtn animate-btn"><i class="fab fa-x"></i> X</a>
+            </div>
+            <div class="comments-section">
+                <h3 class="title-frame animate-text">Comments</h3>
+                <div class="comments-container">
+                    <div class="youtube-comments">
+                        <h4 class="animate-text">YouTube Comments</h4>
+                        <div id="youtube-comments-list"></div>
+                        <div id="youtube-comments-error" class="reaction-text" style="display: none; color: #ff0000;"></div>
+                    </div>
+                    <div class="site-comments">
+                        <h4 class="animate-text">Site Comments</h4>
+                        <div id="site-comments-list"></div>
+                        <div class="button-group" id="comment-input-group" style="display: none;">
+                            <input type="text" id="comment-input" placeholder="Add a comment..." class="chat-input" required>
+                            <button onclick="postComment()">Post</button>
+                        </div>
+                        <div id="site-comments-error" class="reaction-text" style="display: none; color: #ff0000;"></div>
+                    </div>
+                </div>
+                <p class="animate-text">Page Visitors: <span id="page-visitors"></span></p>
+            </div>
+        </div>
+    </section>
+
+    <section class="channel-videos animate-section">
+        <div class="container">
+            <h2 class="title-frame animate-text">More from Yobest Studio</h2>
+            <div class="video-grid" id="video-grid"></div>
+            <div id="channel-videos-error" class="reaction-text" style="display: none; color: #ff0000;"></div>
+        </div>
+    </section>
+
+    <section class="ad-section">
+        <div class="container">
+            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-2925220406728611" data-ad-slot="YYYYYYYYYY" data-ad-format="auto" data-full-width-responsive="true"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+    </section>
+
+    <footer class="animate-section">
+        <div class="container">
+            <p class="animate-text">© 2025 Yobest Studio. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <div id="chat-box" class="animate-section">
+        <h3 class="animate-text"><i class="fas fa-comments"></i> Community Chat</h3>
+        <div id="chat-messages"></div>
+        <div class="button-group">
+            <input type="text" id="chat-input" placeholder="Say something..." class="chat-input">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+        <div id="chat-error" class="reaction-text" style="display: none; color: #ff0000;"></div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            trackVisitor();
+            trackPageVisitors();
+            displayCounters();
+            updateNavButtons();
+            loadGameDetails();
+            updateCommentVisibility();
+        });
+
+        async function loadGameDetails() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const gameId = urlParams.get('id');
+            const videos = JSON.parse(localStorage.getItem('channelVideos') || '[]');
+            const errorDiv = document.getElementById('game-error');
+            const API_KEY = 'AIzaSyChwoHXMqlbmAfeh4lbRUFWx2HjIZ6VV2k'; // Replace with your actual YouTube API key
+
+            if (!gameId || !videos.length || parseInt(gameId) < 0 || parseInt(gameId) >= videos.length) {
+                document.getElementById('game-title').textContent = 'Game Not Found';
+                document.getElementById('game-video').style.display = 'none';
+                document.getElementById('download-btn').style.display = 'none';
+                document.getElementById('game-description').textContent = 'No game data available.';
+                document.getElementById('likes').innerHTML = '<i class="fas fa-thumbs-up"></i> N/A';
+                document.getElementById('views').innerHTML = '<i class="fas fa-eye"></i> N/A';
+                errorDiv.textContent = 'Error: Invalid game ID or no videos loaded.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            const video = videos[parseInt(gameId)];
+            const videoId = video.snippet.resourceId.videoId;
+            const title = video.snippet.title;
+            const description = video.snippet.description || "No description available.";
+
+            document.getElementById('game-title').textContent = title;
+            document.getElementById('game-video').src = `https://www.youtube.com/embed/${videoId}`;
+            document.getElementById('game-description').textContent = description;
+            document.getElementById('download-btn').href = `confirm.html?videoId=${videoId}&title=${encodeURIComponent(title)}`;
+
+            try {
+                const response = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${videoId}&key=${API_KEY}`);
+                if (!response.ok) throw new Error(`HTTP error: ${response.status} - ${response.statusText}`);
+                const data = await response.json();
+                if (data.error) throw new Error(`API error: ${data.error.message}`);
+                if (data.items && data.items.length > 0) {
+                    const stats = data.items[0].statistics;
+                    document.getElementById('likes').innerHTML = `<i class="fas fa-thumbs-up"></i> ${stats.likeCount || 0} Likes`;
+                    document.getElementById('views').innerHTML = `<i class="fas fa-eye"></i> ${stats.viewCount || 0} Views`;
+                } else {
+                    throw new Error('No statistics data returned');
+                }
+            } catch (error) {
+                document.getElementById('likes').innerHTML = '<i class="fas fa-thumbs-up"></i> Failed to load';
+                document.getElementById('views').innerHTML = '<i class="fas fa-eye"></i> Failed to load';
+                errorDiv.textContent = `Error loading stats: ${error.message}. Please check API key or network.`;
+                errorDiv.style.display = 'block';
+                setTimeout(() => errorDiv.style.display = 'none', 3000);
+            }
+
+            loadYouTubeComments(videoId);
+            loadSiteComments(videoId);
+
+            const videoGrid = document.getElementById('video-grid');
+            videos.forEach((item, index) => {
+                if (index !== parseInt(gameId)) {
+                    const card = document.createElement('div');
+                    card.className = 'video-card animate-card';
+                    card.innerHTML = `
+                        <a href="game.html?id=${index}">
+                            <img src="${item.snippet.thumbnails?.medium?.url || 'https://via.placeholder.com/150'}" alt="${item.snippet.title}">
+                            <h3 class="animate-text">${item.snippet.title}</h3>
+                        </a>
+                    `;
+                    videoGrid.appendChild(card);
+                }
+            });
+        }
+
+        function updateCommentVisibility() {
+            const commentInputGroup = document.getElementById('comment-input-group');
+            if (isLoggedIn) {
+                commentInputGroup.style.display = 'flex';
+            } else {
+                commentInputGroup.style.display = 'none';
+            }
+        }
+
+        function loadSiteComments(videoId) {
+            const commentsList = document.getElementById('site-comments-list');
+            let comments = JSON.parse(localStorage.getItem(`comments_${videoId}`) || '[]');
+            commentsList.innerHTML = comments.map(comment => `
+                <div class="comment animate-card" data-comment-id="${comment.timestamp}">
+                    <img src="https://via.placeholder.com/40" alt="User" class="comment-avatar">
+                    <div class="comment-content">
+                        <strong>${comment.user}</strong>: ${comment.text}
+                        <div class="comment-meta">
+                            <span>${new Date(comment.timestamp).toLocaleString()}</span>
+                            ${isLoggedIn && currentUser && comment.user === currentUser.email ? `
+                                <button onclick="editComment('${comment.timestamp}')">Edit</button>
+                                <button onclick="removeComment('${comment.timestamp}')">Remove</button>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function postComment() {
+            if (!isLoggedIn) {
+                const errorDiv = document.getElementById('site-comments-error');
+                errorDiv.textContent = 'Please log in to post a comment.';
+                errorDiv.style.display = 'block';
+                setTimeout(() => errorDiv.style.display = 'none', 3000);
+                return;
+            }
+
+            const videoId = JSON.parse(localStorage.getItem('channelVideos') || '[]')[new URLSearchParams(window.location.search).get('id') || '0']?.snippet.resourceId.videoId;
+            const input = document.getElementById('comment-input');
+            const errorDiv = document.getElementById('site-comments-error');
+            if (input.value.trim()) {
+                let comments = JSON.parse(localStorage.getItem(`comments_${videoId}`) || '[]');
+                comments.push({ text: input.value, timestamp: new Date().toISOString(), user: currentUser.email });
+                localStorage.setItem(`comments_${videoId}`, JSON.stringify(comments));
+                input.value = '';
+                loadSiteComments(videoId);
+            } else {
+                errorDiv.textContent = 'Please enter a comment.';
+                errorDiv.style.display = 'block';
+                setTimeout(() => errorDiv.style.display = 'none', 3000);
+            }
+        }
+
+        function editComment(timestamp) {
+            const videoId = JSON.parse(localStorage.getItem('channelVideos') || '[]')[new URLSearchParams(window.location.search).get('id') || '0']?.snippet.resourceId.videoId;
+            let comments = JSON.parse(localStorage.getItem(`comments_${videoId}`) || '[]');
+            const comment = comments.find(c => c.timestamp === timestamp);
+            if (comment && currentUser && comment.user === currentUser.email) {
+                const newText = prompt('Edit your comment:', comment.text);
+                if (newText) {
+                    comment.text = newText;
+                    localStorage.setItem(`comments_${videoId}`, JSON.stringify(comments));
+                    loadSiteComments(videoId);
+                }
+            }
+        }
+
+        function removeComment(timestamp) {
+            const videoId = JSON.parse(localStorage.getItem('channelVideos') || '[]')[new URLSearchParams(window.location.search).get('id') || '0']?.snippet.resourceId.videoId;
+            let comments = JSON.parse(localStorage.getItem(`comments_${videoId}`) || '[]');
+            const commentIndex = comments.findIndex(c => c.timestamp === timestamp);
+            if (commentIndex !== -1 && currentUser && comments[commentIndex].user === currentUser.email) {
+                comments.splice(commentIndex, 1);
+                localStorage.setItem(`comments_${videoId}`, JSON.stringify(comments));
+                loadSiteComments(videoId);
+            }
+        }
+    </script>
+</body>
+</html>
