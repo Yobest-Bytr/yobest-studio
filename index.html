@@ -11,7 +11,6 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-lua.min.js"></script>
-    <script src="script.js"></script> <!-- Load script.js here to ensure functions and variables are defined before use -->
 </head>
 <body>
     <header class="header-animate">
@@ -159,22 +158,287 @@
         <div id="chat-error" class="reaction-text" style="display: none; color: #ff0000;"></div>
     </div>
 
-    
-    <script src="script.js"></script>
     <script>
+        // Global variables
+        let isLoggedIn = false;
+        let currentUser = null;
+        const API_KEY = 'AIzaSyChwoHXMqlbmAfeh4lbRUFWx2HjIZ6VV2k'; // YouTube Data API key
+        let currentCategory = '';
+
+        // Check login state on page load
         document.addEventListener('DOMContentLoaded', () => {
-            trackVisitor();
-            displayCounters();
-            fetchVideos();
             checkLoginState();
+            loadAccountInfo();
+            trackVisitor();
+            fetchVideos();
+            displayCounters();
             updateNavButtons();
         });
 
+        function openLogin() {
+            document.getElementById('login-form').style.display = 'block';
+        }
+
+        function closeLogin() {
+            document.getElementById('login-form').style.display = 'none';
+        }
+
+        function openAccountSettings() {
+            if (isLoggedIn) {
+                document.getElementById('account-form').style.display = 'block';
+            } else {
+                openLogin();
+            }
+        }
+
+        function closeAccountSettings() {
+            document.getElementById('account-form').style.display = 'none';
+        }
+
+        function checkLoginState() {
+            const savedUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (savedUser) {
+                isLoggedIn = true;
+                currentUser = savedUser;
+                document.getElementById('login-btn').style.display = 'none';
+                document.getElementById('account-btn').style.display = 'inline-block';
+                document.getElementById('account-pic').style.display = 'inline-block';
+                document.getElementById('account-pic').src = savedUser.avatar || 'https://via.placeholder.com/40';
+                document.getElementById('username').value = currentUser.username || currentUser.email.split('@')[0];
+                document.getElementById('email').value = currentUser.email;
+            } else {
+                isLoggedIn = false;
+                currentUser = null;
+                document.getElementById('login-btn').style.display = 'inline-block';
+                document.getElementById('account-btn').style.display = 'none';
+                document.getElementById('account-pic').style.display = 'none';
+            }
+        }
+
+        function loadAccountInfo() {
+            if (currentUser) {
+                document.getElementById('username').value = currentUser.username || currentUser.email.split('@')[0];
+                document.getElementById('email').value = currentUser.email;
+                document.getElementById('avatar-preview').src = currentUser.avatar || 'https://via.placeholder.com/40';
+                document.getElementById('avatar-preview').style.display = currentUser.avatar ? 'block' : 'none';
+            }
+        }
+
+        function authUser() {
+            const email = document.getElementById('email-login').value;
+            const password = document.getElementById('password-login').value;
+            const message = document.getElementById('login-error');
+            const users = JSON.parse(localStorage.getItem('users') || '{}');
+
+            if (users[email] && users[email].password === password) {
+                isLoggedIn = true;
+                currentUser = { email, username: users[email].username || email.split('@')[0], avatar: users[email].avatar };
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+                // Update login history (if account-settings.html is loaded)
+                let logins = JSON.parse(localStorage.getItem('loginHistory') || '[]');
+                logins.unshift({ email: currentUser.email, time: new Date().toLocaleString(), ip: 'Simulated IP' });
+                logins = logins.slice(0, 10); // Keep last 10 logins
+                localStorage.setItem('loginHistory', JSON.stringify(logins));
+
+                closeLogin();
+                updateNavButtons();
+                checkLoginState();
+                message.textContent = 'Login successful!';
+                message.classList.add('animate-success');
+                setTimeout(() => message.textContent = '', 3000);
+            } else if (!users[email]) {
+                // Create new user
+                users[email] = { password, username: email.split('@')[0] };
+                localStorage.setItem('users', JSON.stringify(users));
+                isLoggedIn = true;
+                currentUser = { email, username: email.split('@')[0] };
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+                // Update login history
+                let logins = JSON.parse(localStorage.getItem('loginHistory') || '[]');
+                logins.unshift({ email: currentUser.email, time: new Date().toLocaleString(), ip: 'Simulated IP' });
+                logins = logins.slice(0, 10);
+                localStorage.setItem('loginHistory', JSON.stringify(logins));
+
+                closeLogin();
+                updateNavButtons();
+                checkLoginState();
+                message.textContent = 'Account created and logged in successfully!';
+                message.classList.add('animate-success');
+                setTimeout(() => message.textContent = '', 3000);
+            } else {
+                message.textContent = 'Invalid email or password.';
+                message.classList.add('animate-error');
+                setTimeout(() => message.textContent = '', 3000);
+            }
+        }
+
+        function updateAccount() {
+            const username = document.getElementById('username').value;
+            const file = document.getElementById('avatar-upload').files[0];
+            const message = document.getElementById('account-error');
+
+            if (!currentUser) {
+                message.textContent = 'Please log in first.';
+                message.classList.add('animate-error');
+                setTimeout(() => message.textContent = '', 3000);
+                return;
+            }
+
+            const users = JSON.parse(localStorage.getItem('users') || '{}');
+            currentUser.username = username || currentUser.email.split('@')[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    currentUser.avatar = e.target.result;
+                    users[currentUser.email] = { password: users[currentUser.email].password, username: currentUser.username, avatar: currentUser.avatar };
+                    localStorage.setItem('users', JSON.stringify(users));
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    document.getElementById('account-pic').src = currentUser.avatar;
+                    document.getElementById('avatar-preview').src = currentUser.avatar;
+                    message.textContent = 'Account updated successfully!';
+                    message.classList.add('animate-success');
+                    setTimeout(() => message.textContent = '', 3000);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                users[currentUser.email] = { password: users[currentUser.email].password, username: currentUser.username, avatar: currentUser.avatar };
+                localStorage.setItem('users', JSON.stringify(users));
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                message.textContent = 'Account updated successfully!';
+                message.classList.add('animate-success');
+                setTimeout(() => message.textContent = '', 3000);
+            }
+        }
+
+        function logout() {
+            isLoggedIn = false;
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            document.getElementById('account-form').style.display = 'none';
+            updateNavButtons();
+            checkLoginState();
+            alert('Logged out successfully.');
+        }
+
+        function updateNavButtons() {
+            const loginBtn = document.getElementById('login-btn');
+            const accountBtn = document.getElementById('account-btn');
+            const accountPic = document.getElementById('account-pic');
+            if (isLoggedIn) {
+                loginBtn.style.display = 'none';
+                accountBtn.style.display = 'inline-block';
+                accountPic.style.display = 'inline-block';
+            } else {
+                loginBtn.style.display = 'inline-block';
+                accountBtn.style.display = 'none';
+                accountPic.style.display = 'none';
+            }
+        }
+
+        function trackVisitor() {
+            if (!localStorage.getItem('apiKey') || localStorage.getItem('apiKey') !== API_KEY) {
+                localStorage.setItem('apiKey', API_KEY); // Validate API key
+            }
+
+            let visitors = parseInt(localStorage.getItem('siteVisitors') || '0') + 1;
+            localStorage.setItem('siteVisitors', visitors.toString());
+            const siteVisitorsElement = document.querySelector('#site-visitors');
+            if (siteVisitorsElement) siteVisitorsElement.textContent = visitors;
+        }
+
+        function previewAvatar(input) {
+            const preview = document.getElementById('avatar-preview');
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // AI and Roblox Script Functions
+        function setCategory(category) {
+            currentCategory = category;
+            const input = document.getElementById('script-input');
+            switch (category) {
+                case 'Build':
+                    input.value = 'How do I add background music to my Roblox experience?';
+                    break;
+                case 'Grow':
+                    input.value = 'How do I bring new users to my Roblox experience? Reply and I’ll share what I’m doing so far.';
+                    break;
+                case 'Monetize':
+                    input.value = 'How do Limited avatar items work and what are some tips to sell them?';
+                    break;
+            }
+            input.focus();
+        }
+
+        async function sendToAI() {
+            const input = document.getElementById('script-input').value.trim();
+            const responseDiv = document.getElementById('ai-response');
+            if (input && isLoggedIn) { // Require login for AI access
+                responseDiv.textContent = "Thinking...";
+                responseDiv.classList.add('animate-loading');
+
+                // Simulate AI response (mimic Grok for Roblox Lua code generation)
+                try {
+                    const response = await simulateAIResponse(input, currentCategory);
+                    responseDiv.innerHTML = `<pre class="language-lua"><code>${Prism.highlight(response, Prism.languages.lua, 'lua')}</code></pre>`;
+                    responseDiv.classList.remove('animate-loading');
+                    responseDiv.classList.add('animate-success');
+                } catch (error) {
+                    responseDiv.textContent = "Error generating response. Please try again.";
+                    responseDiv.classList.remove('animate-loading');
+                    responseDiv.classList.add('animate-error');
+                    console.error('AI Response Error:', error);
+                }
+            } else {
+                responseDiv.textContent = isLoggedIn ? "Please enter a question!" : "Please log in to use the AI tool.";
+                responseDiv.classList.add('animate-error');
+                setTimeout(() => responseDiv.textContent = '', 3000);
+            }
+        }
+
+        // Simulated AI response function (replace with real API in production, e.g., xAI Grok API)
+        async function simulateAIResponse(query, category) {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    let response;
+                    switch (category) {
+                        case 'Build':
+                            if (query.includes('background music')) {
+                                response = `To add background music to your Roblox experience:\n1. Use a `Sound` object:\n   - Insert a `Sound` into a part or Workspace.\n   - Set the `SoundId` to a Roblox audio asset ID (e.g., "rbxassetid://123456789").\n   - Play it with `sound:Play()` in a Lua script.\n   Example:\n   ```lua\n   local sound = Instance.new("Sound")\n   sound.SoundId = "rbxassetid://123456789"\n   sound.Parent = game.Workspace\n   sound:Play()\n   ```\n2. Ensure the audio asset is uploaded to Roblox and you have permissions.`;
+                            } else if (query.includes('script')) {
+                                response = `Here's a sample Lua script for Roblox:\n```lua\nlocal part = Instance.new("Part")\npart.Position = Vector3.new(0, 10, 0)\npart.Parent = game.Workspace\npart.Anchored = true\nprint("Part created at position 0, 10, 0")\n````;
+                            } else {
+                                response = `Please specify a Roblox building task. Example: "How do I create a part in Roblox?"\n```lua\nlocal part = Instance.new("Part")\npart.Position = Vector3.new(0, 10, 0)\npart.Parent = game.Workspace\n````;
+                            }
+                            break;
+                        case 'Grow':
+                            response = `To bring new users to your Roblox experience:\n1. Promote on social media (Twitter, Discord, Roblox groups).\n2. Use Roblox Ads (Developer Marketplace) to target users.\n3. Collaborate with other creators for cross-promotion.\n4. Share your progress, and I’ll suggest specifics based on your description.\nExample Lua script for tracking players:\n```lua\nlocal Players = game:GetService("Players")\nPlayers.PlayerAdded:Connect(function(player)\n    print(player.Name .. " joined the game!")\nend)\n````;
+                            break;
+                        case 'Monetize':
+                            response = `Limited avatar items in Roblox:\n- Limited items are rare, time-limited, or have low stock, increasing their value.\n- Tips to sell them:\n  1. List on the Roblox marketplace with a competitive price.\n  2. Promote via Roblox groups, Discord, or Twitter.\n  3. Use scarcity (e.g., “Only 100 left!”) to drive demand.\nExample Lua script to check item ownership:\n```lua\nlocal MarketplaceService = game:GetService("MarketplaceService")\nlocal player = game.Players.LocalPlayer\nlocal itemId = 123456789 -- Replace with your asset ID\nif MarketplaceService:PlayerOwnsAsset(player, itemId) then\n    print("Player owns the limited item!")\nend\n````;
+                            break;
+                        default:
+                            response = `I'm here to help with Roblox! Specify a category (Build, Grow, Monetize) or ask a detailed question. Example Lua script:\n```lua\nlocal part = Instance.new("Part")\npart.Position = Vector3.new(0, 10, 0)\npart.Parent = game.Workspace\n````;
+                    }
+                    resolve(response);
+                }, 2000); // Simulate AI processing delay
+            });
+        }
+
+        // Video and Game Functions
         async function fetchVideos() {
             const reactionDiv = document.getElementById('reaction-text');
             const previewGrid = document.getElementById('preview-grid');
             const errorDiv = document.getElementById('video-error');
-            const API_KEY = 'AIzaSyChwoHXMqlbmAfeh4lbRUFWx2HjIZ6VV2k'; // Replace with your actual YouTube API key
             const CHANNEL_ID = 'UCsV3X3EyEowLEdRW1RileuA'; // Your channel ID
             const CACHE_EXPIRY = 24 * 60 * 60 * 1000; // Cache for 24 hours
 
@@ -247,7 +511,6 @@
         }
 
         async function loadVideoStats(videos) {
-            const API_KEY = 'AIzaSyChwoHXMqlbmAfeh4lbRUFWx2HjIZ6VV2k'; // Replace with your actual YouTube API key
             for (const video of videos) {
                 const videoId = video.snippet.resourceId.videoId;
                 try {
@@ -279,174 +542,11 @@
             }
         }
 
-        function trackVisitor() {
-            let visitors = parseInt(localStorage.getItem('siteVisitors') || '0') + 1;
-            localStorage.setItem('siteVisitors', visitors.toString());
-            const siteVisitorsElement = document.getElementById('site-visitors');
-            if (siteVisitorsElement) siteVisitorsElement.textContent = visitors;
-        }
-
         function displayCounters() {
             const siteVisitorsElement = document.getElementById('site-visitors');
             const totalDownloadsElement = document.getElementById('total-downloads');
             if (siteVisitorsElement) siteVisitorsElement.textContent = localStorage.getItem('siteVisitors') || '0';
             if (totalDownloadsElement) totalDownloadsElement.textContent = localStorage.getItem('totalDownloads') || '0';
-        }
-
-        function updateNavButtons() {
-            const loginBtn = document.getElementById('login-btn');
-            const accountBtn = document.getElementById('account-btn');
-            if (isLoggedIn) {
-                loginBtn.style.display = 'none';
-                accountBtn.style.display = 'inline-block';
-            } else {
-                loginBtn.style.display = 'inline-block';
-                accountBtn.style.display = 'none';
-            }
-        }
-
-        function toggleLoginForm() {
-            document.getElementById('login-form').style.display = 'block';
-            document.getElementById('signup-form').style.display = 'none';
-            document.getElementById('account-form').style.display = 'none';
-        }
-
-        function toggleSignupForm() {
-            document.getElementById('signup-form').style.display = 'block';
-            document.getElementById('login-form').style.display = 'none';
-            document.getElementById('account-form').style.display = 'none';
-        }
-
-        function toggleAccountForm() {
-            if (isLoggedIn) {
-                document.getElementById('account-form').style.display = 'block';
-                document.getElementById('login-form').style.display = 'none';
-                document.getElementById('signup-form').style.display = 'none';
-                document.getElementById('email-account').value = currentUser.email;
-            } else {
-                toggleLoginForm();
-            }
-        }
-
-        function handleLogin(event) {
-            event.preventDefault();
-            const email = document.getElementById('email-login').value;
-            const password = document.getElementById('password-login').value;
-            const errorDiv = document.getElementById('login-error');
-            const users = JSON.parse(localStorage.getItem('users') || '{}');
-            if (users[email] && users[email].password === password) {
-                isLoggedIn = true;
-                currentUser = { email };
-                localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                document.getElementById('login-form').style.display = 'none';
-                updateNavButtons();
-                alert('Login successful!');
-            } else {
-                errorDiv.textContent = 'Invalid email or password.';
-                errorDiv.style.display = 'block';
-                setTimeout(() => errorDiv.style.display = 'none', 3000);
-            }
-        }
-
-        function handleSignup(event) {
-            event.preventDefault();
-            const email = document.getElementById('email-signup').value;
-            const password = document.getElementById('password-signup').value;
-            const confirmPassword = document.getElementById('confirm-password').value;
-            const errorDiv = document.getElementById('signup-error');
-            if (password !== confirmPassword) {
-                errorDiv.textContent = 'Passwords do not match.';
-                errorDiv.style.display = 'block';
-                setTimeout(() => errorDiv.style.display = 'none', 3000);
-                return;
-            }
-            const users = JSON.parse(localStorage.getItem('users') || '{}');
-            if (users[email]) {
-                errorDiv.textContent = 'Email already registered.';
-                errorDiv.style.display = 'block';
-                setTimeout(() => errorDiv.style.display = 'none', 3000);
-            } else {
-                users[email] = { password };
-                localStorage.setItem('users', JSON.stringify(users));
-                document.getElementById('signup-form').style.display = 'none';
-                toggleLoginForm();
-                alert('Signup successful! Please login.');
-            }
-        }
-
-        function updateAccount(event) {
-            event.preventDefault();
-            const email = document.getElementById('email-account').value;
-            const password = document.getElementById('password-account').value;
-            const errorDiv = document.getElementById('account-error');
-            if (!currentUser) {
-                errorDiv.textContent = 'Please login first.';
-                errorDiv.style.display = 'block';
-                setTimeout(() => errorDiv.style.display = 'none', 3000);
-                return;
-            }
-            const users = JSON.parse(localStorage.getItem('users') || '{}');
-            if (email !== currentUser.email && users[email]) {
-                errorDiv.textContent = 'Email already in use.';
-                errorDiv.style.display = 'block';
-                setTimeout(() => errorDiv.style.display = 'none', 3000);
-                return;
-            }
-            delete users[currentUser.email];
-            users[email] = { password };
-            localStorage.setItem('users', JSON.stringify(users));
-            currentUser = { email };
-            localStorage.setItem('currentUser', JSON.stringify(currentUser));
-            errorDiv.textContent = 'Account updated successfully!';
-            errorDiv.style.color = '#00ff00';
-            errorDiv.style.display = 'block';
-            setTimeout(() => { errorDiv.style.display = 'none'; errorDiv.style.color = '#ff0000'; }, 3000);
-        }
-
-        function viewAccountInfo() {
-            const errorDiv = document.getElementById('account-error');
-            if (currentUser) {
-                alert(`Account Info:\nEmail: ${currentUser.email}`);
-            } else {
-                errorDiv.textContent = 'Please login first.';
-                errorDiv.style.display = 'block';
-                setTimeout(() => errorDiv.style.display = 'none', 3000);
-            }
-        }
-
-        function logout() {
-            isLoggedIn = false;
-            currentUser = null;
-            localStorage.removeItem('currentUser');
-            document.getElementById('account-form').style.display = 'none';
-            updateNavButtons();
-            alert('Logged out successfully.');
-        }
-
-        function sendMessage(inputId = 'chat-input', messagesId = 'chat-messages') {
-            const input = document.getElementById(inputId);
-            const messagesDiv = document.getElementById(messagesId);
-            const errorDiv = document.getElementById('chat-error');
-            if (input.value.trim()) {
-                const msg = document.createElement('div');
-                msg.className = 'comment animate-card';
-                msg.innerHTML = `
-                    <img src="https://via.placeholder.com/40" alt="User" class="comment-avatar">
-                    <div class="comment-content">
-                        <strong>${isLoggedIn && currentUser ? currentUser.email : 'Anonymous'}</strong>: ${input.value}
-                        <div class="comment-meta">
-                            <span>${new Date().toLocaleString()}</span>
-                        </div>
-                    </div>
-                `;
-                messagesDiv.appendChild(msg);
-                input.value = '';
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
-            } else {
-                errorDiv.textContent = 'Please enter a message.';
-                errorDiv.style.display = 'block';
-                setTimeout(() => errorDiv.style.display = 'none', 3000);
-            }
         }
     </script>
 </body>
