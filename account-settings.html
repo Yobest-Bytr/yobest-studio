@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Settings - Yobest Studio</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-kqNfk8EL0Vsx5pqskqQ57pq+BwR55rYwtVmswqLxMQ52R9ETg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header-animate">
+        <div class="container">
+            <h1 class="title-frame"><a href="index.html" class="site-name">Yobest Studio<span class="highlight"></span></a></h1>
+            <nav class="nav-container">
+                <a href="blog.html" class="nav-btn">Blog</a>
+                <a href="contact.html" class="nav-btn">Contact</a>
+                <a href="index.html" class="nav-btn">Home</a>
+                <a href="ai.html" class="nav-btn">AI Tools</a>
+                <a href="https://discord.gg/jKASqrc7H3" target="_blank" class="btn socialbtn"><i class="fab fa-discord"></i> Discord</a>
+                <a href="https://x.com/Yobest_BYTR" target="_blank" class="btn socialbtn"><i class="fab fa-x"></i> X</a>
+                <a href="#" id="login-btn" class="btn socialbtn" onclick="toggleLoginForm()" style="display: none;">Login</a>
+                <a href="#" id="account-btn" class="btn socialbtn" onclick="openAccountSettings()" style="display: inline-block;">Account</a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="account-settings animate-section" style="background: linear-gradient(135deg, #1a1a3a, #2a2a5a);">
+        <div class="container">
+            <h2 class="title-frame animate-text">Account Settings</h2>
+            <div class="settings-tabs">
+                <button class="tab-btn active" onclick="openTab('profile')">Profile</button>
+                <button class="tab-btn" onclick="openTab('security')">Security Center</button>
+                <button class="tab-btn" onclick="openTab('logins')">Last Logins</button>
+            </div>
+
+            <div id="profile" class="tab-content active">
+                <form id="profile-form" onsubmit="event.preventDefault(); updateProfile();">
+                    <input type="text" id="username" placeholder="Username" value="" required class="auth-input">
+                    <input type="email" id="email" placeholder="Email" value="" required class="auth-input">
+                    <input type="file" id="avatar-upload" accept="image/*" onchange="previewAvatar(this)" class="auth-input">
+                    <img id="avatar-preview" src="https://via.placeholder.com/40" alt="Avatar Preview" class="avatar-preview" style="display: none; width: 40px; height: 40px; border-radius: 50%; margin: 10px 0;">
+                    <button type="submit" class="btn actionbtn animate-btn">Save Profile</button>
+                </form>
+                <p id="profile-message" class="reaction-text animate-text"></p>
+            </div>
+
+            <div id="security" class="tab-content">
+                <h3 class="title-frame animate-text">Security Center</h3>
+                <form id="security-form" onsubmit="event.preventDefault(); updateSecurity();">
+                    <input type="password" id="current-password" placeholder="Current Password" required class="auth-input">
+                    <input type="password" id="new-password" placeholder="New Password" required class="auth-input">
+                    <input type="password" id="confirm-password" placeholder="Confirm New Password" required class="auth-input">
+                    <button type="submit" class="btn actionbtn animate-btn">Change Password</button>
+                    <button type="button" class="btn actionbtn animate-btn" onclick="verifyEmail()">Verify Email</button>
+                    <p id="security-message" class="reaction-text animate-text"></p>
+                </form>
+            </div>
+
+            <div id="logins" class="tab-content">
+                <h3 class="title-frame animate-text">Last Logins</h3>
+                <div id="login-history" class="login-history">
+                    <p>Loading...</p>
+                </div>
+                <p id="logins-message" class="reaction-text animate-text"></p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="animate-section">
+        <div class="container">
+            <p class="animate-text">© 2025 Yobest Studio. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            updateNavButtons();
+            checkLoginState();
+            loadAccountInfo();
+            loadLoginHistory();
+            openTab('profile'); // Default tab
+        });
+
+        function openTab(tabName) {
+            const tabContents = document.querySelectorAll('.tab-content');
+            const tabButtons = document.querySelectorAll('.tab-btn');
+
+            tabContents.forEach(content => content.classList.remove('active'));
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+
+            document.getElementById(tabName).classList.add('active');
+            document.querySelector(`.tab-btn[onclick="openTab('${tabName}')"]`).classList.add('active');
+        }
+
+        function updateProfile() {
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const message = document.getElementById('profile-message');
+
+            if (!currentUser) {
+                message.textContent = 'Please log in first.';
+                message.classList.add('animate-error');
+                setTimeout(() => message.textContent = '', 3000);
+                return;
+            }
+
+            const users = JSON.parse(localStorage.getItem('users') || '{}');
+            if (users[email] && email !== currentUser.email) {
+                message.textContent = 'Email already registered.';
+                message.classList.add('animate-error');
+                setTimeout(() => message.textContent = '', 3000);
+                return;
+            }
+
+            currentUser.username = username || currentUser.email.split('@')[0]; // Default to email base if no username
+            currentUser.email = email;
+            users[email] = { password: users[currentUser.email].password, username: currentUser.username };
+            delete users[currentUser.email];
+            localStorage.setItem('users', JSON.stringify(users));
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+            message.textContent = 'Profile updated successfully!';
+            message.classList.add('animate-success');
+            setTimeout(() => message.textContent = '', 3000);
+            document.getElementById('account-pic').src = document.getElementById('avatar-preview').src || 'https://via.placeholder.com/40';
+        }
+
+        function updateSecurity() {
+            const currentPassword = document.getElementById('current-password').value;
+            const newPassword = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            const message = document.getElementById('security-message');
+
+            if (!currentUser) {
+                message.textContent = 'Please log in first.';
+                message.classList.add('animate-error');
+                setTimeout(() => message.textContent = '', 3000);
+                return;
+            }
+
+            const users = JSON.parse(localStorage.getItem('users') || '{}');
+            if (users[currentUser.email].password !== currentPassword) {
+                message.textContent = 'Current password is incorrect.';
+                message.classList.add('animate-error');
+                setTimeout(() => message.textContent = '', 3000);
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                message.textContent = 'New passwords do not match.';
+                message.classList.add('animate-error');
+                setTimeout(() => message.textContent = '', 3000);
+                return;
+            }
+
+            users[currentUser.email].password = newPassword;
+            localStorage.setItem('users', JSON.stringify(users));
+
+            message.textContent = 'Password updated successfully!';
+            message.classList.add('animate-success');
+            setTimeout(() => message.textContent = '', 3000);
+        }
+
+        function verifyEmail() {
+            const message = document.getElementById('security-message');
+            if (!currentUser) {
+                message.textContent = 'Please log in first.';
+                message.classList.add('animate-error');
+                setTimeout(() => message.textContent = '', 3000);
+                return;
+            }
+
+            // Simulate sending a verification code (replace with real email service, e.g., SendGrid, Nodemailer)
+            const verificationCode = Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit code
+            localStorage.setItem('verificationCode', verificationCode);
+            localStorage.setItem('verificationEmail', currentUser.email);
+
+            alert(`A verification code has been sent to ${currentUser.email}. Please enter it to verify: ${verificationCode}`);
+            const code = prompt('Enter the verification code:');
+            if (code === verificationCode) {
+                message.textContent = 'Email verified successfully!';
+                message.classList.add('animate-success');
+                localStorage.setItem('emailVerified', 'true');
+            } else {
+                message.textContent = 'Invalid verification code.';
+                message.classList.add('animate-error');
+            }
+            setTimeout(() => message.textContent = '', 3000);
+        }
+
+        function loadLoginHistory() {
+            const historyDiv = document.getElementById('login-history');
+            if (!currentUser) {
+                historyDiv.textContent = 'Please log in to view login history.';
+                return;
+            }
+
+            // Simulate login history (replace with backend storage in production)
+            let logins = JSON.parse(localStorage.getItem('loginHistory') || '[]');
+            if (!logins.length) {
+                logins = [{ email: currentUser.email, time: new Date().toLocaleString(), ip: 'Simulated IP' }];
+                localStorage.setItem('loginHistory', JSON.stringify(logins));
+            }
+
+            historyDiv.innerHTML = logins.map(login => `
+                <p><strong>Email:</strong> ${login.email} | <strong>Time:</strong> ${login.time} | <strong>IP:</strong> ${login.ip}</p>
+            `).join('');
+        }
+
+        function previewAvatar(input) {
+            const preview = document.getElementById('avatar-preview');
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Update existing functions to handle new account settings
+        function checkLoginState() {
+            const savedUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (savedUser) {
+                isLoggedIn = true;
+                currentUser = savedUser;
+                document.getElementById('login-btn').style.display = 'none';
+                document.getElementById('account-btn').style.display = 'inline-block';
+                document.getElementById('account-pic').style.display = 'inline-block';
+                document.getElementById('account-pic').src = savedUser.avatar || 'https://via.placeholder.com/40';
+                loadAccountInfo();
+            } else {
+                isLoggedIn = false;
+                currentUser = null;
+                document.getElementById('login-btn').style.display = 'inline-block';
+                document.getElementById('account-btn').style.display = 'none';
+                document.getElementById('account-pic').style.display = 'none';
+            }
+        }
+
+        function loadAccountInfo() {
+            if (currentUser) {
+                document.getElementById('username').value = currentUser.username || currentUser.email.split('@')[0];
+                document.getElementById('email').value = currentUser.email;
+                document.getElementById('avatar-preview').src = currentUser.avatar || 'https://via.placeholder.com/40';
+                document.getElementById('avatar-preview').style.display = currentUser.avatar ? 'block' : 'none';
+            }
+        }
+
+        // Update handleLogin to save login history
+        function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const message = document.getElementById('auth-message');
+            const users = JSON.parse(localStorage.getItem('users') || '{}');
+
+            if (users[email] && users[email].password === password) {
+                isLoggedIn = true;
+                currentUser = { email, username: users[email].username || email.split('@')[0] };
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+                // Update login history
+                let logins = JSON.parse(localStorage.getItem('loginHistory') || '[]');
+                logins.unshift({ email: currentUser.email, time: new Date().toLocaleString(), ip: 'Simulated IP' });
+                logins = logins.slice(0, 10); // Keep last 10 logins
+                localStorage.setItem('loginHistory', JSON.stringify(logins));
+
+                document.getElementById('login-modal').style.display = 'none';
+                updateNavButtons();
+                checkLoginState();
+                message.textContent = 'Login successful!';
+                message.classList.add('animate-success');
+                setTimeout(() => message.textContent = '', 3000);
+            } else if (!users[email]) {
+                // Create new user if not exists
+                users[email] = { password, username: email.split('@')[0] };
+                localStorage.setItem('users', JSON.stringify(users));
+                isLoggedIn = true;
+                currentUser = { email, username: email.split('@')[0] };
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+                // Update login history
+                let logins = JSON.parse(localStorage.getItem('loginHistory') || '[]');
+                logins.unshift({ email: currentUser.email, time: new Date().toLocaleString(), ip: 'Simulated IP' });
+                logins = logins.slice(0, 10);
+                localStorage.setItem('loginHistory', JSON.stringify(logins));
+
+                document.getElementById('login-modal').style.display = 'none';
+                updateNavButtons();
+                checkLoginState();
+                message.textContent = 'Account created and logged in successfully!';
+                message.classList.add('animate-success');
+                setTimeout(() => message.textContent = '', 3000);
+            } else {
+                message.textContent = 'Invalid email or password.';
+                message.classList.add('animate-error');
+                setTimeout(() => message.textContent = '', 3000);
+            }
+        }
+
+        // Add logout to clear login history if needed
+        function logout() {
+            isLoggedIn = false;
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            document.getElementById('account-settings-modal').style.display = 'none';
+            updateNavButtons();
+            checkLoginState();
+            alert('Logged out successfully.');
+        }
+    </script>
+    <style>
+        .settings-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            background: rgba(255, 0, 255, 0.05);
+            color: #ffffff;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 400;
+            transition: 0.8s;
+            backdrop-filter: blur(15px);
+        }
+
+        .tab-btn.active {
+            background: rgba(0, 212, 255, 0.05);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+        }
+
+        .tab-btn:hover {
+            letter-spacing: 2px;
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.5);
+        }
+
+        .tab-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(to left, rgba(255, 255, 255, 0.15), transparent);
+            transform: skewX(45deg) translateX(0);
+            transition: 0.8s;
+        }
+
+        .tab-btn:hover::before {
+            transform: skewX(45deg) translateX(200%);
+        }
+
+        .tab-btn::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            top: -5px;
+            width: 30px;
+            height: 10px;
+            background: #ff00ff;
+            border-radius: 10px;
+            transition: 0.8s;
+            transition-delay: 0s;
+        }
+
+        .tab-btn:hover::after {
+            top: 0;
+            height: 50%;
+            width: 80%;
+            border-radius: 30px;
+            transition-delay: 0.5s;
+            box-shadow: 0 0 5px #ff00ff,
+                        0 0 15px #ff00ff,
+                        0 0 30px #ff00ff,
+                        0 0 60px #ff00ff;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 20px;
+            background: #1a1a3a;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.2);
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .login-history {
+            max-height: 200px;
+            overflow-y: auto;
+            background: #0a0a2a;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+    </style>
+</body>
+</html>
