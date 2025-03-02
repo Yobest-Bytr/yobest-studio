@@ -2,6 +2,8 @@
 let isLoggedIn = false;
 let currentUser = null;
 const API_KEY = 'AIzaSyChwoHXMqlbmAfeh4lbRUFWx2HjIZ6VV2k'; // Replace with real API key for production
+let accountClickCount = 0; // Track number of clicks on Account button/icon
+const MAX_CLICKS_FOR_SETTINGS = 3; // Best number of clicks to access settings
 
 // Track and save site visitors securely
 function trackVisitor() {
@@ -83,10 +85,30 @@ function closeLogin() {
 }
 
 function openAccountSettings() {
-    if (isLoggedIn) {
-        document.querySelector('#account-settings-modal')?.style.display = 'block';
-    } else {
+    if (!isLoggedIn) {
         openLogin();
+        return;
+    }
+
+    accountClickCount++; // Increment click count
+    const message = document.querySelector('#auth-message') || document.querySelector('#account-message') || document.createElement('div');
+    if (accountClickCount >= MAX_CLICKS_FOR_SETTINGS) {
+        // Navigate to account-settings.html after the best number of clicks
+        window.location.href = 'account-settings.html';
+        accountClickCount = 0; // Reset click count after navigation
+    } else {
+        message.textContent = `Click ${MAX_CLICKS_FOR_SETTINGS - accountClickCount} more time(s) to access settings.`;
+        message.classList.add('reaction-text', 'animate-error');
+        if (message.parentNode) {
+            message.parentNode.appendChild(message);
+        } else {
+            document.body.appendChild(message);
+        }
+        setTimeout(() => {
+            if (message.parentNode) message.parentNode.removeChild(message);
+            message.textContent = '';
+            message.classList.remove('animate-error');
+        }, 3000);
     }
 }
 
@@ -747,7 +769,7 @@ async function handleLikeComment() {
     const maxAttempts = 30; // Increased to 30 seconds for user interaction
     const checkInterval = setInterval(async () => {
         try {
-            const API_KEY = 'AIzaSyChwoHXMqlbmAfeh4lbRUFWx2HjIZ6VV2k'; // Replace with your actual YouTube API key
+            const API_KEY = 'YOUR_API_KEY'; // Replace with your actual YouTube API key
             const response = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${videoId}&key=${API_KEY}`);
             if (response.ok) {
                 const data = await response.json();
