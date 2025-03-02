@@ -164,9 +164,10 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             trackVisitor();
-            displayCounters();
-            fetchVideos();
-            updateNavButtons();
+    displayCounters();
+    fetchVideos();
+    checkLoginState();
+    updateNavButtons(); // Ensure this is called after checkLoginState
         });
 
         async function fetchVideos() {
