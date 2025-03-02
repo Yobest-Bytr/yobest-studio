@@ -11,7 +11,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-lua.min.js"></script>
-    <script src="script.js"></script> <!-- Load script.js here to ensure functions are defined before use -->
+    <script src="script.js"></script> <!-- Load script.js here to ensure functions and variables are defined before use -->
 </head>
 <body>
     <header class="header-animate">
@@ -164,10 +164,10 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             trackVisitor();
-    displayCounters();
-    fetchVideos();
-    checkLoginState();
-    updateNavButtons(); // Ensure this is called after checkLoginState
+            displayCounters();
+            fetchVideos();
+            checkLoginState();
+            updateNavButtons();
         });
 
         async function fetchVideos() {
