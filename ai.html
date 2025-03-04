@@ -5,19 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Tools - Yobest Studio</title>
     <link rel="stylesheet" href="styles.css">
-    <!-- Google AdSense (Replace with your client ID after approval) -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2925220406728611"
-            crossorigin="anonymous"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2925220406728611" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <!-- Poppins Font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
-    <!-- Prism.js for syntax highlighting -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-lua.min.js"></script>
 </head>
 <body>
-    <!-- Header -->
     <header class="header-animate">
         <div class="container">
             <h1 class="title-frame"><a href="index.html" class="site-name">Yobest Studio<span class="highlight"></span></a></h1>
@@ -28,103 +23,95 @@
                 <a href="ai.html" class="nav-btn">AI Tools</a>
                 <a href="https://discord.gg/jKASqrc7H3" target="_blank" class="btn socialbtn"><i class="fab fa-discord"></i> Discord</a>
                 <a href="https://x.com/Yobest_BYTR" target="_blank" class="btn socialbtn"><i class="fab fa-x"></i> X</a>
-                <a href="#" id="login-btn" class="btn socialbtn" onclick="openLogin()" style="display: inline-block;">Login</a>
+                <a href="#" id="login-btn" class="btn socialbtn" onclick="openLogin()">Login</a>
                 <a href="account-settings.html" id="account-btn" class="btn socialbtn" onclick="openAccountSettings()" style="display: none;">Account</a>
                 <img src="https://via.placeholder.com/40" alt="Account" class="account-pic" id="account-pic" style="display: none;" onclick="window.location.href='account-settings.html';">
             </nav>
         </div>
     </header>
 
-    <!-- Login Modal -->
     <div id="login-modal" class="modal">
         <div class="modal-content">
             <span class="close-btn" onclick="closeLogin()">×</span>
             <h2 class="title-frame animate-text">Login or Create Account</h2>
-            <form id="auth-form" onsubmit="event.preventDefault(); authUser(document.getElementById('email').value, document.getElementById('password').value, (message) => { document.getElementById('auth-message').textContent = message; document.getElementById('auth-message').classList.add(message.includes('successful') ? 'animate-success' : 'animate-error'); setTimeout(() => document.getElementById('auth-message').textContent = '', 3000); closeLogin(); })">
+            <form id="login-form" onsubmit="event.preventDefault(); authUser(document.getElementById('login-email').value, document.getElementById('login-password').value, handleAuthResponse)">
                 <button type="button" class="btn google-btn animate-btn" onclick="googleLogin()">Sign in with Google</button>
+                <button type="button" class="btn microsoft-btn animate-btn" onclick="microsoftLogin()">Sign in with Microsoft</button>
                 <div class="or-divider">OR</div>
-                <input type="email" id="email" placeholder="Email" required>
-                <input type="password" id="password" placeholder="Password" required>
+                <input type="email" id="login-email" class="auth-input" placeholder="Email" required>
+                <input type="password" id="login-password" class="auth-input" placeholder="Password" required>
                 <button type="submit" class="btn actionbtn animate-btn">Sign In / Create</button>
+                <p><a href="#" class="auth-link">Forgot Password?</a></p>
+                <p class="auth-link">Don't have an account? <a href="login.html" onclick="closeLogin()">Sign Up</a></p>
+                <div id="login-error" class="reaction-text animate-error" style="display: none;"></div>
             </form>
-            <p id="auth-message" class="reaction-text animate-text"></p>
         </div>
     </div>
 
-    <!-- Account Settings Modal -->
     <div id="account-settings-modal" class="modal">
         <div class="modal-content">
             <span class="close-btn" onclick="closeAccountSettings()">×</span>
             <h2 class="title-frame animate-text">Account Settings</h2>
             <p><a href="account-settings.html" class="btn actionbtn animate-btn">Go to Full Account Settings</a></p>
-            <form id="account-form" onsubmit="event.preventDefault(); updateAccount(document.getElementById('username').value, document.getElementById('email').value, document.getElementById('new-password').value || '', (message) => { document.getElementById('account-message').textContent = message; document.getElementById('account-message').classList.add(message.includes('successful') ? 'animate-success' : 'animate-error'); setTimeout(() => document.getElementById('account-message').textContent = '', 3000); closeAccountSettings(); })">
-                <input type="text" id="username" placeholder="Username" value="" required class="auth-input">
-                <input type="email" id="email" placeholder="Email" required class="auth-input">
-                <input type="password" id="new-password" placeholder="New Password (optional)" class="auth-input">
+            <form id="account-form" onsubmit="event.preventDefault(); updateAccount(document.getElementById('username').value, document.getElementById('email').value, document.getElementById('new-password').value, handleAccountResponse)">
+                <input type="text" id="username" class="auth-input" placeholder="Username" required>
+                <input type="email" id="email" class="auth-input" placeholder="Email" required>
+                <input type="password" id="new-password" class="auth-input" placeholder="New Password (optional)">
                 <input type="file" id="avatar-upload" accept="image/*" onchange="previewAvatar(this)" class="auth-input">
                 <img id="avatar-preview" src="https://via.placeholder.com/40" alt="Avatar Preview" class="avatar-preview" style="display: none; width: 40px; height: 40px; border-radius: 50%; margin: 10px 0;">
                 <button type="submit" class="btn actionbtn animate-btn">Save Changes</button>
+                <button type="button" class="btn actionbtn animate-btn" onclick="logout()">Logout</button>
+                <div id="account-message" class="reaction-text animate-error" style="display: none;"></div>
             </form>
-            <p id="account-message" class="reaction-text animate-text"></p>
         </div>
     </div>
 
-    <!-- AI Tools Section -->
-    <section class="ai-tools animate-section" style="background: #121212;">
+    <section class="ai-tools animate-section">
         <div class="container">
             <h2 class="title-frame animate-text">Assistant</h2>
             <p class="animate-text">Include detailed context and examples in your question to get the best response from our AI Assistant (view guide). Ask a question and start creating in Studio.</p>
             <div class="ai-container" id="ai-tools-content" style="display: none;">
-                <p class="ai-instructions">Tap to ask a question:</p>
+                <p class="ai-instructions animate-text">Tap to ask a question:</p>
                 <div class="ai-categories">
-                    <div class="category-card" data-category="Build" onclick="setCategory('Build')">
+                    <div class="category-card animate-card" data-category="Build" onclick="setCategory('Build')">
                         <i class="fas fa-tools"></i>
-                        <h3>Build</h3>
-                        <p>How do I add background music to my experience?</p>
+                        <h3 class="animate-text">Build</h3>
+                        <p class="animate-text">How do I add background music to my experience?</p>
                     </div>
-                    <div class="category-card" data-category="Grow" onclick="setCategory('Grow')">
+                    <div class="category-card animate-card" data-category="Grow" onclick="setCategory('Grow')">
                         <i class="fas fa-users"></i>
-                        <h3>Grow</h3>
-                        <p>How do I bring new users to my experience? Reply and I'll share what I'm doing so far.</p>
+                        <h3 class="animate-text">Grow</h3>
+                        <p class="animate-text">How do I bring new users to my experience? Reply and I'll share what I'm doing so far.</p>
                     </div>
-                    <div class="category-card" data-category="Monetize" onclick="setCategory('Monetize')">
+                    <div class="category-card animate-card" data-category="Monetize" onclick="setCategory('Monetize')">
                         <i class="fas fa-dollar-sign"></i>
-                        <h3>Monetize</h3>
-                        <p>How do Limited avatar items work and what are some tips to sell them?</p>
+                        <h3 class="animate-text">Monetize</h3>
+                        <p class="animate-text">How do Limited avatar items work and what are some tips to sell them?</p>
                     </div>
-                    <div class="category-card" data-category="ArtificialIntelligence" onclick="setCategory('ArtificialIntelligence')">
+                    <div class="category-card animate-card" data-category="ArtificialIntelligence" onclick="setCategory('ArtificialIntelligence')">
                         <i class="fas fa-robot"></i>
-                        <h3>Artificial Intelligence</h3>
-                        <p>How can I implement AI in my Roblox game?</p>
+                        <h3 class="animate-text">Artificial Intelligence</h3>
+                        <p class="animate-text">How can I implement AI in my Roblox game?</p>
                     </div>
                 </div>
                 <div class="ai-input-group">
-                    <input type="text" id="script-input" placeholder="Ask a question" class="ai-input" spellcheck="false">
-                    <button onclick="sendToAI()" class="btn send-btn animate-btn">Send</button>
+                    <input type="text" id="script-input" class="ai-input" placeholder="Ask a question" spellcheck="false">
+                    <button class="btn send-btn animate-btn" onclick="sendToAI()">Send</button>
                 </div>
-                <p class="ai-disclaimer">Check for accuracy and don’t share personal info</p>
+                <p class="ai-disclaimer animate-text">Check for accuracy and don’t share personal info</p>
                 <div id="ai-response" class="ai-response"></div>
             </div>
-            <p id="ai-login-message" class="animate-text" style="display: block;">Please log in to access AI tools.</p>
+            <p id="ai-login-message" class="reaction-text animate-text" style="display: block;">Please log in to access AI tools.</p>
         </div>
     </section>
 
-    <!-- Inline Ad -->
     <section class="ad-section">
         <div class="container">
-            <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-client="ca-pub-2925220406728611"
-                 data-ad-slot="YYYYYYYYYY"
-                 data-ad-format="auto"
-                 data-full-width-responsive="true"></ins>
-            <script>
-                (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
+            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-2925220406728611" data-ad-slot="YYYYYYYYYY" data-ad-format="auto" data-full-width-responsive="true"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
         </div>
     </section>
 
-    <!-- Footer -->
     <footer class="animate-section">
         <div class="container">
             <p class="animate-text">© 2025 Yobest Studio. All Rights Reserved.</p>
