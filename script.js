@@ -67,10 +67,21 @@ function checkLoginState() {
         isLoggedIn = true;
         currentUser = savedUser;
         updateNavButtons();
+        updateAIState(); // Update AI tool state based on login
     } else {
         isLoggedIn = false;
         currentUser = null;
         updateNavButtons();
+        updateAIState(); // Update AI tool state based on login
+    }
+}
+
+function updateAIState() {
+    const responseDiv = document.getElementById('ai-response');
+    if (responseDiv && !isLoggedIn) {
+        responseDiv.textContent = "Please log in to use the AI tool.";
+        responseDiv.classList.add('animate-error');
+        setTimeout(() => responseDiv.textContent = '', 3000);
     }
 }
 
@@ -81,6 +92,7 @@ function authUser(email, password, callback) {
         currentUser = { email, username: users[email].username || email.split('@')[0], avatar: users[email].avatar || 'https://via.placeholder.com/40' };
         localStorage.setItem('currentUser', JSON.stringify(currentUser));
         updateNavButtons();
+        updateAIState(); // Update AI state after login
         callback({ success: true, message: 'Login successful!' });
     } else if (!users[email]) {
         users[email] = { password, username: email.split('@')[0], avatar: 'https://via.placeholder.com/40' };
@@ -89,6 +101,7 @@ function authUser(email, password, callback) {
         currentUser = { email, username: email.split('@')[0], avatar: 'https://via.placeholder.com/40' };
         localStorage.setItem('currentUser', JSON.stringify(currentUser));
         updateNavButtons();
+        updateAIState(); // Update AI state after login
         callback({ success: true, message: 'Account created and logged in successfully!' });
     } else {
         callback({ success: false, message: 'Invalid email or password.' });
@@ -123,6 +136,7 @@ function logout() {
     currentUser = null;
     localStorage.removeItem('currentUser');
     updateNavButtons();
+    updateAIState(); // Update AI state after logout
     alert('Logged out successfully.');
 }
 
@@ -648,7 +662,9 @@ function handlePageTasks() {
         updateVideoCommentVisibility();
         updateSiteCommentVisibility();
     } else if (path.includes('ai.html')) {
-        // Handled by user interaction via onclick
+        trackVisitor();
+        displayStats();
+        checkLoginState(); // Ensure login state is checked on AI page load
     } else if (path.includes('confirm.html')) {
         // Handled by user interaction via onclick
     } else if (path.includes('login.html')) {
