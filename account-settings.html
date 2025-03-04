@@ -22,7 +22,7 @@
                 <a href="https://x.com/Yobest_BYTR" target="_blank" class="btn socialbtn"><i class="fab fa-x"></i> X</a>
                 <a href="#" id="login-btn" class="btn socialbtn" onclick="openLogin()" style="display: inline-block;">Login</a>
                 <a href="#" id="account-btn" class="btn socialbtn" onclick="openAccountSettings()" style="display: none;">Account</a>
-                <img src="https://via.placeholder.com/40" alt="Account" class="account-pic" id="account-pic" style="display: none;" onclick="openAccountSettings()">
+                <img src="https://via.placeholder.com/40" alt="Account" class="account-pic" id="account-pic" style="display: none;" onclick="window.location.href='account-settings.html';">
             </nav>
         </div>
     </header>
@@ -30,10 +30,10 @@
     <section class="account-settings animate-section">
         <div class="container">
             <h2 class="title-frame animate-text">Account Settings</h2>
+            <p class="animate-text">Site Visitors: <span id="site-visitors">0</span> | Total Downloads: <span id="total-downloads">0</span></p>
             <div class="settings-tabs">
                 <button class="tab-btn" onclick="openTab('profile')">Profile</button>
                 <button class="tab-btn" onclick="openTab('security')">Security</button>
-                <button class="tab-btn" onclick="openTab('logins')">Login History</button>
             </div>
             <div id="profile" class="tab-content active">
                 <form onsubmit="event.preventDefault(); updateProfile();">
@@ -51,13 +51,8 @@
                     <input type="password" id="new-password" placeholder="New Password" required class="auth-input">
                     <input type="password" id="confirm-password" placeholder="Confirm New Password" required class="auth-input">
                     <button type="submit" class="btn actionbtn animate-btn">Update Password</button>
-                    <button type="button" onclick="verifyEmail()" class="btn actionbtn animate-btn">Verify Email</button>
                     <p id="security-message" class="reaction-text animate-text"></p>
                 </form>
-            </div>
-            <div id="logins" class="tab-content">
-                <div id="login-history"></div>
-                <button type="button" onclick="loadLoginHistory()" class="btn actionbtn animate-btn">Refresh History</button>
             </div>
             <button type="button" onclick="logout()" class="btn actionbtn animate-btn">Logout</button>
         </div>
@@ -85,7 +80,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             checkLoginState();
             loadAccountInfo();
-            loadLoginHistory();
+            displayCounters(); // Display site visitors and total downloads
         });
 
         function openLogin() {
@@ -97,15 +92,11 @@
         }
 
         function openAccountSettings() {
-            if (isLoggedIn) {
-                // No modal needed here; this page is the settings page
-            } else {
-                openLogin();
-            }
+            // This function is not needed here as the page is already account-settings
         }
 
         function closeAccountSettings() {
-            // No modal to close here; this is the settings page
+            // No modal to close here
         }
 
         function checkLoginState() {
@@ -136,10 +127,11 @@
             }
         }
 
-        function authUser() {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const message = document.getElementById('auth-message');
+        function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('email-login').value;
+            const password = document.getElementById('password-login').value;
+            const message = document.getElementById('login-error');
             const users = JSON.parse(localStorage.getItem('users') || '{}');
 
             if (users[email] && users[email].password === password) {
@@ -155,10 +147,10 @@
                 setTimeout(() => message.textContent = '', 3000);
             } else if (!users[email]) {
                 // Create new user
-                users[email] = { password, username: email.split('@')[0] };
+                users[email] = { password, username: email.split('@')[0], avatar: 'https://via.placeholder.com/40' };
                 localStorage.setItem('users', JSON.stringify(users));
                 isLoggedIn = true;
-                currentUser = { email, username: email.split('@')[0] };
+                currentUser = { email, username: email.split('@')[0], avatar: 'https://via.placeholder.com/40' };
                 localStorage.setItem('currentUser', JSON.stringify(currentUser));
 
                 closeLogin();
@@ -258,48 +250,6 @@
             setTimeout(() => message.textContent = '', 3000);
         }
 
-        function verifyEmail() {
-            const message = document.getElementById('security-message');
-            if (!currentUser) {
-                message.textContent = 'Please log in first.';
-                message.classList.add('animate-error');
-                setTimeout(() => message.textContent = '', 3000);
-                return;
-            }
-
-            // Simulate sending a verification code (static HTML approach, no API)
-            const verificationCode = Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit code
-            alert(`A verification code has been sent to ${currentUser.email}. Please enter it to verify: ${verificationCode}`);
-            const code = prompt('Enter the verification code:');
-            if (code === verificationCode) {
-                message.textContent = 'Email verified successfully!';
-                message.classList.add('animate-success');
-            } else {
-                message.textContent = 'Invalid verification code.';
-                message.classList.add('animate-error');
-            }
-            setTimeout(() => message.textContent = '', 3000);
-        }
-
-        function loadLoginHistory() {
-            const historyDiv = document.getElementById('login-history');
-            if (!currentUser) {
-                historyDiv.textContent = 'Please log in to view login history.';
-                return;
-            }
-
-            // Static login history (no JavaScript for dynamic fetching)
-            let logins = JSON.parse(localStorage.getItem('loginHistory') || '[]');
-            if (!logins.length) {
-                logins = [{ email: currentUser.email, time: new Date().toLocaleString(), ip: 'Simulated IP' }];
-                localStorage.setItem('loginHistory', JSON.stringify(logins));
-            }
-
-            historyDiv.innerHTML = logins.map(login => `
-                <p><strong>Email:</strong> ${login.email} | <strong>Time:</strong> ${login.time} | <strong>IP:</strong> ${login.ip}</p>
-            `).join('');
-        }
-
         function logout() {
             isLoggedIn = false;
             currentUser = null;
@@ -334,6 +284,14 @@
                 reader.onload = function(e) {
                     preview.src = e.target.result;
                     preview.style.display = 'block';
+                    if (currentUser) {
+                        currentUser.avatar = e.target.result;
+                        const users = JSON.parse(localStorage.getItem('users') || '{}');
+                        users[currentUser.email].avatar = currentUser.avatar;
+                        localStorage.setItem('users', JSON.stringify(users));
+                        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                        document.getElementById('account-pic').src = currentUser.avatar;
+                    }
                 };
                 reader.readAsDataURL(file);
             }
@@ -348,6 +306,26 @@
 
             document.getElementById(tabName).classList.add('active');
             document.querySelector(`.tab-btn[onclick="openTab('${tabName}')"]`).classList.add('active');
+        }
+
+        // Track and display site visitors and total downloads
+        function trackVisitor() {
+            let visitors = parseInt(localStorage.getItem('siteVisitors') || '0') + 1;
+            localStorage.setItem('siteVisitors', visitors.toString());
+            displayCounters();
+        }
+
+        function trackDownload() {
+            let downloads = parseInt(localStorage.getItem('totalDownloads') || '0') + 1;
+            localStorage.setItem('totalDownloads', downloads.toString());
+            displayCounters();
+        }
+
+        function displayCounters() {
+            const siteVisitorsElement = document.getElementById('site-visitors');
+            const totalDownloadsElement = document.getElementById('total-downloads');
+            if (siteVisitorsElement) siteVisitorsElement.textContent = localStorage.getItem('siteVisitors') || '0';
+            if (totalDownloadsElement) totalDownloadsElement.textContent = localStorage.getItem('totalDownloads') || '0';
         }
     </script>
 </body>
