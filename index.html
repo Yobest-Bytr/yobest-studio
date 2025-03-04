@@ -20,7 +20,7 @@
                 <a href="ai.html" class="nav-btn">AI Tools</a>
                 <a href="https://discord.gg/jKASqrc7H3" target="_blank" class="btn socialbtn"><i class="fab fa-discord"></i> Discord</a>
                 <a href="https://x.com/Yobest_BYTR" target="_blank" class="btn socialbtn"><i class="fab fa-x"></i> X</a>
-                <a href="#" id="login-btn" class="btn socialbtn" onclick="openLogin()" style="display: inline-block;">Login</a>
+                <a href="#" id="login-btn" class="btn socialbtn" onclick="openLogin()">Login</a>
                 <a href="account-settings.html" id="account-btn" class="btn socialbtn" onclick="openAccountSettings()" style="display: none;">Account</a>
                 <img src="https://via.placeholder.com/40" alt="Account" class="account-pic" id="account-pic" style="display: none;" onclick="window.location.href='account-settings.html';">
             </nav>
@@ -31,7 +31,7 @@
         <div class="modal-content auth-modal">
             <span class="close-btn" onclick="closeLogin()">×</span>
             <h2 class="modal-title">Login</h2>
-            <form id="login-form-content" onsubmit="handleLogin(event)">
+            <form id="login-form-content" onsubmit="event.preventDefault(); authUser(document.getElementById('email-login').value, document.getElementById('password-login').value, (message) => { document.getElementById('login-error').textContent = message; document.getElementById('login-error').classList.add(message.includes('successful') ? 'animate-success' : 'animate-error'); setTimeout(() => document.getElementById('login-error').textContent = '', 3000); closeLogin(); })">
                 <input type="email" id="email-login" placeholder="Email" required class="auth-input">
                 <input type="password" id="password-login" placeholder="Password" required class="auth-input">
                 <button type="submit" class="btn actionbtn">Login</button>
@@ -47,7 +47,7 @@
         <div class="modal-content auth-modal">
             <span class="close-btn" onclick="document.getElementById('signup-form').style.display='none'">×</span>
             <h2 class="modal-title">Sign Up</h2>
-            <form id="signup-form-content" onsubmit="handleSignup(event)">
+            <form id="signup-form-content" onsubmit="event.preventDefault(); authUser(document.getElementById('email-signup').value, document.getElementById('password-signup').value, (message) => { document.getElementById('signup-error').textContent = message; document.getElementById('signup-error').classList.add(message.includes('successful') ? 'animate-success' : 'animate-error'); setTimeout(() => document.getElementById('signup-error').textContent = '', 3000); document.getElementById('signup-form').style.display='none'; openLogin(); })">
                 <input type="email" id="email-signup" placeholder="Email" required class="auth-input">
                 <input type="password" id="password-signup" placeholder="Password" required class="auth-input">
                 <input type="password" id="confirm-password" placeholder="Confirm Password" required class="auth-input">
@@ -62,7 +62,7 @@
         <div class="modal-content auth-modal">
             <span class="close-btn" onclick="document.getElementById('account-form').style.display='none'">×</span>
             <h2 class="modal-title">Account</h2>
-            <form id="account-form-content" onsubmit="updateAccount(event)">
+            <form id="account-form-content" onsubmit="event.preventDefault(); updateAccount(document.getElementById('email-account').value, document.getElementById('password-account').value, (message) => { document.getElementById('account-error').textContent = message; document.getElementById('account-error').classList.add(message.includes('successful') ? 'animate-success' : 'animate-error'); setTimeout(() => document.getElementById('account-error').textContent = '', 3000); document.getElementById('account-form').style.display='none'; })">
                 <input type="email" id="email-account" placeholder="Email" required class="auth-input">
                 <input type="password" id="password-account" placeholder="New Password" required class="auth-input">
                 <button type="submit" class="btn actionbtn">Update Account</button>
@@ -93,8 +93,22 @@
         <div class="container">
             <h2 class="title-frame animate-text">Game Previews</h2>
             <div id="reaction-text" class="reaction-text animate-text"></div>
-            <div class="video-grid" id="preview-grid"></div>
-            <p id="video-error" class="reaction-text animate-text" style="display: none; color: #ff0000;"></p>
+            <div class="video-grid" id="preview-grid">
+                <!-- Static video cards (no JavaScript for fetching, use cached or manual data) -->
+                <div class="video-card animate-card">
+                    <a href="game.html?id=1">
+                        <img src="https://via.placeholder.com/150" alt="Game Preview 1">
+                        <div class="video-stats">
+                            <p><i class="fas fa-eye"></i> 1,000 Views</p>
+                            <p><i class="fas fa-thumbs-up"></i> 500 Likes</p>
+                            <p><i class="fas fa-thumbs-down"></i> N/A</p>
+                        </div>
+                        <h3 class="animate-text">Game 1</h3>
+                    </a>
+                </div>
+                <!-- Add more static cards as needed -->
+            </div>
+            <p id="video-error" class="reaction-text animate-text" style="display: none; color: #ff0000;">Error: Videos not available. Check network or manual update needed.</p>
         </div>
     </section>
 
@@ -145,221 +159,9 @@
         </div>
     </footer>
 
+    <script src="script.js"></script>
     <script>
-        // Global variables
-        let isLoggedIn = false;
-        let currentUser = null;
-
-        // Check login state on page load
-        document.addEventListener('DOMContentLoaded', () => {
-            checkLoginState();
-            fetchVideos(); // Fetch videos on page load
-            trackVisitor(); // Track site visitors on page load
-            displayCounters(); // Display site visitors and total downloads
-        });
-
-        function openLogin() {
-            document.getElementById('login-form').style.display = 'block';
-        }
-
-        function closeLogin() {
-            document.getElementById('login-form').style.display = 'none';
-        }
-
-        function openAccountSettings() {
-            if (isLoggedIn) {
-                window.location.href = 'account-settings.html';
-            } else {
-                openLogin();
-            }
-        }
-
-        function closeAccountSettings() {
-            document.getElementById('account-form').style.display = 'none';
-        }
-
-        function checkLoginState() {
-            const savedUser = JSON.parse(localStorage.getItem('currentUser'));
-            if (savedUser) {
-                isLoggedIn = true;
-                currentUser = savedUser;
-                document.getElementById('login-btn').style.display = 'none';
-                document.getElementById('account-btn').style.display = 'inline-block';
-                document.getElementById('account-pic').style.display = 'inline-block';
-                document.getElementById('account-pic').src = savedUser.avatar || 'https://via.placeholder.com/40';
-            } else {
-                isLoggedIn = false;
-                currentUser = null;
-                document.getElementById('login-btn').style.display = 'inline-block';
-                document.getElementById('account-btn').style.display = 'none';
-                document.getElementById('account-pic').style.display = 'none';
-            }
-        }
-
-        function handleLogin(event) {
-            event.preventDefault();
-            const email = document.getElementById('email-login').value;
-            const password = document.getElementById('password-login').value;
-            const message = document.getElementById('login-error');
-            const users = JSON.parse(localStorage.getItem('users') || '{}');
-
-            if (users[email] && users[email].password === password) {
-                isLoggedIn = true;
-                currentUser = { email, username: users[email].username || email.split('@')[0], avatar: users[email].avatar };
-                localStorage.setItem('currentUser', JSON.stringify(currentUser));
-
-                closeLogin();
-                updateNavButtons();
-                checkLoginState();
-                message.textContent = 'Login successful!';
-                message.classList.add('animate-success');
-                setTimeout(() => message.textContent = '', 3000);
-            } else if (!users[email]) {
-                // Create new user
-                users[email] = { password, username: email.split('@')[0], avatar: 'https://via.placeholder.com/40' };
-                localStorage.setItem('users', JSON.stringify(users));
-                isLoggedIn = true;
-                currentUser = { email, username: email.split('@')[0], avatar: 'https://via.placeholder.com/40' };
-                localStorage.setItem('currentUser', JSON.stringify(currentUser));
-
-                closeLogin();
-                updateNavButtons();
-                checkLoginState();
-                message.textContent = 'Account created and logged in successfully!';
-                message.classList.add('animate-success');
-                setTimeout(() => message.textContent = '', 3000);
-            } else {
-                message.textContent = 'Invalid email or password.';
-                message.classList.add('animate-error');
-                setTimeout(() => message.textContent = '', 3000);
-            }
-        }
-
-        function handleSignup(event) {
-            event.preventDefault();
-            const email = document.getElementById('email-signup').value;
-            const password = document.getElementById('password-signup').value;
-            const confirmPassword = document.getElementById('confirm-password').value;
-            const message = document.getElementById('signup-error');
-            if (password !== confirmPassword) {
-                message.textContent = 'Passwords do not match.';
-                message.classList.add('animate-error');
-                setTimeout(() => message.textContent = '', 3000);
-                return;
-            }
-            const users = JSON.parse(localStorage.getItem('users') || '{}');
-            if (users[email]) {
-                message.textContent = 'Email already registered.';
-                message.classList.add('animate-error');
-                setTimeout(() => message.textContent = '', 3000);
-            } else {
-                users[email] = { password, username: email.split('@')[0], avatar: 'https://via.placeholder.com/40' };
-                localStorage.setItem('users', JSON.stringify(users));
-                document.getElementById('signup-form').style.display = 'none';
-                openLogin();
-                message.textContent = 'Signup successful! Please login.';
-                message.classList.add('animate-success');
-                setTimeout(() => message.textContent = '', 3000);
-            }
-        }
-
-        function updateAccount(event) {
-            event.preventDefault();
-            const email = document.getElementById('email-account').value;
-            const password = document.getElementById('password-account').value;
-            const message = document.getElementById('account-error');
-            if (!currentUser) {
-                message.textContent = 'Please log in first.';
-                message.classList.add('animate-error');
-                setTimeout(() => message.textContent = '', 3000);
-                return;
-            }
-            const users = JSON.parse(localStorage.getItem('users') || '{}');
-            if (email !== currentUser.email && users[email]) {
-                message.textContent = 'Email already in use.';
-                message.classList.add('animate-error');
-                setTimeout(() => message.textContent = '', 3000);
-                return;
-            }
-            delete users[currentUser.email];
-            users[email] = { password, username: currentUser.username, avatar: currentUser.avatar || 'https://via.placeholder.com/40' };
-            localStorage.setItem('users', JSON.stringify(users));
-            currentUser = { email, username: currentUser.username, avatar: currentUser.avatar || 'https://via.placeholder.com/40' };
-            localStorage.setItem('currentUser', JSON.stringify(currentUser));
-            message.textContent = 'Account updated successfully!';
-            message.classList.add('animate-success');
-            setTimeout(() => message.textContent = '', 3000);
-            document.getElementById('account-form').style.display = 'none';
-        }
-
-        function viewAccountInfo() {
-            const message = document.getElementById('account-error');
-            if (currentUser) {
-                alert(`Account Info:\nEmail: ${currentUser.email}\nUsername: ${currentUser.username || currentUser.email.split('@')[0]}\nAvatar: ${currentUser.avatar || 'Default'}`);
-            } else {
-                message.textContent = 'Please login first.';
-                message.classList.add('animate-error');
-                setTimeout(() => message.textContent = '', 3000);
-            }
-        }
-
-        function logout() {
-            isLoggedIn = false;
-            currentUser = null;
-            localStorage.removeItem('currentUser');
-            document.getElementById('account-form').style.display = 'none';
-            updateNavButtons();
-            checkLoginState();
-            alert('Logged out successfully.');
-        }
-
-        function updateNavButtons() {
-            const loginBtn = document.getElementById('login-btn');
-            const accountBtn = document.getElementById('account-btn');
-            const accountPic = document.getElementById('account-pic');
-            if (isLoggedIn) {
-                loginBtn.style.display = 'none';
-                accountBtn.style.display = 'inline-block';
-                accountPic.style.display = 'inline-block';
-            } else {
-                loginBtn.style.display = 'inline-block';
-                accountBtn.style.display = 'none';
-                accountPic.style.display = 'none';
-            }
-        }
-
-        function previewAvatar(input) {
-            const preview = document.getElementById('avatar-preview');
-            const file = input.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    preview.src = e.target.result;
-                    preview.style.display = 'block';
-                    if (currentUser) {
-                        currentUser.avatar = e.target.result;
-                        const users = JSON.parse(localStorage.getItem('users') || '{}');
-                        users[currentUser.email].avatar = currentUser.avatar;
-                        localStorage.setItem('users', JSON.stringify(users));
-                        localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                        document.getElementById('account-pic').src = currentUser.avatar;
-                    }
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        function toggleSignupForm() {
-            document.getElementById('login-form').style.display = 'none';
-            document.getElementById('signup-form').style.display = 'block';
-        }
-
-        function toggleLoginForm() {
-            document.getElementById('signup-form').style.display = 'none';
-            document.getElementById('login-form').style.display = 'block';
-        }
-
-        // Track and display site visitors and total downloads
+        // Minimal inline JavaScript for non-login tasks (site stats and video simulation)
         function trackVisitor() {
             let visitors = parseInt(localStorage.getItem('siteVisitors') || '0') + 1;
             localStorage.setItem('siteVisitors', visitors.toString());
@@ -373,12 +175,9 @@
         }
 
         function displayCounters() {
-            const siteVisitorsElement = document.getElementById('site-visitors');
-            const totalDownloadsElement = document.getElementById('total-downloads');
-            if (siteVisitorsElement) siteVisitorsElement.textContent = localStorage.getItem('siteVisitors') || '0';
-            if (totalDownloadsElement) totalDownloadsElement.textContent = localStorage.getItem('totalDownloads') || '0';
+            document.getElementById('site-visitors').textContent = localStorage.getItem('siteVisitors') || '0';
+            document.getElementById('total-downloads').textContent = localStorage.getItem('totalDownloads') || '0';
         }
-
         // Video and Game Functions
         async function fetchVideos() {
             const reactionDiv = document.querySelector('#reaction-text');
@@ -488,6 +287,9 @@
                 }
             }
         }
+        // Call on page load
+        trackVisitor();
+        displayCounters();
     </script>
 </body>
 </html>
