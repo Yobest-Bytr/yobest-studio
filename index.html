@@ -8,6 +8,9 @@
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2925220406728611" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-kqNfk8EL0Vsx5pqskqQ57pq+BwR55rYwtVmswqLxMQ52R9ETg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-lua.min.js"></script>
 </head>
 <body>
     <header class="header-animate">
@@ -27,57 +30,45 @@
         </div>
     </header>
 
-    <div id="login-form" class="modal">
-        <div class="modal-content auth-modal">
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
             <span class="close-btn" onclick="closeLogin()">×</span>
-            <h2 class="modal-title">Login</h2>
-            <form id="login-form-content" onsubmit="event.preventDefault(); authUser(document.getElementById('email-login').value, document.getElementById('password-login').value, (message) => { document.getElementById('login-error').textContent = message; document.getElementById('login-error').classList.add(message.includes('successful') ? 'animate-success' : 'animate-error'); setTimeout(() => document.getElementById('login-error').textContent = '', 3000); closeLogin(); })">
-                <input type="email" id="email-login" placeholder="Email" required class="auth-input">
-                <input type="password" id="password-login" placeholder="Password" required class="auth-input">
-                <button type="submit" class="btn actionbtn">Login</button>
-                <p class="or-divider">OR</p>
-                <a href="#" class="btn google-btn" onclick="googleLogin()">Sign in with Google</a>
-                <p class="auth-link">Not registered? <a href="login.html" onclick="closeLogin()">Sign Up</a></p>
-                <div id="login-error" class="reaction-text" style="display: none; color: #ff0000;"></div>
+            <h2 class="title-frame animate-text">Login or Create Account</h2>
+            <form id="login-form" onsubmit="event.preventDefault(); authUser(document.getElementById('login-email').value, document.getElementById('login-password').value, handleAuthResponse)">
+                <button type="button" class="btn google-btn animate-btn" onclick="googleLogin()">Sign in with Google</button>
+                <button type="button" class="btn microsoft-btn animate-btn" onclick="microsoftLogin()">Sign in with Microsoft</button>
+                <div class="or-divider">OR</div>
+                <input type="email" id="login-email" class="auth-input" placeholder="Email" required>
+                <input type="password" id="login-password" class="auth-input" placeholder="Password" required>
+                <button type="submit" class="btn actionbtn animate-btn">Sign In / Create</button>
+                <p><a href="#" class="auth-link">Forgot Password?</a></p>
+                <p class="auth-link">Don't have an account? <a href="login.html" onclick="closeLogin()">Sign Up</a></p>
+                <div id="login-error" class="reaction-text animate-error" style="display: none;"></div>
             </form>
         </div>
     </div>
 
-    <div id="signup-form" class="modal" style="display: none;">
-        <div class="modal-content auth-modal">
-            <span class="close-btn" onclick="document.getElementById('signup-form').style.display='none'">×</span>
-            <h2 class="modal-title">Sign Up</h2>
-            <form id="signup-form-content" onsubmit="event.preventDefault(); authUser(document.getElementById('username-signup').value, document.getElementById('email-signup').value, document.getElementById('password-signup').value, (message) => { document.getElementById('signup-error').textContent = message; document.getElementById('signup-error').classList.add(message.includes('successful') ? 'animate-success' : 'animate-error'); setTimeout(() => document.getElementById('signup-error').textContent = '', 3000); document.getElementById('signup-form').style.display='none'; openLogin(); })">
-                <input type="text" id="username-signup" placeholder="Username" required class="auth-input">
-                <input type="email" id="email-signup" placeholder="Email" required class="auth-input">
-                <input type="password" id="password-signup" placeholder="Password" required class="auth-input">
-                <input type="password" id="confirm-password" placeholder="Confirm Password" required class="auth-input">
-                <button type="submit" class="btn actionbtn">Sign Up</button>
-                <p class="auth-link">Already registered? <a href="#" onclick="toggleLoginForm()">Login</a></p>
-                <div id="signup-error" class="reaction-text" style="display: none; color: #ff0000;"></div>
+    <div id="account-settings-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeAccountSettings()">×</span>
+            <h2 class="title-frame animate-text">Account Settings</h2>
+            <p><a href="account-settings.html" class="btn actionbtn animate-btn">Go to Full Account Settings</a></p>
+            <form id="account-form" onsubmit="event.preventDefault(); updateAccount(document.getElementById('username').value, document.getElementById('email').value, document.getElementById('new-password').value, handleAccountResponse)">
+                <input type="text" id="username" class="auth-input" placeholder="Username" required>
+                <input type="email" id="email" class="auth-input" placeholder="Email" required>
+                <input type="password" id="new-password" class="auth-input" placeholder="New Password (optional)">
+                <input type="file" id="avatar-upload" accept="image/*" onchange="previewAvatar(this)" class="auth-input">
+                <img id="avatar-preview" src="https://via.placeholder.com/40" alt="Avatar Preview" class="avatar-preview" style="display: none; width: 40px; height: 40px; border-radius: 50%; margin: 10px 0;">
+                <button type="submit" class="btn actionbtn animate-btn">Save Changes</button>
+                <button type="button" class="btn actionbtn animate-btn" onclick="logout()">Logout</button>
+                <div id="account-message" class="reaction-text animate-error" style="display: none;"></div>
             </form>
         </div>
     </div>
 
-    <div id="account-form" class="modal" style="display: none;">
-        <div class="modal-content auth-modal">
-            <span class="close-btn" onclick="document.getElementById('account-form').style.display='none'">×</span>
-            <h2 class="modal-title">Account</h2>
-            <form id="account-form-content" onsubmit="event.preventDefault(); updateAccount(document.getElementById('username-account').value, document.getElementById('email-account').value, document.getElementById('password-account').value, (message) => { document.getElementById('account-error').textContent = message; document.getElementById('account-error').classList.add(message.includes('successful') ? 'animate-success' : 'animate-error'); setTimeout(() => document.getElementById('account-error').textContent = '', 3000); document.getElementById('account-form').style.display='none'; })">
-                <input type="text" id="username-account" placeholder="Username" required class="auth-input">
-                <input type="email" id="email-account" placeholder="Email" required class="auth-input">
-                <input type="password" id="password-account" placeholder="New Password (optional)" class="auth-input">
-                <button type="submit" class="btn actionbtn">Update Account</button>
-                <button type="button" onclick="viewAccountInfo()" class="btn actionbtn">View Info</button>
-                <button type="button" onclick="logout()" class="btn actionbtn">Logout</button>
-                <div id="account-error" class="reaction-text" style="display: none; color: #ff0000;"></div>
-            </form>
-        </div>
-    </div>
-
-    <section class="hero animate-section" style="background: linear-gradient(135deg, #0a0a2a, #1a1a4a, #2a2a6a);">
+    <section class="hero animate-section">
         <div class="container">
-            <h2 class="animate-text">Welcome to My Roblox World!</h2>
+            <h2 class="title-frame animate-text">Welcome to My Roblox World!</h2>
             <p class="animate-text">Explore free and paid games crafted by Yobest Studio.</p>
             <p class="animate-text">Site Visitors | Total Downloads: <span id="site-stats">0</span></p>
             <div class="button-group">
@@ -95,8 +86,8 @@
         <div class="container">
             <h2 class="title-frame animate-text">Game Previews</h2>
             <div id="reaction-text" class="reaction-text animate-text"></div>
-            <div class="video-grid" id="preview-grid" data-task="fetchVideos"></div>
-            <p id="video-error" class="reaction-text animate-text" style="display: none; color: #ff0000;"></p>
+            <div class="video-grid" id="preview-grid"></div>
+            <p id="video-error" class="reaction-text animate-error" style="display: none;"></p>
         </div>
     </section>
 
@@ -148,5 +139,13 @@
     </footer>
 
     <script src="script.js"></script>
+    <script>
+        // Call on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchVideos();
+            trackVisitor();
+            displayStats();
+        });
+    </script>
 </body>
 </html>
