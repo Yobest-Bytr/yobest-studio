@@ -320,27 +320,7 @@ function loadGameDetails() {
                         <p><i class="fas fa-download"></i> ${downloads} Downloads</p>
                     </div>
                     <p class="small-text animate-text" style="color: #888;">Published on ${new Date(videoData.publishedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} (March 04, 2025)</p>
-                    <div id="comment-section" class="comment-section" style="display: none;">
-                        <h3 class="title-large animate-text" style="color: #00ffcc;">YouTube Comments</h3>
-                        <form onsubmit="event.preventDefault(); addVideoComment()">
-                            <input type="text" id="video-comment-input" class="auth-input" placeholder="Add a comment for this video..." required>
-                            <button type="submit" class="btn actionbtn animate-btn">Submit <i class="fas fa-paper-plane"></i></button>
-                        </form>
-                        <div id="video-comments-list" class="comments-list"></div>
-                    </div>
-                    <button id="toggle-video-comments" class="btn actionbtn animate-btn" onclick="updateVideoCommentVisibility()">Toggle Video Comments <i class="fas fa-comment"></i></button>
-                    <div id="site-comment-section" class="comment-section" style="display: none;">
-                        <h3 class="title-large animate-text" style="color: #00ffcc;">Site Comments</h3>
-                        <form onsubmit="event.preventDefault(); addSiteComment()">
-                            <input type="text" id="site-comment-input" class="auth-input" placeholder="Add a comment for the site..." required>
-                            <button type="submit" class="btn actionbtn animate-btn">Submit <i class="fas fa-paper-plane"></i></button>
-                        </form>
-                        <div id="site-comments-list" class="comments-list"></div>
-                    </div>
-                    <button id="toggle-site-comments" class="btn actionbtn animate-btn" onclick="updateSiteCommentVisibility()">Toggle Site Comments <i class="fas fa-comment"></i></button>
                 `;
-                loadVideoComments(gameId);
-                loadSiteComments();
             }
         } else {
             console.error(`Video with ID ${gameId} not found in cache`);
@@ -465,7 +445,7 @@ ai:addAgent("EnemyBot", "Patrol and Attack")
 ai:runAgent("EnemyBot")
 `, Prism.languages.lua, 'lua')}</code></pre>
             <p class="body-text animate-text" style="color: #a0a0a0;">Click the image above to see a demo of AI in action! <i class="fas fa-play"></i></p>
-            <button class="btn actionbtn animate-btn" style="background: linear-gradient(45deg, #00ffcc, #00ff99); color: #0a1f3d; border: none; padding: 12px 24px; border-radius: 25px; cursor: pointer; font-weight: bold; transition: all 0.3s ease; font-family: 'Inter', sans-serif; font-size: 1em; box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);">Expand Details <i class="fas fa-expand"></i></button>
+            <button class="btn actionbtn animate-btn" style="background: linear-gradient(45deg, #00ffcc, #ff00ff); color: #0a1f3d; border: none; padding: 12px 24px; border-radius: 25px; cursor: pointer; font-weight: bold; transition: all 0.3s ease; font-family: 'Inter', sans-serif; font-size: 1em; box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);">Expand Details <i class="fas fa-expand"></i></button>
         </div>
         <script>
             function expandAIInterface(responseElementId) {
@@ -573,8 +553,8 @@ function saveVideoComments(commentsListId = 'video-comments-list') {
     }
 }
 
-function loadVideoComments(videoId, commentsListId = 'video-comments-list') {
-    const comments = JSON.parse(localStorage.getItem(`videoComments_${videoId}`) || '[]');
+function loadVideoComments(commentsListId = 'video-comments-list') {
+    const comments = JSON.parse(localStorage.getItem('videoComments') || '[]');
     const commentsList = document.getElementById(commentsListId);
     if (commentsList) {
         commentsList.innerHTML = '';
@@ -659,10 +639,12 @@ function handlePageTasks() {
         trackVisitor();
         displayStats();
         loadSiteComments();
+        initializeChat();
     } else if (path.includes('game.html')) {
         trackPageVisitors();
         loadGameDetails();
         loadVideoComments();
+        loadSiteComments();
         updateVideoCommentVisibility();
         updateSiteCommentVisibility();
     } else if (path.includes('ai.html')) {
