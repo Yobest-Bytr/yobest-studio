@@ -11,10 +11,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <!-- Poppins Font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
-    <!-- Prism.js for syntax highlighting -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-lua.min.js"></script>
 </head>
 <body>
     <!-- Header -->
@@ -67,36 +63,36 @@
         </div>
     </div>
 
-    <!-- AI Tools Section -->
+    <!-- AI Tools Section (Static, no JavaScript) -->
     <section class="ai-tools animate-section" style="background: #0a0a0a;">
         <div class="container">
             <h2 class="title-frame animate-text">Assistant</h2>
-            <p class="animate-text">Include detailed context and examples in your question to get the best response from our AI Assistant (view guide). Ask a question and start creating in Studio.</p>
-            <div class="ai-container">
+            <p class="animate-text">Please log in to access AI tools.</p>
+            <div class="ai-container" style="display: none;" id="ai-tools-content">
                 <p class="ai-instructions">Tap to ask a question:</p>
                 <div class="ai-categories">
-                    <div class="category-card" onclick="setCategory('Build')">
+                    <div class="category-card">
                         <i class="fas fa-tools"></i>
                         <h3>Build</h3>
                         <p>How do I add background music to my experience?</p>
                     </div>
-                    <div class="category-card" onclick="setCategory('Grow')">
+                    <div class="category-card">
                         <i class="fas fa-users"></i>
                         <h3>Grow</h3>
-                        <p>How do I bring new users to my experience? Reply and I'll share what I'm doing so far.</p>
+                        <p>How do I bring new users to my experience?</p>
                     </div>
-                    <div class="category-card" onclick="setCategory('Monetize')">
+                    <div class="category-card">
                         <i class="fas fa-dollar-sign"></i>
                         <h3>Monetize</h3>
-                        <p>How do Limited avatar items work and what are some tips to sell them?</p>
+                        <p>How do Limited avatar items work?</p>
                     </div>
                 </div>
                 <div class="ai-input-group">
-                    <input type="text" id="script-input" placeholder="Ask a question" class="ai-input" spellcheck="false">
-                    <button onclick="sendToAI()" class="btn send-btn animate-btn">Send</button>
+                    <input type="text" placeholder="Ask a question" class="ai-input" disabled>
+                    <button class="btn send-btn animate-btn" disabled>Send</button>
                 </div>
                 <p class="ai-disclaimer">Check for accuracy and don’t share personal info</p>
-                <div id="ai-response" class="ai-response"></div>
+                <div class="ai-response">Login required to use AI tools.</div>
             </div>
         </div>
     </section>
@@ -127,14 +123,16 @@
         // Global variables
         let isLoggedIn = false;
         let currentUser = null;
-        const API_KEY = 'AIzaSyChwoHXMqlbmAfeh4lbRUFWx2HjIZ6VV2k'; // YouTube Data API key
-        let currentCategory = '';
 
         // Check login state on page load
         document.addEventListener('DOMContentLoaded', () => {
             checkLoginState();
-            loadAccountInfo();
-            trackVisitor();
+            const aiToolsContent = document.getElementById('ai-tools-content');
+            if (isLoggedIn) {
+                aiToolsContent.style.display = 'block';
+            } else {
+                aiToolsContent.style.display = 'none';
+            }
         });
 
         function openLogin() {
@@ -166,8 +164,6 @@
                 document.getElementById('account-btn').style.display = 'inline-block';
                 document.getElementById('account-pic').style.display = 'inline-block';
                 document.getElementById('account-pic').src = savedUser.avatar || 'https://via.placeholder.com/40';
-                document.getElementById('username').value = currentUser.username || currentUser.email.split('@')[0];
-                document.getElementById('email').value = currentUser.email;
             } else {
                 isLoggedIn = false;
                 currentUser = null;
@@ -175,14 +171,11 @@
                 document.getElementById('account-btn').style.display = 'none';
                 document.getElementById('account-pic').style.display = 'none';
             }
-        }
-
-        function loadAccountInfo() {
-            if (currentUser) {
-                document.getElementById('username').value = currentUser.username || currentUser.email.split('@')[0];
-                document.getElementById('email').value = currentUser.email;
-                document.getElementById('avatar-preview').src = currentUser.avatar || 'https://via.placeholder.com/40';
-                document.getElementById('avatar-preview').style.display = currentUser.avatar ? 'block' : 'none';
+            const aiToolsContent = document.getElementById('ai-tools-content');
+            if (isLoggedIn) {
+                aiToolsContent.style.display = 'block';
+            } else {
+                aiToolsContent.style.display = 'none';
             }
         }
 
@@ -197,12 +190,6 @@
                 currentUser = { email, username: users[email].username || email.split('@')[0], avatar: users[email].avatar };
                 localStorage.setItem('currentUser', JSON.stringify(currentUser));
 
-                // Update login history (if account-settings.html is loaded)
-                let logins = JSON.parse(localStorage.getItem('loginHistory') || '[]');
-                logins.unshift({ email: currentUser.email, time: new Date().toLocaleString(), ip: 'Simulated IP' });
-                logins = logins.slice(0, 10); // Keep last 10 logins
-                localStorage.setItem('loginHistory', JSON.stringify(logins));
-
                 closeLogin();
                 updateNavButtons();
                 checkLoginState();
@@ -216,12 +203,6 @@
                 isLoggedIn = true;
                 currentUser = { email, username: email.split('@')[0] };
                 localStorage.setItem('currentUser', JSON.stringify(currentUser));
-
-                // Update login history
-                let logins = JSON.parse(localStorage.getItem('loginHistory') || '[]');
-                logins.unshift({ email: currentUser.email, time: new Date().toLocaleString(), ip: 'Simulated IP' });
-                logins = logins.slice(0, 10);
-                localStorage.setItem('loginHistory', JSON.stringify(logins));
 
                 closeLogin();
                 updateNavButtons();
@@ -299,17 +280,6 @@
             }
         }
 
-        function trackVisitor() {
-            if (!localStorage.getItem('apiKey') || localStorage.getItem('apiKey') !== API_KEY) {
-                localStorage.setItem('apiKey', API_KEY); // Validate API key
-            }
-
-            let visitors = parseInt(localStorage.getItem('siteVisitors') || '0') + 1;
-            localStorage.setItem('siteVisitors', visitors.toString());
-            const siteVisitorsElement = document.querySelector('#site-visitors');
-            if (siteVisitorsElement) siteVisitorsElement.textContent = visitors;
-        }
-
         function previewAvatar(input) {
             const preview = document.getElementById('avatar-preview');
             const file = input.files[0];
@@ -321,79 +291,6 @@
                 };
                 reader.readAsDataURL(file);
             }
-        }
-
-        // AI and Roblox Script Functions
-        function setCategory(category) {
-            currentCategory = category;
-            const input = document.getElementById('script-input');
-            switch (category) {
-                case 'Build':
-                    input.value = 'How do I add background music to my Roblox experience?';
-                    break;
-                case 'Grow':
-                    input.value = 'How do I bring new users to my Roblox experience? Reply and I’ll share what I’m doing so far.';
-                    break;
-                case 'Monetize':
-                    input.value = 'How do Limited avatar items work and what are some tips to sell them?';
-                    break;
-            }
-            input.focus();
-        }
-
-        async function sendToAI() {
-            const input = document.getElementById('script-input').value.trim();
-            const responseDiv = document.getElementById('ai-response');
-            if (input && isLoggedIn) { // Require login for AI access
-                responseDiv.textContent = "Thinking...";
-                responseDiv.classList.add('animate-loading');
-
-                // Simulate AI response (mimic Grok for Roblox Lua code generation)
-                try {
-                    const response = await simulateAIResponse(input, currentCategory);
-                    responseDiv.innerHTML = `<pre class="language-lua"><code>${Prism.highlight(response, Prism.languages.lua, 'lua')}</code></pre>`;
-                    responseDiv.classList.remove('animate-loading');
-                    responseDiv.classList.add('animate-success');
-                } catch (error) {
-                    responseDiv.textContent = "Error generating response. Please try again.";
-                    responseDiv.classList.remove('animate-loading');
-                    responseDiv.classList.add('animate-error');
-                    console.error('AI Response Error:', error);
-                }
-            } else {
-                responseDiv.textContent = isLoggedIn ? "Please enter a question!" : "Please log in to use the AI tool.";
-                responseDiv.classList.add('animate-error');
-                setTimeout(() => responseDiv.textContent = '', 3000);
-            }
-        }
-
-        // Simulated AI response function (replace with real API in production, e.g., xAI Grok API)
-        async function simulateAIResponse(query, category) {
-            return new Promise((resolve) => {
-                setTimeout(() => {
-                    let response;
-                    switch (category) {
-                        case 'Build':
-                            if (query.includes('background music')) {
-                                response = `To add background music to your Roblox experience:\n1. Use a `Sound` object:\n   - Insert a `Sound` into a part or Workspace.\n   - Set the `SoundId` to a Roblox audio asset ID (e.g., "rbxassetid://123456789").\n   - Play it with `sound:Play()` in a Lua script.\n   Example:\n   ```lua\n   local sound = Instance.new("Sound")\n   sound.SoundId = "rbxassetid://123456789"\n   sound.Parent = game.Workspace\n   sound:Play()\n   ```\n2. Ensure the audio asset is uploaded to Roblox and you have permissions.`;
-                            } else if (query.includes('script')) {
-                                response = `Here's a sample Lua script for Roblox:\n```lua\nlocal part = Instance.new("Part")\npart.Position = Vector3.new(0, 10, 0)\npart.Parent = game.Workspace\npart.Anchored = true\nprint("Part created at position 0, 10, 0")\n````;
-                            } else {
-                                response = `Please specify a Roblox building task. Example: "How do I create a part in Roblox?"\n```lua\nlocal part = Instance.new("Part")\npart.Position = Vector3.new(0, 10, 0)\npart.Parent = game.Workspace\n````;
-                            }
-                            break;
-                        case 'Grow':
-                            response = `To bring new users to your Roblox experience:\n1. Promote on social media (Twitter, Discord, Roblox groups).\n2. Use Roblox Ads (Developer Marketplace) to target users.\n3. Collaborate with other creators for cross-promotion.\n4. Share your progress, and I’ll suggest specifics based on your description.\nExample Lua script for tracking players:\n```lua\nlocal Players = game:GetService("Players")\nPlayers.PlayerAdded:Connect(function(player)\n    print(player.Name .. " joined the game!")\nend)\n````;
-                            break;
-                        case 'Monetize':
-                            response = `Limited avatar items in Roblox:\n- Limited items are rare, time-limited, or have low stock, increasing their value.\n- Tips to sell them:\n  1. List on the Roblox marketplace with a competitive price.\n  2. Promote via Roblox groups, Discord, or Twitter.\n  3. Use scarcity (e.g., “Only 100 left!”) to drive demand.\nExample Lua script to check item ownership:\n```lua\nlocal MarketplaceService = game:GetService("MarketplaceService")\nlocal player = game.Players.LocalPlayer\nlocal itemId = 123456789 -- Replace with your asset ID\nif MarketplaceService:PlayerOwnsAsset(player, itemId) then\n    print("Player owns the limited item!")\nend\n````;
-                            break;
-                        default:
-                            response = `I'm here to help with Roblox! Specify a category (Build, Grow, Monetize) or ask a detailed question. Example Lua script:\n```lua\nlocal part = Instance.new("Part")\npart.Position = Vector3.new(0, 10, 0)\npart.Parent = game.Workspace\n````;
-                    }
-                    resolve(response);
-                }, 2000); // Simulate AI processing delay
-            });
         }
     </script>
 </body>
