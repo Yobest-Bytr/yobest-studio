@@ -68,7 +68,7 @@
     </div>
 
     <!-- AI Tools Section -->
-    <section class="ai-tools animate-section" style="background: #0a0a0a;">
+    <section class="ai-tools animate-section" style="background: #121212;">
         <div class="container">
             <h2 class="title-frame animate-text">Assistant</h2>
             <p class="animate-text">Include detailed context and examples in your question to get the best response from our AI Assistant (view guide). Ask a question and start creating in Studio.</p>
@@ -89,6 +89,11 @@
                         <i class="fas fa-dollar-sign"></i>
                         <h3>Monetize</h3>
                         <p>How do Limited avatar items work and what are some tips to sell them?</p>
+                    </div>
+                    <div class="category-card" onclick="setCategory('ArtificialIntelligence')">
+                        <i class="fas fa-robot"></i>
+                        <h3>Artificial Intelligence</h3>
+                        <p>How can I implement AI in my Roblox game?</p>
                     </div>
                 </div>
                 <div class="ai-input-group">
@@ -130,7 +135,7 @@
         let currentUser = null;
         let currentCategory = '';
 
-        // Check login state on page load with debugging
+        // Check login state on page load with detailed debugging
         document.addEventListener('DOMContentLoaded', () => {
             console.log('Page loaded, checking login state...');
             checkLoginState();
@@ -162,7 +167,7 @@
             const savedUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
             console.log('Saved user from localStorage:', savedUser);
 
-            if (savedUser && savedUser.email) { // Ensure savedUser is not null and has an email
+            if (savedUser && savedUser.email && typeof savedUser.email === 'string') { // Ensure email exists and is a string
                 isLoggedIn = true;
                 currentUser = savedUser;
                 console.log('User is logged in:', currentUser);
@@ -336,20 +341,28 @@
                 case 'Monetize':
                     input.value = 'How do Limited avatar items work and what are some tips to sell them?';
                     break;
+                case 'ArtificialIntelligence':
+                    input.value = 'How can I implement artificial intelligence in my Roblox game?';
+                    break;
             }
             input.focus();
         }
 
         async function sendToAI() {
-            const input = document.getElementById('script-input').value.trim();
+            const input = document.getElementById('script-input').value.trim().toLowerCase();
             const responseDiv = document.getElementById('ai-response');
             if (input && isLoggedIn) { // Require login for AI access
                 responseDiv.textContent = "Thinking...";
                 responseDiv.classList.add('animate-loading');
 
                 try {
-                    const response = await simulateAIResponse(input, currentCategory);
-                    responseDiv.innerHTML = `<pre class="language-lua"><code>${Prism.highlight(response, Prism.languages.lua, 'lua')}</code></pre>`;
+                    let response;
+                    if (input.includes('artificial intelligence')) {
+                        response = await generateAIInterface(); // Custom interface for AI requests
+                    } else {
+                        response = await simulateAIResponse(input, currentCategory);
+                    }
+                    responseDiv.innerHTML = response;
                     responseDiv.classList.remove('animate-loading');
                     responseDiv.classList.add('animate-success');
                 } catch (error) {
@@ -386,12 +399,103 @@
                             response = `Limited avatar items in Roblox:\n- Limited items are rare, time-limited, or have low stock, increasing their value.\n- Tips to sell them:\n  1. List on the Roblox marketplace with a competitive price.\n  2. Promote via Roblox groups, Discord, or Twitter.\n  3. Use scarcity (e.g., “Only 100 left!”) to drive demand.\nExample Lua script to check item ownership:\n```lua\nlocal MarketplaceService = game:GetService("MarketplaceService")\nlocal player = game.Players.LocalPlayer\nlocal itemId = 123456789 -- Replace with your asset ID\nif MarketplaceService:PlayerOwnsAsset(player, itemId) then\n    print("Player owns the limited item!")\nend\n````;
                             break;
                         default:
-                            response = `I'm here to help with Roblox! Specify a category (Build, Grow, Monetize) or ask a detailed question. Example Lua script:\n```lua\nlocal part = Instance.new("Part")\npart.Position = Vector3.new(0, 10, 0)\npart.Parent = game.Workspace\n````;
+                            response = `I'm here to help with Roblox! Specify a category (Build, Grow, Monetize, ArtificialIntelligence) or ask a detailed question. Example Lua script:\n```lua\nlocal part = Instance.new("Part")\npart.Position = Vector3.new(0, 10, 0)\npart.Parent = game.Workspace\n````;
                     }
                     resolve(response);
                 }, 2000); // Simulate AI processing delay
             });
         }
+
+        // Custom AI interface for "artificial intelligence" requests
+        async function generateAIInterface() {
+            return `
+                <div class="ai-interface" style="
+                    background-color: #121212;
+                    color: white;
+                    font-family: Arial, sans-serif;
+                    text-align: center;
+                    padding: 20px;
+                    border-radius: 5px;
+                    margin: 10px;
+                ">
+                    <h2>Artificial Intelligence in Roblox</h2>
+                    <p>Here's how to implement AI in your Roblox game using Lua:</p>
+                    <div class="video-container">
+                        <img src="https://via.placeholder.com/200" alt="AI Demo" style="
+                            width: 200px;
+                            height: auto;
+                            cursor: pointer;
+                            margin: 10px;
+                        " onclick="alert('Click to view AI demo video!')">
+                    </div>
+                    <pre class="language-lua"><code>${Prism.highlight(`
+local AIService = {}
+AIService.__index = AIService
+
+function AIService.new()
+    local self = setmetatable({}, AIService)
+    self.agents = {}
+    return self
+end
+
+function AIService:addAgent(name, behavior)
+    self.agents[name] = behavior
+    print(name .. " AI agent added with behavior: " .. behavior)
+end
+
+function AIService:runAgent(name)
+    if self.agents[name] then
+        print("Running " .. name .. " AI behavior...")
+        -- Simulate AI behavior (e.g., pathfinding, decision-making)
+        local humanoid = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid")
+        if humanoid then
+            humanoid:MoveTo(Vector3.new(0, 10, 0)) -- Example: Move to a position
+        end
+    else
+        warn("Agent " .. name .. " not found!")
+    end
+end
+
+-- Example usage
+local ai = AIService.new()
+ai:addAgent("EnemyBot", "Patrol and Attack")
+ai:runAgent("EnemyBot")
+`, Prism.languages.lua, 'lua')}</code></pre>
+                    <p>Click the image above to see a demo of AI in action!</p>
+                    <button class="btn actionbtn" onclick="expandAIInterface()">Expand Details</button>
+                </div>
+                <script>
+                    function expandAIInterface() {
+                        alert('Expanding AI details: Use Roblox\'s PathfindingService for navigation, Behavior Trees for decision-making, and NPC models for AI characters. Example: local path = game:GetService("PathfindingService"):CreatePath()');
+                    }
+                </script>
+            `;
+        }
     </script>
+
+    <!-- Additional CSS to match the screenshot's dark theme -->
+    <style>
+        body {
+            background-color: #121212;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        header {
+            background-color: #1e1e1e;
+            padding: 20px;
+        }
+        .video-container img {
+            width: 200px;
+            height: auto;
+            cursor: pointer;
+            margin: 10px;
+        }
+        #chat-box {
+            background-color: #1e1e1e;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
 </body>
 </html>
