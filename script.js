@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     checkLoginState();
     handlePageTasks();
     initializePrism(); // Initialize Prism.js for Lua highlighting
+    initializeButtonAnimations(); // Initialize button animations
 });
 
 // Utility Functions for Prism.js
@@ -17,6 +18,23 @@ function initializePrism() {
     } else {
         console.error('Prism.js not loaded. Check script inclusion.');
     }
+}
+
+// Button Animation Initialization
+function initializeButtonAnimations() {
+    const buttons = document.querySelectorAll('.btn, .nav-btn, .socialbtn, .actionbtn, .send-btn');
+    buttons.forEach(button => {
+        button.addEventListener('mouseover', () => {
+            button.classList.add('glow');
+        });
+        button.addEventListener('mouseout', () => {
+            button.classList.remove('glow');
+        });
+        button.addEventListener('click', () => {
+            button.classList.add('pulse-click');
+            setTimeout(() => button.classList.remove('pulse-click'), 500);
+        });
+    });
 }
 
 // Login Functions
@@ -280,12 +298,13 @@ function loadGameDetails() {
             const gameContent = document.querySelector('.game-content');
             if (gameContent) {
                 gameContent.innerHTML = `
-                    <h3 class="animate-text title-large">${video.snippet.title}</h3>
-                    <p class="animate-text body-text">Description of the game, featuring exciting gameplay and features...</p>
+                    <h3 class="animate-text title-large" style="color: #00ffcc;">${video.snippet.title}</h3>
+                    <p class="animate-text body-text" style="color: #a0a0a0;">Description of the game, featuring exciting gameplay and features... <i class="fas fa-gamepad"></i></p>
                     <img src="${video.snippet.thumbnails?.medium?.url || 'https://via.placeholder.com/300'}" alt="${video.snippet.title}" class="game-screenshot animate-image">
                     <div class="video-stats">
                         <p><i class="fas fa-eye"></i> ${loadVideoStat(video.snippet.resourceId.videoId, 'viewCount') || 'Loading views...'}</p>
                         <p><i class="fas fa-thumbs-up"></i> ${loadVideoStat(video.snippet.resourceId.videoId, 'likeCount') || 'Loading likes...'}</p>
+                        <p><i class="fas fa-download"></i> ${localStorage.getItem('totalDownloads') || '0'} Downloads</p>
                     </div>
                 `;
             }
@@ -372,11 +391,11 @@ function simulateAIResponse(query) {
 
 function generateAIInterface(responseElementId = 'ai-response') {
     return `
-        <div class="ai-interface animate-card" style="background-color: #121212; color: white; font-family: 'Roboto', sans-serif; text-align: center; padding: 20px; border-radius: 10px; margin: 10px; border: 2px solid #00ffb7;">
-            <h2 class="title-large animate-text" style="color: #00ffb7;">Artificial Intelligence in Roblox</h2>
-            <p class="body-text animate-text" style="color: #a0a0a0;">Here's how to implement AI in your Roblox game using Lua:</p>
+        <div class="ai-interface animate-card" style="background-color: rgba(0, 0, 0, 0.8); color: #ffffff; font-family: 'Inter', sans-serif; text-align: center; padding: 20px; border-radius: 15px; margin: 10px; border: 2px solid #00ffcc; backdrop-filter: blur(10px);">
+            <h2 class="title-large animate-text" style="color: #00ffcc;">Artificial Intelligence in Roblox</h2>
+            <p class="body-text animate-text" style="color: #a0a0a0;">Here's how to implement AI in your Roblox game using Lua: <i class="fas fa-robot"></i></p>
             <div class="video-container">
-                <img src="https://via.placeholder.com/200" alt="AI Demo" class="animate-image" style="width: 200px; height: auto; cursor: pointer; margin: 10px; border-radius: 8px; border: 2px solid #00ffb7;" onclick="alert('Click to view AI demo video!')">
+                <img src="https://via.placeholder.com/200" alt="AI Demo" class="animate-image" style="width: 200px; height: auto; cursor: pointer; margin: 10px; border-radius: 10px; border: 2px solid #00ffcc;" onclick="alert('Click to view AI demo video!')">
             </div>
             <pre class="language-lua"><code>${Prism.highlight(`
 local AIService = {}
@@ -411,13 +430,13 @@ local ai = AIService.new()
 ai:addAgent("EnemyBot", "Patrol and Attack")
 ai:runAgent("EnemyBot")
 `, Prism.languages.lua, 'lua')}</code></pre>
-            <p class="body-text animate-text" style="color: #a0a0a0;">Click the image above to see a demo of AI in action!</p>
-            <button class="btn actionbtn animate-btn" style="background-color: #00ffb7; color: #121212; border: none; padding: 12px 24px; border-radius: 25px; cursor: pointer; font-weight: bold; transition: all 0.3s ease; font-family: 'Roboto', sans-serif;">Expand Details</button>
+            <p class="body-text animate-text" style="color: #a0a0a0;">Click the image above to see a demo of AI in action! <i class="fas fa-play"></i></p>
+            <button class="btn actionbtn animate-btn" style="background: linear-gradient(45deg, #00ffcc, #00ff99); color: #121212; border: none; padding: 12px 24px; border-radius: 25px; cursor: pointer; font-weight: bold; transition: all 0.3s ease; font-family: 'Inter', sans-serif; font-size: 1em; box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);">Expand Details <i class="fas fa-expand"></i></button>
         </div>
         <script>
             function expandAIInterface(responseElementId) {
                 const responseDiv = document.getElementById(responseElementId);
-                responseDiv.innerHTML += '<p class="body-text animate-text" style="color: #a0a0a0;">Expanding AI details: Use Roblox\'s PathfindingService for navigation, Behavior Trees for decision-making, and NPC models for AI characters. Example: local path = game:GetService("PathfindingService"):CreatePath()</p>';
+                responseDiv.innerHTML += '<p class="body-text animate-text" style="color: #a0a0a0;">Expanding AI details: Use Roblox\'s PathfindingService for navigation, Behavior Trees for decision-making, and NPC models for AI characters. Example: local path = game:GetService("PathfindingService"):CreatePath() <i class="fas fa-info-circle"></i></p>';
                 initializePrism(); // Reinitialize Prism for new content
             }
         </script>
@@ -446,7 +465,7 @@ function addComment(commentInputId = 'comment-input', commentsListId = 'comments
             commentDiv.className = 'comment animate-card';
             commentDiv.textContent = `${currentUser.username || currentUser.email}: ${commentText}`;
             commentDiv.style.color = '#a0a0a0';
-            commentDiv.style.fontFamily = '"Roboto", sans-serif';
+            commentDiv.style.fontFamily = '"Inter", sans-serif';
             commentsList.appendChild(commentDiv);
             commentInput.value = '';
             saveComments(commentsListId);
@@ -474,7 +493,7 @@ function loadComments(commentsListId = 'comments-list') {
             commentDiv.className = 'comment animate-card';
             commentDiv.textContent = comment;
             commentDiv.style.color = '#a0a0a0';
-            commentDiv.style.fontFamily = '"Roboto", sans-serif';
+            commentDiv.style.fontFamily = '"Inter", sans-serif';
             commentsList.appendChild(commentDiv);
         });
     }
@@ -499,14 +518,14 @@ function checkAllTasks() {
         if (successMessage) {
             successMessage.style.display = 'block';
             successMessage.classList.add('animate-success');
-            successMessage.style.color = '#00ffb7';
-            successMessage.style.fontFamily = '"Roboto", sans-serif';
+            successMessage.style.color = '#00ffcc';
+            successMessage.style.fontFamily = '"Inter", sans-serif';
             successMessage.style.fontSize = '1.1em';
         }
         if (downloadLink) {
             downloadLink.style.display = 'inline-block';
             downloadLink.classList.add('animate-btn');
-            downloadLink.style.fontFamily = '"Roboto", sans-serif';
+            downloadLink.style.fontFamily = '"Inter", sans-serif';
             downloadLink.style.fontSize = '1em';
         }
     } else {
@@ -569,8 +588,8 @@ function handleAuthResponse(response) {
         errorDiv.style.display = response.success ? 'none' : 'block';
         errorDiv.classList.remove('animate-error');
         errorDiv.classList.add(response.success ? 'animate-success' : 'animate-error');
-        errorDiv.style.color = response.success ? '#00ffb7' : '#ff0000';
-        errorDiv.style.fontFamily = '"Roboto", sans-serif';
+        errorDiv.style.color = response.success ? '#00ffcc' : '#ff4444';
+        errorDiv.style.fontFamily = '"Inter", sans-serif';
         errorDiv.style.fontSize = '1em';
         if (response.success) {
             window.location.href = 'index.html';
@@ -586,8 +605,8 @@ function handleAccountResponse(response) {
         messageDiv.style.display = response.success ? 'block' : 'none';
         messageDiv.classList.remove('animate-error');
         messageDiv.classList.add(response.success ? 'animate-success' : 'animate-error');
-        messageDiv.style.color = response.success ? '#00ffb7' : '#ff0000';
-        messageDiv.style.fontFamily = '"Roboto", sans-serif';
+        messageDiv.style.color = response.success ? '#00ffcc' : '#ff4444';
+        messageDiv.style.fontFamily = '"Inter", sans-serif';
         messageDiv.style.fontSize = '1em';
         setTimeout(() => messageDiv.textContent = '', 3000);
     }
