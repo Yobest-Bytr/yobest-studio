@@ -135,13 +135,7 @@
         let currentUser = null;
         let currentCategory = '';
 
-        // Check login state on page load with detailed debugging
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log('Page loaded, checking login state...');
-            checkLoginState();
-            trackVisitor(); // Track site visitors on page load
-        });
-
+        // Ensure functions are defined before HTML references them
         function openLogin() {
             document.getElementById('login-modal').style.display = 'block';
         }
@@ -161,6 +155,13 @@
         function closeAccountSettings() {
             document.getElementById('account-settings-modal').style.display = 'none';
         }
+
+        // Check login state on page load with detailed debugging
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Page loaded, checking login state...');
+            checkLoginState();
+            trackVisitor(); // Track site visitors on page load
+        });
 
         function checkLoginState() {
             console.log('Checking login state...');
