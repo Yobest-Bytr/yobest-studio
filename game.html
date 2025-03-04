@@ -7,7 +7,8 @@
     <link rel="stylesheet" href="styles.css">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2925220406728611" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-kqNfk8EL0Vsx5pqskqQ57pq+BwR55rYwtVmswqLxMQ52R9ETg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="yobest_studio_logo.png">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-lua.min.js"></script>
@@ -17,14 +18,14 @@
         <div class="container">
             <h1 class="title-frame"><a href="index.html" class="site-name">Yobest Studio<span class="highlight"></span></a></h1>
             <nav class="nav-container">
-                <a href="blog.html" class="nav-btn">Blog</a>
-                <a href="contact.html" class="nav-btn">Contact</a>
-                <a href="index.html" class="nav-btn">Home</a>
-                <a href="ai.html" class="nav-btn">AI Tools</a>
+                <a href="blog.html" class="nav-btn"><i class="fas fa-blog"></i> Blog</a>
+                <a href="contact.html" class="nav-btn"><i class="fas fa-envelope"></i> Contact</a>
+                <a href="index.html" class="nav-btn"><i class="fas fa-home"></i> Home</a>
+                <a href="ai.html" class="nav-btn"><i class="fas fa-robot"></i> AI Tools</a>
                 <a href="https://discord.gg/jKASqrc7H3" target="_blank" class="btn socialbtn"><i class="fab fa-discord"></i> Discord</a>
                 <a href="https://x.com/Yobest_BYTR" target="_blank" class="btn socialbtn"><i class="fab fa-x"></i> X</a>
-                <a href="#" id="login-btn" class="btn socialbtn" onclick="openLogin()">Login</a>
-                <a href="account-settings.html" id="account-btn" class="btn socialbtn" onclick="openAccountSettings()" style="display: none;">Account</a>
+                <a href="#" id="login-btn" class="btn socialbtn" onclick="openLogin()">Login <i class="fas fa-sign-in-alt"></i></a>
+                <a href="account-settings.html" id="account-btn" class="btn socialbtn" onclick="openAccountSettings()" style="display: none;">Account <i class="fas fa-user"></i></a>
                 <img src="https://via.placeholder.com/40" alt="Account" class="account-pic" id="account-pic" style="display: none;" onclick="window.location.href='account-settings.html';">
             </nav>
         </div>
@@ -33,16 +34,16 @@
     <div id="login-modal" class="modal">
         <div class="modal-content">
             <span class="close-btn" onclick="closeLogin()">×</span>
-            <h2 class="title-frame animate-text">Login or Create Account</h2>
+            <h2 class="title-large animate-text" style="color: #00ffcc;">Login or Create Account</h2>
             <form id="login-form" onsubmit="event.preventDefault(); authUser(document.getElementById('login-email').value, document.getElementById('login-password').value, handleAuthResponse)">
-                <button type="button" class="btn google-btn animate-btn" onclick="googleLogin()">Sign in with Google</button>
-                <button type="button" class="btn microsoft-btn animate-btn" onclick="microsoftLogin()">Sign in with Microsoft</button>
+                <button type="button" class="btn google-btn animate-btn" onclick="googleLogin()"><i class="fab fa-google"></i> Sign in with Google</button>
+                <button type="button" class="btn microsoft-btn animate-btn" onclick="microsoftLogin()"><i class="fab fa-microsoft"></i> Sign in with Microsoft</button>
                 <div class="or-divider">OR</div>
                 <input type="email" id="login-email" class="auth-input" placeholder="Email" required>
                 <input type="password" id="login-password" class="auth-input" placeholder="Password" required>
-                <button type="submit" class="btn actionbtn animate-btn">Sign In / Create</button>
-                <p><a href="#" class="auth-link">Forgot Password?</a></p>
-                <p class="auth-link">Don't have an account? <a href="login.html" onclick="closeLogin()">Sign Up</a></p>
+                <button type="submit" class="btn actionbtn animate-btn">Sign In / Create <i class="fas fa-arrow-right"></i></button>
+                <p class="small-text auth-link">Forgot Password? <a href="#" class="animate-text" style="color: #00ffcc;">Reset</a></p>
+                <p class="small-text auth-link">Don't have an account? <a href="login.html" class="animate-text" onclick="closeLogin()" style="color: #00ffcc;">Sign Up</a></p>
                 <div id="login-error" class="reaction-text animate-error" style="display: none;"></div>
             </form>
         </div>
@@ -51,16 +52,16 @@
     <div id="account-settings-modal" class="modal">
         <div class="modal-content">
             <span class="close-btn" onclick="closeAccountSettings()">×</span>
-            <h2 class="title-frame animate-text">Account Settings</h2>
-            <p><a href="account-settings.html" class="btn actionbtn animate-btn">Go to Full Account Settings</a></p>
+            <h2 class="title-large animate-text" style="color: #00ffcc;">Account Settings</h2>
+            <p class="body-text animate-text"><a href="account-settings.html" class="btn actionbtn animate-btn">Go to Full Account Settings <i class="fas fa-cog"></i></a></p>
             <form id="account-form" onsubmit="event.preventDefault(); updateAccount(document.getElementById('username').value, document.getElementById('email').value, document.getElementById('new-password').value, handleAccountResponse)">
                 <input type="text" id="username" class="auth-input" placeholder="Username" required>
                 <input type="email" id="email" class="auth-input" placeholder="Email" required>
                 <input type="password" id="new-password" class="auth-input" placeholder="New Password (optional)">
                 <input type="file" id="avatar-upload" accept="image/*" onchange="previewAvatar(this)" class="auth-input">
-                <img id="avatar-preview" src="https://via.placeholder.com/40" alt="Avatar Preview" class="avatar-preview" style="display: none; width: 40px; height: 40px; border-radius: 50%; margin: 10px 0;">
-                <button type="submit" class="btn actionbtn animate-btn">Save Changes</button>
-                <button type="button" class="btn actionbtn animate-btn" onclick="logout()">Logout</button>
+                <img id="avatar-preview" src="https://via.placeholder.com/40" alt="Avatar Preview" class="avatar-preview" style="display: none; width: 40px; height: 40px; border-radius: 50%; margin: 10px 0; border: 2px solid #00ffcc;">
+                <button type="submit" class="btn actionbtn animate-btn">Save Changes <i class="fas fa-save"></i></button>
+                <button type="button" class="btn actionbtn animate-btn" onclick="logout()">Logout <i class="fas fa-sign-out-alt"></i></button>
                 <div id="account-message" class="reaction-text animate-error" style="display: none;"></div>
             </form>
         </div>
@@ -68,21 +69,30 @@
 
     <section class="game-details animate-section">
         <div class="container">
-            <h2 class="title-frame animate-text">Game Details</h2>
-            <p class="animate-text">Explore this epic Roblox game from Yobest Studio!</p>
+            <h2 class="title-large animate-text" style="color: #00ffcc;">Game Details</h2>
+            <p class="body-text animate-text" style="color: #a0a0a0;">Explore this epic Roblox game from Yobest Studio! <i class="fas fa-gamepad"></i></p>
             <div class="button-group">
-                <a href="confirm.html" class="btn actionbtn animate-btn" onclick="trackDownload()">Download Game</a>
+                <a href="confirm.html" class="btn actionbtn animate-btn" onclick="trackDownload()">Download Game <i class="fas fa-download"></i></a>
             </div>
             <div class="game-content"></div>
             <div id="comment-section" class="comment-section" style="display: none;">
-                <h3 class="title-frame animate-text">Comments</h3>
+                <h3 class="title-large animate-text" style="color: #00ffcc;">Comments</h3>
                 <form onsubmit="event.preventDefault(); addComment()">
                     <input type="text" id="comment-input" class="auth-input" placeholder="Add a comment..." required>
-                    <button type="submit" class="btn actionbtn animate-btn">Submit</button>
+                    <button type="submit" class="btn actionbtn animate-btn">Submit <i class="fas fa-paper-plane"></i></button>
                 </form>
                 <div id="comments-list" class="comments-list"></div>
             </div>
-            <button id="toggle-comments" class="btn actionbtn animate-btn" onclick="updateCommentVisibility()">Toggle Comments</button>
+            <button id="toggle-comments" class="btn actionbtn animate-btn" onclick="updateCommentVisibility()">Toggle Comments <i class="fas fa-comment"></i></button>
+            <div class="reaction-buttons">
+                <button class="reaction-btn" data-reaction="Like"><i class="fas fa-thumbs-up"></i> Like</button>
+                <button class="reaction-btn" data-reaction="Love"><i class="fas fa-heart"></i> Love</button>
+                <button class="reaction-btn" data-reaction="Wow"><i class="fas fa-star"></i> Wow</button>
+            </div>
+            <div class="writing-frame">
+                <textarea class="writing-input" placeholder="Write your thoughts here..."></textarea>
+                <button class="btn actionbtn animate-btn" onclick="saveWriting()">Save <i class="fas fa-save"></i></button>
+            </div>
         </div>
     </section>
 
@@ -95,7 +105,7 @@
 
     <footer class="animate-section">
         <div class="container">
-            <p class="animate-text">© 2025 Yobest Studio. All Rights Reserved.</p>
+            <p class="small-text animate-text" style="color: #888;">© 2025 Yobest Studio. All Rights Reserved. <i class="fas fa-copyright"></i></p>
             <div class="social-links">
                 <a href="https://www.youtube.com/channel/UCsV3X3EyEowLEdRW1RileuA" target="_blank" class="btn socialbtn animate-btn"><i class="fab fa-youtube"></i> YouTube</a>
                 <a href="https://discord.gg/jKASqrc7H3" target="_blank" class="btn socialbtn animate-btn"><i class="fab fa-discord"></i> Discord</a>
