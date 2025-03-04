@@ -274,30 +274,33 @@ function renderVideos(videos) {
     loadVideoStats(videos);
 }
 
-async function loadVideoStats(videos) {
-    const API_KEY = 'AIzaSyChwoHXMqlbmAfeh4lbRUFWx2HjIZ6VV2k'; // Replace with your actual YouTube API key
-    for (const video of videos) {
-        const videoId = video.snippet.resourceId.videoId;
-        try {
-            const response = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${videoId}&key=${API_KEY}`);
-            if (!response.ok) throw new Error(`HTTP error: ${response.status} - ${response.statusText}`);
-            const data = await response.json();
-            if (data.error) throw new Error(`API error: ${data.error.message}`);
-            if (data.items && data.items.length > 0) {
-                const stats = data.items[0].statistics;
-                const videoCard = document.querySelector(`.video-card[data-index="${videos.indexOf(video)}"] .video-stats`);
-                if (videoCard) {
-                    videoCard.querySelector('p:nth-child(1)').innerHTML = `<i class="fas fa-eye"></i> ${stats.viewCount || 0} Views`;
-                    videoCard.querySelector('p:nth-child(2)').innerHTML = `<i class="fas fa-thumbs-up"></i> ${stats.likeCount || 0} Likes`;
+async function loadVideoStats() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const gameId = urlParams.get('id');
+    if (gameId) {
+        const cachedVideos = JSON.parse(localStorage.getItem('channelVideos') || '[]');
+        const video = cachedVideos[gameId];
+        if (video) {
+            const videoId = video.snippet.resourceId.videoId;
+            const API_KEY = 'AIzaSyChwoHXMqlbmAfeh4lbRUFWx2HjIZ6VV2k'; // Replace with your actual YouTube API key
+            try {
+                const response = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${videoId}&key=${API_KEY}`);
+                if (!response.ok) throw new Error(`HTTP error: ${response.status} - ${response.statusText}`);
+                const data = await response.json();
+                if (data.error) throw new Error(`API error: ${data.error.message}`);
+                if (data.items && data.items.length > 0) {
+                    const stats = data.items[0].statistics;
+                    document.getElementById('video-views').textContent = stats.viewCount || 0;
+                    document.getElementById('video-likes').textContent = stats.likeCount || 0;
                 }
+            } catch (error) {
+                console.error(`Error loading stats for video ${videoId}:`, error);
+                document.getElementById('video-views').textContent = 'Failed to load';
+                document.getElementById('video-likes').textContent = 'Failed to load';
             }
-        } catch (error) {
-            console.error(`Error loading stats for video ${videoId}:`, error);
-            const videoCard = document.querySelector(`.video-card[data-index="${videos.indexOf(video)}"] .video-stats`);
-            if (videoCard) {
-                videoCard.querySelector('p:nth-child(1)').innerHTML = `<i class="fas fa-eye"></i> Failed to load views`;
-                videoCard.querySelector('p:nth-child(2)').innerHTML = `<i class="fas fa-thumbs-up"></i> Failed to load likes`;
-            }
+            // Simulated visitors (based on site visits)
+            const visitors = localStorage.getItem('gamePageVisits') || 0;
+            document.getElementById('video-visitors').textContent = visitors;
         }
     }
 }
@@ -315,12 +318,9 @@ function loadGameDetails() {
                 const videoData = {
                     title: video.snippet.title,
                     description: "An epic Roblox game featuring exciting gameplay and features created by Yobest Studio.",
-                    views: 1000000, // Simulated views as of March 04, 2025
-                    likes: 50000,   // Simulated likes
                     videoId: video.snippet.resourceId.videoId,
                     publishedAt: "2024-03-01T12:00:00Z" // Simulated publish date
                 };
-                const downloads = localStorage.getItem('totalDownloads') || '0';
 
                 gameContent.innerHTML = `
                     <h3 class="animate-text title-large" style="color: #00ffcc;">${videoData.title}</h3>
@@ -328,34 +328,12 @@ function loadGameDetails() {
                     <div class="video-player">
                         <iframe width="560" height="315" src="https://www.youtube.com/embed/${videoData.videoId}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                     </div>
-                    <div class="video-stats">
-                        <p><i class="fas fa-eye"></i> ${videoData.views} Views</p>
-                        <p><i class="fas fa-thumbs-up"></i> ${videoData.likes} Likes</p>
-                        <p><i class="fas fa-download"></i> ${downloads} Downloads</p>
-                    </div>
                     <p class="small-text animate-text" style="color: #888;">Published on ${new Date(videoData.publishedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} (March 04, 2025)</p>
                 `;
             }
         } else {
             console.error(`Video with ID ${gameId} not found in cache`);
         }
-    }
-}
-
-async function loadVideoStat(videoId, statType) {
-    const API_KEY = 'AIzaSyChwoHXMqlbmAfeh4lbRUFWx2HjIZ6VV2k'; // Replace with your actual YouTube API key
-    try {
-        const response = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${videoId}&key=${API_KEY}`);
-        if (!response.ok) throw new Error(`HTTP error: ${response.status} - ${response.statusText}`);
-        const data = await response.json();
-        if (data.error) throw new Error(`API error: ${data.error.message}`);
-        if (data.items && data.items.length > 0) {
-            return data.items[0].statistics[statType] || 'N/A';
-        }
-        return 'N/A';
-    } catch (error) {
-        console.error(`Error loading ${statType} for video ${videoId}:`, error);
-        return 'Failed to load';
     }
 }
 
@@ -489,37 +467,55 @@ function addSiteComment(commentInputId = 'site-comment-input', commentsListId = 
     if (commentText && isLoggedIn) {
         const commentsList = document.getElementById(commentsListId);
         if (commentsList) {
-            const commentDiv = document.createElement('div');
-            commentDiv.className = 'comment animate-card';
-            commentDiv.textContent = `${currentUser.username || currentUser.email}: ${commentText} - ${new Date().toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })}`;
-            commentDiv.style.color = '#a0a0a0';
-            commentDiv.style.fontFamily = '"Inter", sans-serif';
-            commentsList.appendChild(commentDiv);
+            const comment = {
+                username: currentUser.username || currentUser.email,
+                avatar: currentUser.avatar || 'https://via.placeholder.com/40',
+                content: commentText,
+                likes: 0,
+                response: '',
+                date: new Date().toISOString(),
+                owner: currentUser.email // Track comment owner for edit/delete
+            };
+            saveSiteComment(comment);
+            loadSiteComments();
             commentInput.value = '';
-            saveSiteComments(commentsListId);
         }
     } else {
         alert('Please log in to add a comment!');
     }
 }
 
-function saveSiteComments(commentsListId = 'site-comments-list') {
-    const commentsList = document.getElementById(commentsListId);
-    if (commentsList) {
-        const comments = Array.from(commentsList.children).map(comment => comment.textContent);
-        localStorage.setItem('siteComments', JSON.stringify(comments));
-    }
+function saveSiteComment(comment) {
+    let comments = JSON.parse(localStorage.getItem('siteGameComments') || '[]');
+    comments.push(comment);
+    localStorage.setItem('siteGameComments', JSON.stringify(comments));
 }
 
 function loadSiteComments(commentsListId = 'site-comments-list') {
-    const comments = JSON.parse(localStorage.getItem('siteComments') || '[]');
+    const comments = JSON.parse(localStorage.getItem('siteGameComments') || '[]');
     const commentsList = document.getElementById(commentsListId);
     if (commentsList) {
         commentsList.innerHTML = '';
         comments.forEach(comment => {
+            const isOwner = isLoggedIn && currentUser.email === comment.owner;
             const commentDiv = document.createElement('div');
-            commentDiv.className = 'comment animate-card';
-            commentDiv.textContent = comment;
+            commentDiv.className = 'site-comment animate-card';
+            commentDiv.innerHTML = `
+                <div class="comment-header">
+                    <img src="${comment.avatar}" alt="${comment.username}" class="comment-avatar">
+                    <span class="neon-text">${comment.username}</span>
+                </div>
+                <p class="body-text animate-text" style="color: #a0a0a0;">${comment.content}</p>
+                <div class="comment-actions">
+                    <button class="btn-small animate-btn" onclick="likeSiteComment('${comment.date}')"><i class="fas fa-thumbs-up"></i> ${comment.likes}</button>
+                    ${isOwner ? `
+                        <button class="btn-small animate-btn" onclick="editSiteComment('${comment.date}')"><i class="fas fa-edit"></i> Edit</button>
+                        <button class="btn-small animate-btn" onclick="deleteSiteComment('${comment.date}')"><i class="fas fa-trash"></i> Delete</button>
+                    ` : ''}
+                    <p class="small-text animate-text" style="color: #888;">${new Date(comment.date).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })}</p>
+                </div>
+                ${comment.response ? `<p class="body-text animate-text response" style="color: #a0a0a0;">Response: ${comment.response}</p>` : ''}
+            `;
             commentDiv.style.color = '#a0a0a0';
             commentDiv.style.fontFamily = '"Inter", sans-serif';
             commentsList.appendChild(commentDiv);
@@ -527,59 +523,69 @@ function loadSiteComments(commentsListId = 'site-comments-list') {
     }
 }
 
-// Comment Functions for Video
-function updateVideoCommentVisibility(commentSectionId = 'comment-section', toggleButtonId = 'toggle-video-comments') {
-    const commentSection = document.getElementById(commentSectionId);
-    const toggleButton = document.getElementById(toggleButtonId);
-    if (commentSection && toggleButton) {
-        const isVisible = commentSection.style.display === 'block';
-        commentSection.style.display = isVisible ? 'none' : 'block';
-        toggleButton.textContent = isVisible ? 'Show Video Comments' : 'Hide Video Comments';
-        toggleButton.classList.add('animate-btn');
-    }
-}
-
-function addVideoComment(commentInputId = 'video-comment-input', commentsListId = 'video-comments-list') {
-    const commentInput = document.getElementById(commentInputId);
-    const commentText = commentInput?.value.trim();
-    if (commentText && isLoggedIn) {
-        const commentsList = document.getElementById(commentsListId);
-        if (commentsList) {
-            const commentDiv = document.createElement('div');
-            commentDiv.className = 'comment animate-card';
-            commentDiv.textContent = `${currentUser.username || currentUser.email}: ${commentText} - ${new Date().toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })}`;
-            commentDiv.style.color = '#a0a0a0';
-            commentDiv.style.fontFamily = '"Inter", sans-serif';
-            commentsList.appendChild(commentDiv);
-            commentInput.value = '';
-            saveVideoComments(commentsListId);
+function likeSiteComment(commentDate) {
+    if (isLoggedIn) {
+        let comments = JSON.parse(localStorage.getItem('siteGameComments') || '[]');
+        const comment = comments.find(c => c.date === commentDate);
+        if (comment) {
+            comment.likes = (comment.likes || 0) + 1;
+            localStorage.setItem('siteGameComments', JSON.stringify(comments));
+            loadSiteComments();
         }
     } else {
-        alert('Please log in to add a comment!');
+        alert('Please log in to like a comment!');
     }
 }
 
-function saveVideoComments(commentsListId = 'video-comments-list') {
-    const commentsList = document.getElementById(commentsListId);
-    if (commentsList) {
-        const comments = Array.from(commentsList.children).map(comment => comment.textContent);
-        localStorage.setItem('videoComments', JSON.stringify(comments));
+function editSiteComment(commentDate) {
+    if (isLoggedIn) {
+        let comments = JSON.parse(localStorage.getItem('siteGameComments') || '[]');
+        const comment = comments.find(c => c.date === commentDate);
+        if (comment && currentUser.email === comment.owner) {
+            const newContent = prompt('Edit your comment:', comment.content);
+            if (newContent && newContent.trim()) {
+                comment.content = newContent.trim();
+                localStorage.setItem('siteGameComments', JSON.stringify(comments));
+                loadSiteComments();
+            }
+        } else {
+            alert('You can only edit your own comments!');
+        }
+    } else {
+        alert('Please log in to edit a comment!');
     }
 }
 
-function loadVideoComments(commentsListId = 'video-comments-list') {
-    const comments = JSON.parse(localStorage.getItem('videoComments') || '[]');
+function deleteSiteComment(commentDate) {
+    if (isLoggedIn) {
+        let comments = JSON.parse(localStorage.getItem('siteGameComments') || '[]');
+        const commentIndex = comments.findIndex(c => c.date === commentDate);
+        if (commentIndex !== -1 && currentUser.email === comments[commentIndex].owner) {
+            if (confirm('Are you sure you want to delete this comment?')) {
+                comments.splice(commentIndex, 1);
+                localStorage.setItem('siteGameComments', JSON.stringify(comments));
+                loadSiteComments();
+            }
+        } else {
+            alert('You can only delete your own comments!');
+        }
+    } else {
+        alert('Please log in to delete a comment!');
+    }
+}
+
+// Comment Functions for YouTube (Simulated, read-only)
+function loadYouTubeComments(commentsListId = 'youtube-comments-list') {
+    const comments = JSON.parse(localStorage.getItem('youtubeComments') || '[]');
     const commentsList = document.getElementById(commentsListId);
     if (commentsList) {
-        commentsList.innerHTML = '';
-        comments.forEach(comment => {
-            const commentDiv = document.createElement('div');
-            commentDiv.className = 'comment animate-card';
-            commentDiv.textContent = comment;
-            commentDiv.style.color = '#a0a0a0';
-            commentDiv.style.fontFamily = '"Inter", sans-serif';
-            commentsList.appendChild(commentDiv);
-        });
+        commentsList.innerHTML = comments.map(comment => `
+            <div class="youtube-comment animate-card">
+                <span class="neon-text">${comment.username}</span>
+                <p class="body-text animate-text" style="color: #a0a0a0;">${comment.content}</p>
+                <p class="small-text animate-text" style="color: #888;">${new Date(comment.date).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })}</p>
+            </div>
+        `).join('');
     }
 }
 
@@ -657,10 +663,10 @@ function handlePageTasks() {
     } else if (path.includes('game.html')) {
         trackPageVisitors();
         loadGameDetails();
-        loadVideoComments();
+        loadVideoStats();
+        loadYouTubeComments();
         loadSiteComments();
-        updateVideoCommentVisibility();
-        updateSiteCommentVisibility();
+        initializeChat();
     } else if (path.includes('ai.html')) {
         trackVisitor();
         displayStats();
