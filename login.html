@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Yobest Studio</title>
+    <link rel="stylesheet" href="styles.css">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2925220406728611" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #121212;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+        .login-container {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.9), rgba(20, 20, 20, 0.9));
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(0, 255, 191, 0.3);
+            width: 400px;
+            text-align: center;
+            color: white;
+        }
+        .login-container h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #00ffb7;
+        }
+        .auth-input, .btn {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+        .auth-input {
+            background-color: #1e1e1e;
+            color: white;
+            border: 2px solid transparent;
+        }
+        .auth-input:focus {
+            border-color: #00ffb7;
+            outline: none;
+        }
+        .btn {
+            background-color: #00ffb7;
+            color: #121212;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .btn:hover {
+            background-color: #00e6a0;
+        }
+        .google-btn, .microsoft-btn {
+            background-color: #1e1e1e;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .google-btn:hover, .microsoft-btn:hover {
+            background-color: #2e2e2e;
+        }
+        .or-divider {
+            margin: 15px 0;
+            color: #888;
+        }
+        .auth-link {
+            font-size: 14px;
+            color: #00ffb7;
+        }
+        .auth-link a {
+            color: #00ffb7;
+            text-decoration: none;
+        }
+        .auth-link a:hover {
+            text-decoration: underline;
+        }
+        #login-error, #signup-error {
+            color: #ff0000;
+            margin-top: 10px;
+            display: none;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #121212;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 400px;
+            border-radius: 15px;
+        }
+        .close-btn {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close-btn:hover,
+        .close-btn:focus {
+            color: white;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>Sign in to Yobest Studio</h2>
+        <button class="btn google-btn" onclick="googleLogin()">
+            <i class="fab fa-google"></i> Sign in with Google
+        </button>
+        <button class="btn microsoft-btn" onclick="microsoftLogin()">
+            <i class="fab fa-microsoft"></i> Sign in with Microsoft
+        </button>
+        <div class="or-divider">OR</div>
+        <form id="login-form" onsubmit="event.preventDefault(); authUser(document.getElementById('login-email').value, document.getElementById('login-password').value, (message) => { document.getElementById('login-error').textContent = message; document.getElementById('login-error').style.display = message.includes('successful') ? 'none' : 'block'; if (message.includes('successful')) window.location.href = 'index.html'; })">
+            <input type="text" id="login-email" class="auth-input" placeholder="Phone, email, or username" required>
+            <input type="password" id="login-password" class="auth-input" placeholder="Password" required>
+            <button type="submit" class="btn">Next</button>
+            <p><a href="#" class="auth-link">Forgot Password?</a></p>
+            <p class="auth-link">Don't have an account? <a href="#signup" onclick="showSignup()">Sign Up</a></p>
+            <div id="login-error" class="reaction-text"></div>
+        </form>
+
+        <form id="signup-form" style="display: none;" onsubmit="event.preventDefault(); authUser(document.getElementById('signup-username').value, document.getElementById('signup-email').value, document.getElementById('signup-password').value, (message) => { document.getElementById('signup-error').textContent = message; document.getElementById('signup-error').style.display = message.includes('successful') ? 'none' : 'block'; if (message.includes('successful')) window.location.href = 'index.html'; })">
+            <h2>Sign Up</h2>
+            <input type="text" id="signup-username" class="auth-input" placeholder="Username" required>
+            <input type="email" id="signup-email" class="auth-input" placeholder="Email address" required>
+            <input type="password" id="signup-password" class="auth-input" placeholder="Create password" required>
+            <input type="password" id="confirm-password" class="auth-input" placeholder="Confirm password" required>
+            <button type="submit" class="btn">Create Account</button>
+            <p class="auth-link">Already a member? <a href="#" onclick="showLogin()">Login</a></p>
+            <div id="signup-error" class="reaction-text"></div>
+        </form>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Call on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchVideos();
+            trackVisitor();
+            displayStats();
+        });
+
+        function showSignup() {
+            document.getElementById('login-form').style.display = 'none';
+            document.getElementById('signup-form').style.display = 'block';
+        }
+
+        function showLogin() {
+            document.getElementById('signup-form').style.display = 'none';
+            document.getElementById('login-form').style.display = 'block';
+        }
+
+        function microsoftLogin() {
+            alert('Microsoft Sign-In requires OAuth setup. This is a simulation.');
+            // In production, integrate with Microsoft OAuth
+        }
+    </script>
+</body>
+</html>
