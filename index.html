@@ -21,8 +21,8 @@
                 <a href="https://discord.gg/jKASqrc7H3" target="_blank" class="btn socialbtn"><i class="fab fa-discord"></i> Discord</a>
                 <a href="https://x.com/Yobest_BYTR" target="_blank" class="btn socialbtn"><i class="fab fa-x"></i> X</a>
                 <a href="#" id="login-btn" class="btn socialbtn" onclick="openLogin()" style="display: inline-block;">Login</a>
-                <a href="#" id="account-btn" class="btn socialbtn" onclick="openAccountSettings()" style="display: none;">Account</a>
-                <img src="https://via.placeholder.com/40" alt="Account" class="account-pic" id="account-pic" style="display: none;" onclick="openAccountSettings()">
+                <a href="account-settings.html" id="account-btn" class="btn socialbtn" onclick="openAccountSettings()" style="display: none;">Account</a>
+                <img src="https://via.placeholder.com/40" alt="Account" class="account-pic" id="account-pic" style="display: none;" onclick="window.location.href='account-settings.html';">
             </nav>
         </div>
     </header>
@@ -77,6 +77,7 @@
         <div class="container">
             <h2 class="animate-text">Welcome to My Roblox World!</h2>
             <p class="animate-text">Explore free and paid games crafted by Yobest Studio.</p>
+            <p class="animate-text">Site Visitors: <span id="site-visitors">0</span> | Total Downloads: <span id="total-downloads">0</span></p>
             <div class="button-group">
                 <a href="#games" class="btn actionbtn animate-btn">Check Out My Games</a>
             </div>
@@ -153,6 +154,8 @@
         document.addEventListener('DOMContentLoaded', () => {
             checkLoginState();
             fetchVideos(); // Fetch videos on page load
+            trackVisitor(); // Track site visitors on page load
+            displayCounters(); // Display site visitors and total downloads
         });
 
         function openLogin() {
@@ -165,7 +168,7 @@
 
         function openAccountSettings() {
             if (isLoggedIn) {
-                document.getElementById('account-form').style.display = 'block';
+                window.location.href = 'account-settings.html';
             } else {
                 openLogin();
             }
@@ -213,10 +216,10 @@
                 setTimeout(() => message.textContent = '', 3000);
             } else if (!users[email]) {
                 // Create new user
-                users[email] = { password, username: email.split('@')[0] };
+                users[email] = { password, username: email.split('@')[0], avatar: 'https://via.placeholder.com/40' };
                 localStorage.setItem('users', JSON.stringify(users));
                 isLoggedIn = true;
-                currentUser = { email, username: email.split('@')[0] };
+                currentUser = { email, username: email.split('@')[0], avatar: 'https://via.placeholder.com/40' };
                 localStorage.setItem('currentUser', JSON.stringify(currentUser));
 
                 closeLogin();
@@ -250,7 +253,7 @@
                 message.classList.add('animate-error');
                 setTimeout(() => message.textContent = '', 3000);
             } else {
-                users[email] = { password, username: email.split('@')[0] };
+                users[email] = { password, username: email.split('@')[0], avatar: 'https://via.placeholder.com/40' };
                 localStorage.setItem('users', JSON.stringify(users));
                 document.getElementById('signup-form').style.display = 'none';
                 openLogin();
@@ -279,9 +282,9 @@
                 return;
             }
             delete users[currentUser.email];
-            users[email] = { password, username: currentUser.username, avatar: currentUser.avatar };
+            users[email] = { password, username: currentUser.username, avatar: currentUser.avatar || 'https://via.placeholder.com/40' };
             localStorage.setItem('users', JSON.stringify(users));
-            currentUser = { email, username: currentUser.username, avatar: currentUser.avatar };
+            currentUser = { email, username: currentUser.username, avatar: currentUser.avatar || 'https://via.placeholder.com/40' };
             localStorage.setItem('currentUser', JSON.stringify(currentUser));
             message.textContent = 'Account updated successfully!';
             message.classList.add('animate-success');
@@ -333,6 +336,14 @@
                 reader.onload = function(e) {
                     preview.src = e.target.result;
                     preview.style.display = 'block';
+                    if (currentUser) {
+                        currentUser.avatar = e.target.result;
+                        const users = JSON.parse(localStorage.getItem('users') || '{}');
+                        users[currentUser.email].avatar = currentUser.avatar;
+                        localStorage.setItem('users', JSON.stringify(users));
+                        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                        document.getElementById('account-pic').src = currentUser.avatar;
+                    }
                 };
                 reader.readAsDataURL(file);
             }
@@ -346,6 +357,26 @@
         function toggleLoginForm() {
             document.getElementById('signup-form').style.display = 'none';
             document.getElementById('login-form').style.display = 'block';
+        }
+
+        // Track and display site visitors and total downloads
+        function trackVisitor() {
+            let visitors = parseInt(localStorage.getItem('siteVisitors') || '0') + 1;
+            localStorage.setItem('siteVisitors', visitors.toString());
+            displayCounters();
+        }
+
+        function trackDownload() {
+            let downloads = parseInt(localStorage.getItem('totalDownloads') || '0') + 1;
+            localStorage.setItem('totalDownloads', downloads.toString());
+            displayCounters();
+        }
+
+        function displayCounters() {
+            const siteVisitorsElement = document.getElementById('site-visitors');
+            const totalDownloadsElement = document.getElementById('total-downloads');
+            if (siteVisitorsElement) siteVisitorsElement.textContent = localStorage.getItem('siteVisitors') || '0';
+            if (totalDownloadsElement) totalDownloadsElement.textContent = localStorage.getItem('totalDownloads') || '0';
         }
 
         // Video and Game Functions
