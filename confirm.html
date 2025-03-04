@@ -33,7 +33,7 @@
             <span class="close-btn" onclick="closeLogin()">×</span>
             <h2 class="title-frame animate-text">Login or Create Account</h2>
             <form id="auth-form" onsubmit="event.preventDefault(); authUser(document.getElementById('email').value, document.getElementById('password').value, (message) => { document.getElementById('auth-message').textContent = message; document.getElementById('auth-message').classList.add(message.includes('successful') ? 'animate-success' : 'animate-error'); setTimeout(() => document.getElementById('auth-message').textContent = '', 3000); closeLogin(); })">
-                <button type="button" class="btn google-btn animate-btn" onclick="alert('Google Sign-In requires OAuth setup.')"><i class="fab fa-google"></i> Sign in with Google</button>
+                <button type="button" class="btn google-btn animate-btn" onclick="googleLogin()">Sign in with Google</button>
                 <div class="or-divider">OR</div>
                 <input type="email" id="email" placeholder="Email" required>
                 <input type="password" id="password" placeholder="Password" required>
@@ -49,8 +49,9 @@
             <span class="close-btn" onclick="closeAccountSettings()">×</span>
             <h2 class="title-frame animate-text">Account Settings</h2>
             <p><a href="account-settings.html" class="btn actionbtn animate-btn">Go to Full Account Settings</a></p>
-            <form id="account-form" onsubmit="event.preventDefault(); updateAccount(document.getElementById('username').value, document.getElementById('new-password').value || '', (message) => { document.getElementById('account-message').textContent = message; document.getElementById('account-message').classList.add(message.includes('successful') ? 'animate-success' : 'animate-error'); setTimeout(() => document.getElementById('account-message').textContent = '', 3000); closeAccountSettings(); })">
+            <form id="account-form" onsubmit="event.preventDefault(); updateAccount(document.getElementById('username').value, document.getElementById('email').value, document.getElementById('new-password').value || '', (message) => { document.getElementById('account-message').textContent = message; document.getElementById('account-message').classList.add(message.includes('successful') ? 'animate-success' : 'animate-error'); setTimeout(() => document.getElementById('account-message').textContent = '', 3000); closeAccountSettings(); })">
                 <input type="text" id="username" placeholder="Username" value="" required class="auth-input">
+                <input type="email" id="email" placeholder="Email" required class="auth-input">
                 <input type="password" id="new-password" placeholder="New Password (optional)" class="auth-input">
                 <input type="file" id="avatar-upload" accept="image/*" onchange="previewAvatar(this)" class="auth-input">
                 <img id="avatar-preview" src="https://via.placeholder.com/40" alt="Avatar Preview" class="avatar-preview" style="display: none; width: 40px; height: 40px; border-radius: 50%; margin: 10px 0;">
@@ -69,19 +70,19 @@
                 <div class="task-card">
                     <h3>Subscribe to Yobest Studio on YouTube</h3>
                     <p>Visit <a href="https://www.youtube.com/channel/UCsV3X3EyEowLEdRW1RileuA" target="_blank">our YouTube channel</a> and subscribe.</p>
-                    <button class="btn actionbtn" onclick="if (confirm('Have you subscribed to Yobest Studio on YouTube?')) { this.parentElement.classList.add('completed'); checkAllTasks(); }">Verify Subscription</button>
+                    <button class="btn actionbtn" onclick="checkTask(this, 'youtube-subscribe')">Verify Subscription</button>
                 </div>
                 <!-- Like and Comment Task -->
                 <div class="task-card">
                     <h3>Like and Comment on the Video</h3>
                     <p>Visit the video page (e.g., <a href="https://www.youtube.com/watch?v=VIDEO_ID" target="_blank">video link</a>) and like/comment.</p>
-                    <button class="btn actionbtn" onclick="if (confirm('Have you liked and commented on the video?')) { this.parentElement.classList.add('completed'); checkAllTasks(); }">Verify Like/Comment</button>
+                    <button class="btn actionbtn" onclick="checkTask(this, 'video-like-comment')">Verify Like/Comment</button>
                 </div>
                 <!-- Follow on Twitter Task -->
                 <div class="task-card">
                     <h3>Follow @Yobest_BYTR on Twitter</h3>
                     <p>Visit <a href="https://x.com/Yobest_BYTR" target="_blank">our Twitter profile</a> and follow.</p>
-                    <button class="btn actionbtn" onclick="if (confirm('Have you followed @Yobest_BYTR on Twitter?')) { this.parentElement.classList.add('completed'); checkAllTasks(); }">Verify Follow</button>
+                    <button class="btn actionbtn" onclick="checkTask(this, 'twitter-follow')">Verify Follow</button>
                 </div>
             </div>
             <p id="success-message" class="reaction-text animate-text" style="display: none; color: #00ff00;">All tasks completed! Download available below.</p>
@@ -105,42 +106,12 @@
 
     <script src="script.js"></script>
     <script>
-        // Minimal inline JavaScript for non-login tasks (task completion and stats)
-        function checkAllTasks() {
-            const tasks = document.querySelectorAll('.task-card');
-            const allCompleted = Array.from(tasks).every(task => task.classList.contains('completed'));
-            const successMessage = document.getElementById('success-message');
-            const downloadLink = document.getElementById('download-link');
-
-            if (allCompleted) {
-                successMessage.style.display = 'block';
-                downloadLink.style.display = 'inline-block';
-            } else {
-                successMessage.style.display = 'none';
-                downloadLink.style.display = 'none';
+        function checkTask(button, taskType) {
+            if (confirm(`Have you completed the ${taskType.replace('-', ' ')} task?`)) {
+                button.parentElement.classList.add('completed');
+                checkAllTasks();
             }
         }
-
-        function trackVisitor() {
-            let visitors = parseInt(localStorage.getItem('siteVisitors') || '0') + 1;
-            localStorage.setItem('siteVisitors', visitors.toString());
-            displayCounters();
-        }
-
-        function trackDownload() {
-            let downloads = parseInt(localStorage.getItem('totalDownloads') || '0') + 1;
-            localStorage.setItem('totalDownloads', downloads.toString());
-            displayCounters();
-        }
-
-        function displayCounters() {
-            document.getElementById('site-visitors').textContent = localStorage.getItem('siteVisitors') || '0';
-            document.getElementById('total-downloads').textContent = localStorage.getItem('totalDownloads') || '0';
-        }
-
-        // Call on page load
-        trackVisitor();
-        displayCounters();
     </script>
 </body>
 </html>
