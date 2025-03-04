@@ -20,7 +20,7 @@
                 <a href="ai.html" class="nav-btn">AI Tools</a>
                 <a href="https://discord.gg/jKASqrc7H3" target="_blank" class="btn socialbtn"><i class="fab fa-discord"></i> Discord</a>
                 <a href="https://x.com/Yobest_BYTR" target="_blank" class="btn socialbtn"><i class="fab fa-x"></i> X</a>
-                <a href="#" id="login-btn" class="btn socialbtn" onclick="openLogin()">Login</a>
+                <a href="#" id="login-btn" class="btn socialbtn" onclick="openLogin()"> Login</a>
                 <a href="account-settings.html" id="account-btn" class="btn socialbtn" onclick="openAccountSettings()" style="display: none;">Account</a>
                 <img src="https://via.placeholder.com/40" alt="Account" class="account-pic" id="account-pic" style="display: none;" onclick="window.location.href='account-settings.html';">
             </nav>
@@ -77,7 +77,7 @@
         <div class="container">
             <h2 class="animate-text">Welcome to My Roblox World!</h2>
             <p class="animate-text">Explore free and paid games crafted by Yobest Studio.</p>
-            <p class="animate-text">Site Visitors: <span id="site-visitors">0</span> | Total Downloads: <span id="total-downloads">0</span></p>
+            <p class="animate-text">Site Visitors | Total Downloads: <span id="site-stats">0</span></p>
             <div class="button-group">
                 <a href="#games" class="btn actionbtn animate-btn">Check Out My Games</a>
             </div>
@@ -149,20 +149,25 @@
     <script>
         // Minimal inline JavaScript for non-login tasks (site stats and video fetching)
         function trackVisitor() {
-            let visitors = parseInt(localStorage.getItem('siteVisitors') || '0') + 1;
-            localStorage.setItem('siteVisitors', visitors.toString());
-            displayCounters();
+            let stats = parseInt(localStorage.getItem('siteVisitors') || '0') + 1;
+            localStorage.setItem('siteVisitors', stats.toString());
+            localStorage.setItem('totalDownloads', stats.toString()); // Sync with site visitors
+            displayStats();
         }
 
         function trackDownload() {
-            let downloads = parseInt(localStorage.getItem('totalDownloads') || '0') + 1;
-            localStorage.setItem('totalDownloads', downloads.toString());
-            displayCounters();
+            let stats = parseInt(localStorage.getItem('siteVisitors') || '0') + 1; // Use same counter
+            localStorage.setItem('siteVisitors', stats.toString());
+            localStorage.setItem('totalDownloads', stats.toString()); // Sync with site visitors
+            displayStats();
         }
 
-        function displayCounters() {
-            document.getElementById('site-visitors').textContent = localStorage.getItem('siteVisitors') || '0';
-            document.getElementById('total-downloads').textContent = localStorage.getItem('totalDownloads') || '0';
+        function displayStats() {
+            const statsElement = document.getElementById('site-stats');
+            if (statsElement) {
+                const stats = localStorage.getItem('siteVisitors') || '0';
+                statsElement.textContent = stats;
+            }
         }
 
         // Video and Game Functions
@@ -275,11 +280,11 @@
             }
         }
 
-        // Call video fetching on page load
+        // Call on page load
         document.addEventListener('DOMContentLoaded', () => {
             fetchVideos();
             trackVisitor();
-            displayCounters();
+            displayStats();
         });
     </script>
 </body>
