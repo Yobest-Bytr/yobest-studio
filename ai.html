@@ -41,7 +41,7 @@
             <span class="close-btn" onclick="closeLogin()">×</span>
             <h2 class="title-frame animate-text">Login or Create Account</h2>
             <form id="auth-form" onsubmit="event.preventDefault(); authUser(document.getElementById('email').value, document.getElementById('password').value, (message) => { document.getElementById('auth-message').textContent = message; document.getElementById('auth-message').classList.add(message.includes('successful') ? 'animate-success' : 'animate-error'); setTimeout(() => document.getElementById('auth-message').textContent = '', 3000); closeLogin(); })">
-                <button type="button" class="btn google-btn animate-btn" onclick="alert('Google Sign-In requires OAuth setup.')"><i class="fab fa-google"></i> Sign in with Google</button>
+                <button type="button" class="btn google-btn animate-btn" onclick="googleLogin()">Sign in with Google</button>
                 <div class="or-divider">OR</div>
                 <input type="email" id="email" placeholder="Email" required>
                 <input type="password" id="password" placeholder="Password" required>
@@ -57,8 +57,9 @@
             <span class="close-btn" onclick="closeAccountSettings()">×</span>
             <h2 class="title-frame animate-text">Account Settings</h2>
             <p><a href="account-settings.html" class="btn actionbtn animate-btn">Go to Full Account Settings</a></p>
-            <form id="account-form" onsubmit="event.preventDefault(); updateAccount(document.getElementById('username').value, document.getElementById('new-password').value || '', (message) => { document.getElementById('account-message').textContent = message; document.getElementById('account-message').classList.add(message.includes('successful') ? 'animate-success' : 'animate-error'); setTimeout(() => document.getElementById('account-message').textContent = '', 3000); closeAccountSettings(); })">
+            <form id="account-form" onsubmit="event.preventDefault(); updateAccount(document.getElementById('username').value, document.getElementById('email').value, document.getElementById('new-password').value || '', (message) => { document.getElementById('account-message').textContent = message; document.getElementById('account-message').classList.add(message.includes('successful') ? 'animate-success' : 'animate-error'); setTimeout(() => document.getElementById('account-message').textContent = '', 3000); closeAccountSettings(); })">
                 <input type="text" id="username" placeholder="Username" value="" required class="auth-input">
+                <input type="email" id="email" placeholder="Email" required class="auth-input">
                 <input type="password" id="new-password" placeholder="New Password (optional)" class="auth-input">
                 <input type="file" id="avatar-upload" accept="image/*" onchange="previewAvatar(this)" class="auth-input">
                 <img id="avatar-preview" src="https://via.placeholder.com/40" alt="Avatar Preview" class="avatar-preview" style="display: none; width: 40px; height: 40px; border-radius: 50%; margin: 10px 0;">
@@ -76,22 +77,22 @@
             <div class="ai-container" id="ai-tools-content" style="display: none;">
                 <p class="ai-instructions">Tap to ask a question:</p>
                 <div class="ai-categories">
-                    <div class="category-card" data-category="Build" onclick="setCategory(this.getAttribute('data-category'))">
+                    <div class="category-card" data-category="Build" onclick="setCategory('Build')">
                         <i class="fas fa-tools"></i>
                         <h3>Build</h3>
                         <p>How do I add background music to my experience?</p>
                     </div>
-                    <div class="category-card" data-category="Grow" onclick="setCategory(this.getAttribute('data-category'))">
+                    <div class="category-card" data-category="Grow" onclick="setCategory('Grow')">
                         <i class="fas fa-users"></i>
                         <h3>Grow</h3>
                         <p>How do I bring new users to my experience? Reply and I'll share what I'm doing so far.</p>
                     </div>
-                    <div class="category-card" data-category="Monetize" onclick="setCategory(this.getAttribute('data-category'))">
+                    <div class="category-card" data-category="Monetize" onclick="setCategory('Monetize')">
                         <i class="fas fa-dollar-sign"></i>
                         <h3>Monetize</h3>
                         <p>How do Limited avatar items work and what are some tips to sell them?</p>
                     </div>
-                    <div class="category-card" data-category="ArtificialIntelligence" onclick="setCategory(this.getAttribute('data-category'))">
+                    <div class="category-card" data-category="ArtificialIntelligence" onclick="setCategory('ArtificialIntelligence')">
                         <i class="fas fa-robot"></i>
                         <h3>Artificial Intelligence</h3>
                         <p>How can I implement AI in my Roblox game?</p>
@@ -131,124 +132,5 @@
     </footer>
 
     <script src="script.js"></script>
-    <script>
-        // Minimal inline JavaScript for non-login tasks (AI tools)
-        function setCategory(category) {
-            document.getElementById('script-input').value = getSampleQuestion(category);
-            document.getElementById('script-input').focus();
-        }
-
-        function getSampleQuestion(category) {
-            switch (category) {
-                case 'Build': return 'How do I add background music to my Roblox experience?';
-                case 'Grow': return 'How do I bring new users to my Roblox experience? Reply and I’ll share what I’m doing so far.';
-                case 'Monetize': return 'How do Limited avatar items work and what are some tips to sell them?';
-                case 'ArtificialIntelligence': return 'How can I implement artificial intelligence in my Roblox game?';
-                default: return 'Ask a question about Roblox development...';
-            }
-        }
-
-        function sendToAI() {
-            const input = document.getElementById('script-input').value.trim().toLowerCase();
-            const responseDiv = document.getElementById('ai-response');
-            if (input) {
-                responseDiv.textContent = "Thinking...";
-                responseDiv.classList.add('animate-loading');
-
-                setTimeout(() => {
-                    let response;
-                    if (input.includes('artificial intelligence')) {
-                        response = generateAIInterface();
-                    } else {
-                        response = simulateAIResponse(input);
-                    }
-                    responseDiv.innerHTML = response;
-                    responseDiv.classList.remove('animate-loading');
-                    responseDiv.classList.add('animate-success');
-                }, 2000); // Simulate AI processing delay
-            } else {
-                responseDiv.textContent = "Please enter a question!";
-                responseDiv.classList.add('animate-error');
-                setTimeout(() => responseDiv.textContent = '', 3000);
-            }
-        }
-
-        function simulateAIResponse(query) {
-            if (query.includes('background music')) {
-                return `To add background music to your Roblox experience:\n1. Use a `Sound` object:\n   - Insert a `Sound` into a part or Workspace.\n   - Set the `SoundId` to a Roblox audio asset ID (e.g., "rbxassetid://123456789").\n   - Play it with `sound:Play()` in a Lua script.\n   Example:\n   <pre class="language-lua"><code>${Prism.highlight(`local sound = Instance.new("Sound")\nsound.SoundId = "rbxassetid://123456789"\nsound.Parent = game.Workspace\nsound:Play()`, Prism.languages.lua, 'lua')}</code></pre>\n2. Ensure the audio asset is uploaded to Roblox and you have permissions.`;
-            } else if (query.includes('new users')) {
-                return `To bring new users to your Roblox experience:\n1. Promote on social media (Twitter, Discord, Roblox groups).\n2. Use Roblox Ads (Developer Marketplace) to target users.\n3. Collaborate with other creators for cross-promotion.\nExample Lua script for tracking players:\n<pre class="language-lua"><code>${Prism.highlight(`local Players = game:GetService("Players")\nPlayers.PlayerAdded:Connect(function(player)\n    print(player.Name .. " joined the game!")\nend)`, Prism.languages.lua, 'lua')}</code></pre>`;
-            } else if (query.includes('limited avatar items')) {
-                return `Limited avatar items in Roblox:\n- Limited items are rare, time-limited, or have low stock, increasing their value.\n- Tips to sell them:\n  1. List on the Roblox marketplace with a competitive price.\n  2. Promote via Roblox groups, Discord, or Twitter.\n  3. Use scarcity (e.g., “Only 100 left!”) to drive demand.\nExample Lua script to check item ownership:\n<pre class="language-lua"><code>${Prism.highlight(`local MarketplaceService = game:GetService("MarketplaceService")\nlocal player = game.Players.LocalPlayer\nlocal itemId = 123456789 -- Replace with your asset ID\nif MarketplaceService:PlayerOwnsAsset(player, itemId) then\n    print("Player owns the limited item!")\nend`, Prism.languages.lua, 'lua')}</code></pre>`;
-            } else {
-                return `I'm here to help with Roblox! Specify a category (Build, Grow, Monetize, ArtificialIntelligence) or ask a detailed question. Example Lua script:\n<pre class="language-lua"><code>${Prism.highlight(`local part = Instance.new("Part")\npart.Position = Vector3.new(0, 10, 0)\npart.Parent = game.Workspace`, Prism.languages.lua, 'lua')}</code></pre>`;
-            }
-        }
-
-        function generateAIInterface() {
-            return `
-                <div class="ai-interface" style="
-                    background-color: #121212;
-                    color: white;
-                    font-family: Arial, sans-serif;
-                    text-align: center;
-                    padding: 20px;
-                    border-radius: 5px;
-                    margin: 10px;
-                ">
-                    <h2>Artificial Intelligence in Roblox</h2>
-                    <p>Here's how to implement AI in your Roblox game using Lua:</p>
-                    <div class="video-container">
-                        <img src="https://via.placeholder.com/200" alt="AI Demo" style="
-                            width: 200px;
-                            height: auto;
-                            cursor: pointer;
-                            margin: 10px;
-                        " onclick="alert('Click to view AI demo video!')">
-                    </div>
-                    <pre class="language-lua"><code>${Prism.highlight(`
-local AIService = {}
-AIService.__index = AIService
-
-function AIService.new()
-    local self = setmetatable({}, AIService)
-    self.agents = {}
-    return self
-end
-
-function AIService:addAgent(name, behavior)
-    self.agents[name] = behavior
-    print(name .. " AI agent added with behavior: " .. behavior)
-end
-
-function AIService:runAgent(name)
-    if self.agents[name] then
-        print("Running " .. name .. " AI behavior...")
-        -- Simulate AI behavior (e.g., pathfinding, decision-making)
-        local humanoid = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid")
-        if humanoid then
-            humanoid:MoveTo(Vector3.new(0, 10, 0)) -- Example: Move to a position
-        end
-    else
-        warn("Agent " .. name .. " not found!")
-    end
-end
-
--- Example usage
-local ai = AIService.new()
-ai:addAgent("EnemyBot", "Patrol and Attack")
-ai:runAgent("EnemyBot")
-`, Prism.languages.lua, 'lua')}</code></pre>
-                    <p>Click the image above to see a demo of AI in action!</p>
-                    <button class="btn actionbtn" onclick="expandAIInterface()">Expand Details</button>
-                </div>
-                <script>
-                    function expandAIInterface() {
-                        alert('Expanding AI details: Use Roblox\'s PathfindingService for navigation, Behavior Trees for decision-making, and NPC models for AI characters. Example: local path = game:GetService("PathfindingService"):CreatePath()');
-                    }
-                </script>
-            `;
-        }
-    </script>
 </body>
 </html>
