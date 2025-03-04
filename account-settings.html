@@ -30,15 +30,15 @@
     <section class="account-settings animate-section">
         <div class="container">
             <h2 class="title-frame animate-text">Account Settings</h2>
-            <p class="animate-text">Site Visitors: <span id="site-visitors">0</span> | Total Downloads: <span id="total-downloads">0</span></p>
+            <p class="animate-text">Site Visitors | Total Downloads: <span id="site-stats">0</span></p>
             <div class="settings-tabs">
                 <button class="tab-btn" onclick="openTab('profile')">Profile</button>
                 <button class="tab-btn" onclick="openTab('security')">Security</button>
             </div>
             <div id="profile" class="tab-content active">
-                <form onsubmit="event.preventDefault(); updateAccount(document.getElementById('username').value, document.getElementById('new-email').value || '', (message) => { document.getElementById('profile-message').textContent = message; document.getElementById('profile-message').classList.add(message.includes('successful') ? 'animate-success' : 'animate-error'); setTimeout(() => document.getElementById('profile-message').textContent = '', 3000); })">
+                <form onsubmit="event.preventDefault(); updateAccount(document.getElementById('username').value, document.getElementById('email').value, '', (message) => { document.getElementById('profile-message').textContent = message; document.getElementById('profile-message').classList.add(message.includes('successful') ? 'animate-success' : 'animate-error'); setTimeout(() => document.getElementById('profile-message').textContent = '', 3000); })">
                     <input type="text" id="username" placeholder="Username" required class="auth-input">
-                    <input type="email" id="new-email" placeholder="New Email (optional)" class="auth-input">
+                    <input type="email" id="email" placeholder="Email" required class="auth-input">
                     <input type="file" id="avatar-upload" accept="image/*" onchange="previewAvatar(this)" class="auth-input">
                     <img id="avatar-preview" src="https://via.placeholder.com/40" alt="Avatar Preview" class="avatar-preview" style="display: none; width: 40px; height: 40px; border-radius: 50%; margin: 10px 0;">
                     <button type="submit" class="btn actionbtn animate-btn">Save Profile</button>
@@ -46,7 +46,7 @@
                 </form>
             </div>
             <div id="security" class="tab-content">
-                <form onsubmit="event.preventDefault(); updateAccount('', document.getElementById('new-password').value, (message) => { document.getElementById('security-message').textContent = message; document.getElementById('security-message').classList.add(message.includes('successful') ? 'animate-success' : 'animate-error'); setTimeout(() => document.getElementById('security-message').textContent = '', 3000); })">
+                <form onsubmit="event.preventDefault(); updateAccount('', '', document.getElementById('new-password').value, (message) => { document.getElementById('security-message').textContent = message; document.getElementById('security-message').classList.add(message.includes('successful') ? 'animate-success' : 'animate-error'); setTimeout(() => document.getElementById('security-message').textContent = '', 3000); })">
                     <input type="password" id="current-password" placeholder="Current Password" required class="auth-input">
                     <input type="password" id="new-password" placeholder="New Password" required class="auth-input">
                     <button type="submit" class="btn actionbtn animate-btn">Update Password</button>
@@ -71,39 +71,5 @@
     </footer>
 
     <script src="script.js"></script>
-    <script>
-        // Minimal inline JavaScript for non-login tasks (site stats and tabs)
-        function openTab(tabName) {
-            const tabContents = document.querySelectorAll('.tab-content');
-            const tabButtons = document.querySelectorAll('.tab-btn');
-
-            tabContents.forEach(content => content.classList.remove('active'));
-            tabButtons.forEach(btn => btn.classList.remove('active'));
-
-            document.getElementById(tabName).classList.add('active');
-            document.querySelector(`.tab-btn[onclick="openTab('${tabName}')"]`).classList.add('active');
-        }
-
-        function trackVisitor() {
-            let visitors = parseInt(localStorage.getItem('siteVisitors') || '0') + 1;
-            localStorage.setItem('siteVisitors', visitors.toString());
-            displayCounters();
-        }
-
-        function trackDownload() {
-            let downloads = parseInt(localStorage.getItem('totalDownloads') || '0') + 1;
-            localStorage.setItem('totalDownloads', downloads.toString());
-            displayCounters();
-        }
-
-        function displayCounters() {
-            document.getElementById('site-visitors').textContent = localStorage.getItem('siteVisitors') || '0';
-            document.getElementById('total-downloads').textContent = localStorage.getItem('totalDownloads') || '0';
-        }
-
-        // Call on page load
-        trackVisitor();
-        displayCounters();
-    </script>
 </body>
 </html>
