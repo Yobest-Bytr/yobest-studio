@@ -16,7 +16,10 @@
 <body>
     <header class="header-animate">
         <div class="container">
-            <h1 class="title-frame"><a href="index.html" class="site-name">Yobest Studio<span class="highlight"></span></a></h1>
+            <h1 class="title-frame">
+                <span class="neon-text">Yobest Studio</span>
+                <span class="highlight neon-glow"></span>
+            </h1>
             <nav class="nav-container">
                 <a href="blog.html" class="nav-btn"><i class="fas fa-blog"></i> Blog</a>
                 <a href="contact.html" class="nav-btn"><i class="fas fa-envelope"></i> Contact</a>
@@ -67,90 +70,92 @@
         </div>
     </div>
 
-    <section class="hero animate-section">
-        <div class="container">
-            <h2 class="title-large animate-text" style="color: #00ffcc;">Welcome to My Roblox World!</h2>
-            <p class="body-text animate-text" style="color: #a0a0a0;">Explore free and paid games crafted by Yobest Studio. <i class="fas fa-gamepad"></i></p>
-            <p class="small-text animate-text">Site Visitors | Total Downloads: <span id="site-stats">0</span> <i class="fas fa-users"></i> | <i class="fas fa-download"></i></p>
-            <div class="button-group">
-                <a href="#games" class="btn actionbtn animate-btn">Check Out My Games <i class="fas fa-gamepad"></i></a>
+    <main class="site-content">
+        <section class="hero animate-section">
+            <div class="container">
+                <h2 class="title-large animate-text" style="color: #00ffcc;">Welcome to My Roblox World!</h2>
+                <p class="body-text animate-text" style="color: #a0a0a0;">Explore free and paid games crafted by Yobest Studio. <i class="fas fa-gamepad"></i></p>
+                <p class="small-text animate-text">Site Visitors | Total Downloads: <span id="site-stats">0</span> <i class="fas fa-users"></i> | <i class="fas fa-download"></i></p>
+                <div class="button-group">
+                    <a href="#games" class="btn actionbtn animate-btn">Check Out My Games <i class="fas fa-gamepad"></i></a>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <aside class="sidebar-ad">
-        <ins class="adsbygoogle" style="display:block; width: 160px; height: 600px;" data-ad-client="ca-pub-2925220406728611" data-ad-slot="YYYYYYYYYY" data-ad-format="vertical" data-full-width-responsive="true"></ins>
-        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-    </aside>
-
-    <aside class="community-chat">
-        <h3>Community Chat</h3>
-        <div class="chat-messages" id="chat-messages"></div>
-        <form id="chat-form" onsubmit="event.preventDefault(); sendChatMessage()">
-            <input type="text" id="chat-input" placeholder="Say something..." required>
-            <button type="submit" class="btn animate-btn">Send <i class="fas fa-paper-plane"></i></button>
-        </form>
-    </aside>
-
-    <section id="games" class="game-previews animate-section">
-        <div class="container">
-            <h2 class="title-large animate-text" style="color: #00ffcc;">Game Previews</h2>
-            <div id="reaction-text" class="reaction-text animate-text"></div>
-            <div class="video-grid" id="preview-grid"></div>
-            <p id="video-error" class="reaction-text animate-error" style="display: none;"></p>
-        </div>
-    </section>
-
-    <section class="ad-section">
-        <div class="container">
-            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-2925220406728611" data-ad-slot="YYYYYYYYYY" data-ad-format="auto" data-full-width-responsive="true"></ins>
+        <aside class="sidebar-ad">
+            <ins class="adsbygoogle" style="display:block; width: 160px; height: 600px;" data-ad-client="ca-pub-2925220406728611" data-ad-slot="YYYYYYYYYY" data-ad-format="vertical" data-full-width-responsive="true"></ins>
             <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-        </div>
-    </section>
+        </aside>
 
-    <section class="downloads animate-section">
-        <div class="container">
-            <h2 class="title-large animate-text" style="color: #00ffcc;">Downloads</h2>
-            <p class="body-text animate-text" style="color: #a0a0a0;">Get my games directly! Links coming soon. <i class="fas fa-download"></i></p>
-            <div class="button-group">
-                <a href="confirm.html" class="btn actionbtn animate-btn" onclick="trackDownload()">Download Games <i class="fas fa-download"></i></a>
-            </div>
-        </div>
-    </section>
-
-    <section class="blog-teaser animate-section">
-        <div class="container">
-            <h2 class="title-large animate-text" style="color: #00ffcc;">Latest Blog Posts</h2>
-            <div class="blog-grid">
-                <article class="animate-card">
-                    <h3 class="body-text animate-text" style="color: #ffffff;">New Game Release!</h3>
-                    <p class="small-text animate-text" style="color: #a0a0a0;">Check out my latest creation and what inspired it. <i class="fas fa-star"></i></p>
-                    <div class="button-group">
-                        <a href="blog.html" class="btn-small animate-btn">Read More <i class="fas fa-arrow-right"></i></a>
-                    </div>
-                </article>
-            </div>
-        </div>
-    </section>
-
-    <section class="ad-section">
-        <div class="container">
-            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-2925220406728611" data-ad-slot="YYYYYYYYYY" data-ad-format="auto" data-full-width-responsive="true"></ins>
-            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-        </div>
-    </section>
-
-    <section id="comment-section" class="comment-section" style="display: none;">
-        <div class="container">
-            <h2 class="title-large animate-text" style="color: #00ffcc;">Site Comments</h2>
-            <form onsubmit="event.preventDefault(); addSiteComment()">
-                <input type="text" id="site-comment-input" class="auth-input" placeholder="Add a comment for the site..." required>
-                <button type="submit" class="btn actionbtn animate-btn">Submit <i class="fas fa-paper-plane"></i></button>
+        <aside class="community-chat">
+            <h3>Community Chat</h3>
+            <div class="chat-messages" id="chat-messages"></div>
+            <form id="chat-form" onsubmit="event.preventDefault(); sendChatMessage()">
+                <input type="text" id="chat-input" placeholder="Say something..." required>
+                <button type="submit" class="btn animate-btn">Send <i class="fas fa-paper-plane"></i></button>
             </form>
-            <div id="site-comments-list" class="comments-list"></div>
-        </div>
-    </section>
-    <button id="toggle-site-comments" class="btn actionbtn animate-btn" onclick="updateSiteCommentVisibility()">Toggle Site Comments <i class="fas fa-comment"></i></button>
+        </aside>
+
+        <section id="games" class="game-previews animate-section">
+            <div class="container">
+                <h2 class="title-large animate-text" style="color: #00ffcc;">Game Previews</h2>
+                <div id="reaction-text" class="reaction-text animate-text"></div>
+                <div class="video-grid" id="preview-grid"></div>
+                <p id="video-error" class="reaction-text animate-error" style="display: none;"></p>
+            </div>
+        </section>
+
+        <section class="ad-section">
+            <div class="container">
+                <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-2925220406728611" data-ad-slot="YYYYYYYYYY" data-ad-format="auto" data-full-width-responsive="true"></ins>
+                <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+            </div>
+        </section>
+
+        <section class="downloads animate-section">
+            <div class="container">
+                <h2 class="title-large animate-text" style="color: #00ffcc;">Downloads</h2>
+                <p class="body-text animate-text" style="color: #a0a0a0;">Get my games directly! Links coming soon. <i class="fas fa-download"></i></p>
+                <div class="button-group">
+                    <a href="confirm.html" class="btn actionbtn animate-btn" onclick="trackDownload()">Download Games <i class="fas fa-download"></i></a>
+                </div>
+            </div>
+        </section>
+
+        <section class="blog-teaser animate-section">
+            <div class="container">
+                <h2 class="title-large animate-text" style="color: #00ffcc;">Latest Blog Posts</h2>
+                <div class="blog-grid">
+                    <article class="animate-card">
+                        <h3 class="body-text animate-text" style="color: #ffffff;">New Game Release!</h3>
+                        <p class="small-text animate-text" style="color: #a0a0a0;">Check out my latest creation and what inspired it. <i class="fas fa-star"></i></p>
+                        <div class="button-group">
+                            <a href="blog.html" class="btn-small animate-btn">Read More <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="ad-section">
+            <div class="container">
+                <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-2925220406728611" data-ad-slot="YYYYYYYYYY" data-ad-format="auto" data-full-width-responsive="true"></ins>
+                <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+            </div>
+        </section>
+
+        <section id="comment-section" class="comment-section animate-section" style="display: none;">
+            <div class="container">
+                <h2 class="title-large animate-text" style="color: #00ffcc;">Site Comments</h2>
+                <form onsubmit="event.preventDefault(); addSiteComment()">
+                    <input type="text" id="site-comment-input" class="auth-input" placeholder="Add a comment for the site..." required>
+                    <button type="submit" class="btn actionbtn animate-btn">Submit <i class="fas fa-paper-plane"></i></button>
+                </form>
+                <div id="site-comments-list" class="comments-list"></div>
+            </div>
+        </section>
+        <button id="toggle-site-comments" class="btn actionbtn animate-btn" onclick="updateSiteCommentVisibility()">Toggle Site Comments <i class="fas fa-comment"></i></button>
+    </main>
 
     <footer class="animate-section">
         <div class="container">
