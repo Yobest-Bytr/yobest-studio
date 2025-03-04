@@ -93,22 +93,8 @@
         <div class="container">
             <h2 class="title-frame animate-text">Game Previews</h2>
             <div id="reaction-text" class="reaction-text animate-text"></div>
-            <div class="video-grid" id="preview-grid">
-                <!-- Static video cards (no JavaScript for fetching, use cached or manual data) -->
-                <div class="video-card animate-card">
-                    <a href="game.html?id=1">
-                        <img src="https://via.placeholder.com/150" alt="Game Preview 1">
-                        <div class="video-stats">
-                            <p><i class="fas fa-eye"></i> 1,000 Views</p>
-                            <p><i class="fas fa-thumbs-up"></i> 500 Likes</p>
-                            <p><i class="fas fa-thumbs-down"></i> N/A</p>
-                        </div>
-                        <h3 class="animate-text">Game 1</h3>
-                    </a>
-                </div>
-                <!-- Add more static cards as needed -->
-            </div>
-            <p id="video-error" class="reaction-text animate-text" style="display: none; color: #ff0000;">Error: Videos not available. Check network or manual update needed.</p>
+            <div class="video-grid" id="preview-grid"></div> <!-- Empty for dynamic content -->
+            <p id="video-error" class="reaction-text animate-text" style="display: none; color: #ff0000;"></p>
         </div>
     </section>
 
@@ -161,7 +147,7 @@
 
     <script src="script.js"></script>
     <script>
-        // Minimal inline JavaScript for non-login tasks (site stats and video simulation)
+        // Minimal inline JavaScript for non-login tasks (site stats and video fetching)
         function trackVisitor() {
             let visitors = parseInt(localStorage.getItem('siteVisitors') || '0') + 1;
             localStorage.setItem('siteVisitors', visitors.toString());
@@ -178,6 +164,7 @@
             document.getElementById('site-visitors').textContent = localStorage.getItem('siteVisitors') || '0';
             document.getElementById('total-downloads').textContent = localStorage.getItem('totalDownloads') || '0';
         }
+
         // Video and Game Functions
         async function fetchVideos() {
             const reactionDiv = document.querySelector('#reaction-text');
@@ -287,9 +274,13 @@
                 }
             }
         }
-        // Call on page load
-        trackVisitor();
-        displayCounters();
+
+        // Call video fetching on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchVideos();
+            trackVisitor();
+            displayCounters();
+        });
     </script>
 </body>
 </html>
