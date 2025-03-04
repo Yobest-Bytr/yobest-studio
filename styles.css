@@ -50,6 +50,7 @@ body {
 }
 
 .nav-btn, .btn, .socialbtn {
+    position: relative;
     padding: 12px 24px;
     border-radius: 25px;
     text-decoration: none;
@@ -60,8 +61,11 @@ body {
     cursor: pointer;
     font-family: 'Inter', sans-serif;
     font-size: 1em;
-    box-shadow: 0 0 10px rgba(0, 255, 204, 0.2);
-    backdrop-filter: blur(5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px);
+    z-index: 1;
 }
 
 .nav-btn:hover, .btn:hover, .socialbtn:hover {
@@ -69,6 +73,52 @@ body {
     border-color: #00ffcc;
     transform: scale(1.05);
     box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
+    letter-spacing: 3px;
+}
+
+.nav-btn::before, .btn::before, .socialbtn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(to left, rgba(255, 255, 255, 0.15), transparent);
+    transform: skewX(45deg) translateX(0);
+    transition: 0.8s;
+    z-index: -1;
+}
+
+.nav-btn:hover::before, .btn:hover::before, .socialbtn:hover::before {
+    transform: skewX(45deg) translateX(200%);
+}
+
+.nav-btn::after, .btn::after, .socialbtn::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: -5px;
+    width: 30px;
+    height: 10px;
+    background: #ff1f71; /* Red for some buttons */
+    border-radius: 10px;
+    transition: 0.8s;
+    transition-delay: 0s;
+    z-index: -1;
+}
+
+.nav-btn:hover::after, .btn:hover::after, .socialbtn:hover::after {
+    top: 0;
+    height: 50%;
+    width: 80%;
+    border-radius: 25px;
+    transition-delay: 0.5s;
+}
+
+.socialbtn::after {
+    background: #2bd2ff; /* Blue for social buttons */
+    box-shadow: 0 0 5px #2bd2ff, 0 0 15px #2bd2ff, 0 0 30px #2bd2ff, 0 0 60px #2bd2ff;
 }
 
 .socialbtn {
@@ -275,6 +325,78 @@ body {
     box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
 }
 
+.reaction-btn {
+    position: relative;
+    padding: 10px 20px;
+    border-radius: 25px;
+    text-decoration: none;
+    color: white;
+    background: linear-gradient(45deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.8));
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9em;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px);
+    z-index: 1;
+    margin: 5px;
+}
+
+.reaction-btn:hover {
+    background: linear-gradient(45deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9));
+    border-color: #00ffcc;
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
+    letter-spacing: 2px;
+}
+
+.reaction-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(to left, rgba(255, 255, 255, 0.15), transparent);
+    transform: skewX(45deg) translateX(0);
+    transition: 0.8s;
+    z-index: -1;
+}
+
+.reaction-btn:hover::before {
+    transform: skewX(45deg) translateX(200%);
+}
+
+.reaction-btn::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: -5px;
+    width: 30px;
+    height: 10px;
+    background: #ff1f71; /* Red for reaction buttons */
+    border-radius: 10px;
+    transition: 0.8s;
+    transition-delay: 0s;
+    z-index: -1;
+}
+
+.reaction-btn:hover::after {
+    top: 0;
+    height: 50%;
+    width: 80%;
+    border-radius: 25px;
+    transition-delay: 0.5s;
+}
+
+.reaction-btn.reacted {
+    animation: react-pulse 0.5s ease-in-out;
+}
+
 .or-divider {
     margin: 15px 0;
     color: #888;
@@ -357,6 +479,13 @@ body {
 
 .video-stats p {
     margin: 5px 0;
+}
+
+.reaction-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
 }
 
 .game-previews, .downloads, .blog-teaser, .ad-section, .account-settings {
@@ -673,6 +802,37 @@ body {
     max-width: 728px;
 }
 
+.writing-frame {
+    margin: 20px 0;
+    padding: 20px;
+    background: linear-gradient(45deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.8));
+    border-radius: 15px;
+    box-shadow: 0 0 10px rgba(0, 255, 204, 0.2);
+    backdrop-filter: blur(5px);
+    border: 2px solid #00ffcc;
+}
+
+.writing-input {
+    width: 100%;
+    height: 100px;
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.3);
+    color: #ffffff;
+    font-family: 'Inter', sans-serif;
+    font-size: 1em;
+    box-shadow: 0 0 5px rgba(0, 255, 204, 0.2);
+    resize: vertical;
+    backdrop-filter: blur(5px);
+}
+
+.writing-input:focus {
+    outline: none;
+    box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
+    transform: scale(1.01);
+}
+
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
@@ -733,4 +893,10 @@ body {
     0% { box-shadow: 0 0 5px rgba(0, 255, 204, 0.2); }
     50% { box-shadow: 0 0 20px rgba(0, 255, 204, 0.8); }
     100% { box-shadow: 0 0 5px rgba(0, 255, 204, 0.2); }
+}
+
+@keyframes react-pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); box-shadow: 0 0 20px rgba(255, 31, 113, 0.8); }
+    100% { transform: scale(1); }
 }
