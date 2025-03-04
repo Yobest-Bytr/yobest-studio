@@ -33,7 +33,7 @@
             <span class="close-btn" onclick="closeLogin()">×</span>
             <h2 class="title-frame animate-text">Login or Create Account</h2>
             <form id="auth-form" onsubmit="event.preventDefault(); authUser(document.getElementById('email').value, document.getElementById('password').value, (message) => { document.getElementById('auth-message').textContent = message; document.getElementById('auth-message').classList.add(message.includes('successful') ? 'animate-success' : 'animate-error'); setTimeout(() => document.getElementById('auth-message').textContent = '', 3000); closeLogin(); })">
-                <button type="button" class="btn google-btn animate-btn" onclick="alert('Google Sign-In requires OAuth setup.')"><i class="fab fa-google"></i> Sign in with Google</button>
+                <button type="button" class="btn google-btn animate-btn" onclick="googleLogin()">Sign in with Google</button>
                 <div class="or-divider">OR</div>
                 <input type="email" id="email" placeholder="Email" required>
                 <input type="password" id="password" placeholder="Password" required>
@@ -49,8 +49,9 @@
             <span class="close-btn" onclick="closeAccountSettings()">×</span>
             <h2 class="title-frame animate-text">Account Settings</h2>
             <p><a href="account-settings.html" class="btn actionbtn animate-btn">Go to Full Account Settings</a></p>
-            <form id="account-form" onsubmit="event.preventDefault(); updateAccount(document.getElementById('username').value, document.getElementById('new-password').value || '', (message) => { document.getElementById('account-message').textContent = message; document.getElementById('account-message').classList.add(message.includes('successful') ? 'animate-success' : 'animate-error'); setTimeout(() => document.getElementById('account-message').textContent = '', 3000); closeAccountSettings(); })">
+            <form id="account-form" onsubmit="event.preventDefault(); updateAccount(document.getElementById('username').value, document.getElementById('email').value, document.getElementById('new-password').value || '', (message) => { document.getElementById('account-message').textContent = message; document.getElementById('account-message').classList.add(message.includes('successful') ? 'animate-success' : 'animate-error'); setTimeout(() => document.getElementById('account-message').textContent = '', 3000); closeAccountSettings(); })">
                 <input type="text" id="username" placeholder="Username" value="" required class="auth-input">
+                <input type="email" id="email" placeholder="Email" required class="auth-input">
                 <input type="password" id="new-password" placeholder="New Password (optional)" class="auth-input">
                 <input type="file" id="avatar-upload" accept="image/*" onchange="previewAvatar(this)" class="auth-input">
                 <img id="avatar-preview" src="https://via.placeholder.com/40" alt="Avatar Preview" class="avatar-preview" style="display: none; width: 40px; height: 40px; border-radius: 50%; margin: 10px 0;">
@@ -65,24 +66,19 @@
             <h2 class="title-frame animate-text">Game Details</h2>
             <p class="animate-text">Explore this epic Roblox game from Yobest Studio!</p>
             <div class="button-group">
-                <a href="confirm.html" class="btn actionbtn animate-btn">Download Game</a>
+                <a href="confirm.html" class="btn actionbtn animate-btn" onclick="trackDownload()">Download Game</a>
             </div>
-            <!-- Add game-specific content here, e.g., video, description, etc. -->
-            <div class="game-content">
-                <h3 class="animate-text">Game Title</h3>
-                <p class="animate-text">Description of the game, featuring exciting gameplay and features...</p>
-                <img src="https://via.placeholder.com/300" alt="Game Screenshot" class="game-screenshot">
-                <!-- Comment Section (hidden by default) -->
-                <div id="comment-section" class="comment-section" style="display: none;">
-                    <h3 class="animate-text">Comments</h3>
-                    <form onsubmit="event.preventDefault(); addComment();">
-                        <input type="text" id="comment-input" placeholder="Add a comment..." class="auth-input" required>
-                        <button type="submit" class="btn actionbtn animate-btn">Submit</button>
-                    </form>
-                    <div id="comments-list" class="comments-list"></div>
-                </div>
-                <button id="toggle-comments" class="btn actionbtn animate-btn" onclick="updateCommentVisibility()">Toggle Comments</button>
+            <div class="game-content" data-task="loadGameDetails"></div>
+            <!-- Comment Section (hidden by default) -->
+            <div id="comment-section" class="comment-section" style="display: none;">
+                <h3 class="animate-text">Comments</h3>
+                <form onsubmit="event.preventDefault(); addComment()">
+                    <input type="text" id="comment-input" placeholder="Add a comment..." class="auth-input" required>
+                    <button type="submit" class="btn actionbtn animate-btn">Submit</button>
+                </form>
+                <div id="comments-list" class="comments-list"></div>
             </div>
+            <button id="toggle-comments" class="btn actionbtn animate-btn" onclick="updateCommentVisibility()">Toggle Comments</button>
         </div>
     </section>
 
@@ -109,85 +105,5 @@
     </footer>
 
     <script src="script.js"></script>
-    <script>
-        // Minimal inline JavaScript for non-login tasks
-        function trackVisitor() {
-            let stats = parseInt(localStorage.getItem('siteVisitors') || '0') + 1;
-            localStorage.setItem('siteVisitors', stats.toString());
-            localStorage.setItem('totalDownloads', stats.toString()); // Sync with site visitors
-            displayCounters();
-        }
-
-        function trackPageVisitors() {
-            let pageVisits = parseInt(localStorage.getItem('gamePageVisits') || '0') + 1;
-            localStorage.setItem('gamePageVisits', pageVisits.toString());
-            console.log(`Game page visited ${pageVisits} times`);
-        }
-
-        function displayCounters() {
-            // No display needed here since stats are shown in index.html
-        }
-
-        function updateNavButtons() {
-            // This function is already defined in script.js, but we call it here to ensure updates
-            if (typeof window.updateNavButtons === 'function') {
-                window.updateNavButtons();
-            }
-        }
-
-        function loadGameDetails() {
-            // Simulate loading game details based on URL parameter (e.g., ?id=1)
-            const urlParams = new URLSearchParams(window.location.search);
-            const gameId = urlParams.get('id');
-            if (gameId) {
-                const gameData = getGameData(gameId); // Placeholder function for game data
-                document.querySelector('.game-content h3').textContent = gameData.title || `Game ${gameId}`;
-                document.querySelector('.game-content p').textContent = gameData.description || 'Description of the game, featuring exciting gameplay and features...';
-                document.querySelector('.game-content .game-screenshot').src = gameData.image || 'https://via.placeholder.com/300';
-            }
-        }
-
-        function getGameData(gameId) {
-            // Placeholder function – replace with actual data or API call
-            const games = {
-                '1': { title: 'Epic Adventure', description: 'An exciting Roblox adventure game!', image: 'https://via.placeholder.com/300' },
-                '2': { title: 'Space Battle', description: 'Battle in space with epic ships!', image: 'https://via.placeholder.com/300' }
-                // Add more games as needed
-            };
-            return games[gameId] || { title: `Game ${gameId}`, description: 'Default game description...', image: 'https://via.placeholder.com/300' };
-        }
-
-        function updateCommentVisibility() {
-            const commentSection = document.getElementById('comment-section');
-            const isVisible = commentSection.style.display === 'block';
-            commentSection.style.display = isVisible ? 'none' : 'block';
-            document.getElementById('toggle-comments').textContent = isVisible ? 'Show Comments' : 'Hide Comments';
-        }
-
-        function addComment() {
-            const commentInput = document.getElementById('comment-input');
-            const commentText = commentInput.value.trim();
-            if (commentText && isLoggedIn) { // Check login state from script.js
-                const commentsList = document.getElementById('comments-list');
-                const commentDiv = document.createElement('div');
-                commentDiv.className = 'comment';
-                commentDiv.textContent = `${currentUser.username || currentUser.email}: ${commentText}`;
-                commentsList.appendChild(commentDiv);
-                commentInput.value = '';
-            } else {
-                alert('Please log in to add a comment!');
-            }
-        }
-
-        // Call functions on page load
-        document.addEventListener('DOMContentLoaded', () => {
-            trackVisitor();
-            trackPageVisitors();
-            displayCounters();
-            updateNavButtons();
-            loadGameDetails();
-            updateCommentVisibility();
-        });
-    </script>
 </body>
 </html>
