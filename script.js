@@ -360,7 +360,7 @@ function sendToAI(inputElementId = 'script-input', responseElementId = 'ai-respo
 
 function simulateAIResponse(query) {
     const responses = {
-        'background music': `To add background music to your Roblox experience:\n1. Use a `Sound` object:\n   - Insert a `Sound` into a part or Workspace.\n   - Set the `SoundId` to a Roblox audio asset ID (e.g., "rbxassetid://123456789").\n   - Play it with `sound:Play()` in a Lua script.\n   Example:\n   <pre class="language-lua"><code>${Prism.highlight(`local sound = Instance.new("Sound")\nsound.SoundId = "rbxassetid://123456789"\nsound.Parent = game.Workspace\nsound:Play()`, Prism.languages.lua, 'lua')}</code></pre>\n2. Ensure the audio asset is uploaded to Roblox and you have permissions.`,
+        'background music': `To add background music to your Roblox experience:\n1. Use a Sound object:\n   - Insert a Sound into a part or Workspace.\n   - Set the SoundId to a Roblox audio asset ID (e.g., "rbxassetid://123456789").\n   - Play it with sound:Play() in a Lua script.\n   Example:\n   <pre class="language-lua"><code>${Prism.highlight('local sound = Instance.new("Sound")\nsound.SoundId = "rbxassetid://123456789"\nsound.Parent = game.Workspace\nsound:Play()', Prism.languages.lua, 'lua')}</code></pre>\n2. Ensure the audio asset is uploaded to Roblox and you have permissions.`,
         'new users': `To bring new users to your Roblox experience:\n1. Promote on social media (Twitter, Discord, Roblox groups).\n2. Use Roblox Ads (Developer Marketplace) to target users.\n3. Collaborate with other creators for cross-promotion.\nExample Lua script for tracking players:\n<pre class="language-lua"><code>${Prism.highlight(`local Players = game:GetService("Players")\nPlayers.PlayerAdded:Connect(function(player)\n    print(player.Name .. " joined the game!")\nend)`, Prism.languages.lua, 'lua')}</code></pre>`,
         'limited avatar items': `Limited avatar items in Roblox:\n- Limited items are rare, time-limited, or have low stock, increasing their value.\n- Tips to sell them:\n  1. List on the Roblox marketplace with a competitive price.\n  2. Promote via Roblox groups, Discord, or Twitter.\n  3. Use scarcity (e.g., “Only 100 left!”) to drive demand.\nExample Lua script to check item ownership:\n<pre class="language-lua"><code>${Prism.highlight(`local MarketplaceService = game:GetService("MarketplaceService")\nlocal player = game.Players.LocalPlayer\nlocal itemId = 123456789 -- Replace with your asset ID\nif MarketplaceService:PlayerOwnsAsset(player, itemId) then\n    print("Player owns the limited item!")\nend`, Prism.languages.lua, 'lua')}</code></pre>`
     };
@@ -552,6 +552,31 @@ function trackPageVisitors() {
 }
 
 // Tab Switching for Account Settings
+function handleAuthResponse(response) {
+    const errorDiv = document.getElementById('login-error');
+    if (errorDiv) {
+        errorDiv.textContent = response.message;
+        errorDiv.style.display = response.success ? 'none' : 'block';
+        errorDiv.classList.remove('animate-error');
+        errorDiv.classList.add(response.success ? 'animate-success' : 'animate-error');
+        if (response.success) {
+            window.location.href = 'index.html';
+        }
+        setTimeout(() => errorDiv.textContent = '', 3000);
+    }
+}
+
+function handleAccountResponse(response) {
+    const messageDiv = document.getElementById('account-message');
+    if (messageDiv) {
+        messageDiv.textContent = response.message;
+        messageDiv.style.display = response.success ? 'block' : 'none';
+        messageDiv.classList.remove('animate-error');
+        messageDiv.classList.add(response.success ? 'animate-success' : 'animate-error');
+        setTimeout(() => messageDiv.textContent = '', 3000);
+    }
+}
+
 function openTab(tabName) {
     const tabContents = document.querySelectorAll('.tab-content');
     const tabButtons = document.querySelectorAll('.tab-btn');
