@@ -76,23 +76,23 @@
             </div>
             <div class="game-content"></div>
             <div id="comment-section" class="comment-section" style="display: none;">
-                <h3 class="title-large animate-text" style="color: #00ffcc;">Comments</h3>
-                <form onsubmit="event.preventDefault(); addComment()">
-                    <input type="text" id="comment-input" class="auth-input" placeholder="Add a comment..." required>
+                <h3 class="title-large animate-text" style="color: #00ffcc;">YouTube Comments</h3>
+                <form onsubmit="event.preventDefault(); addVideoComment()">
+                    <input type="text" id="video-comment-input" class="auth-input" placeholder="Add a comment for this video..." required>
                     <button type="submit" class="btn actionbtn animate-btn">Submit <i class="fas fa-paper-plane"></i></button>
                 </form>
-                <div id="comments-list" class="comments-list"></div>
+                <div id="video-comments-list" class="comments-list"></div>
             </div>
-            <button id="toggle-comments" class="btn actionbtn animate-btn" onclick="updateCommentVisibility()">Toggle Comments <i class="fas fa-comment"></i></button>
-            <div class="reaction-buttons">
-                <button class="reaction-btn" data-reaction="Like"><i class="fas fa-thumbs-up"></i> Like</button>
-                <button class="reaction-btn" data-reaction="Love"><i class="fas fa-heart"></i> Love</button>
-                <button class="reaction-btn" data-reaction="Wow"><i class="fas fa-star"></i> Wow</button>
+            <button id="toggle-video-comments" class="btn actionbtn animate-btn" onclick="updateVideoCommentVisibility()">Toggle Video Comments <i class="fas fa-comment"></i></button>
+            <div id="site-comment-section" class="comment-section" style="display: none;">
+                <h3 class="title-large animate-text" style="color: #00ffcc;">Site Comments</h3>
+                <form onsubmit="event.preventDefault(); addSiteComment()">
+                    <input type="text" id="site-comment-input" class="auth-input" placeholder="Add a comment for the site..." required>
+                    <button type="submit" class="btn actionbtn animate-btn">Submit <i class="fas fa-paper-plane"></i></button>
+                </form>
+                <div id="site-comments-list" class="comments-list"></div>
             </div>
-            <div class="writing-frame">
-                <textarea class="writing-input" placeholder="Write your thoughts here..."></textarea>
-                <button class="btn actionbtn animate-btn" onclick="saveWriting()">Save <i class="fas fa-save"></i></button>
-            </div>
+            <button id="toggle-site-comments" class="btn actionbtn animate-btn" onclick="updateSiteCommentVisibility()">Toggle Site Comments <i class="fas fa-comment"></i></button>
         </div>
     </section>
 
