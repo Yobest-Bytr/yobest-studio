@@ -130,8 +130,9 @@
         let currentUser = null;
         let currentCategory = '';
 
-        // Check login state on page load
+        // Check login state on page load with debugging
         document.addEventListener('DOMContentLoaded', () => {
+            console.log('Page loaded, checking login state...');
             checkLoginState();
             trackVisitor(); // Track site visitors on page load
         });
@@ -157,19 +158,24 @@
         }
 
         function checkLoginState() {
-            const savedUser = JSON.parse(localStorage.getItem('currentUser'));
-            if (savedUser) {
+            console.log('Checking login state...');
+            const savedUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+            console.log('Saved user from localStorage:', savedUser);
+
+            if (savedUser && savedUser.email) { // Ensure savedUser is not null and has an email
                 isLoggedIn = true;
                 currentUser = savedUser;
+                console.log('User is logged in:', currentUser);
                 document.getElementById('login-btn').style.display = 'none';
                 document.getElementById('account-btn').style.display = 'inline-block';
                 document.getElementById('account-pic').style.display = 'inline-block';
-                document.getElementById('account-pic').src = savedUser.avatar || 'https://via.placeholder.com/40';
+                document.getElementById('account-pic').src = currentUser.avatar || 'https://via.placeholder.com/40';
                 document.getElementById('ai-tools-content').style.display = 'block';
                 document.getElementById('ai-login-message').style.display = 'none';
             } else {
                 isLoggedIn = false;
                 currentUser = null;
+                console.log('User is not logged in');
                 document.getElementById('login-btn').style.display = 'inline-block';
                 document.getElementById('account-btn').style.display = 'none';
                 document.getElementById('account-pic').style.display = 'none';
@@ -188,6 +194,7 @@
                 isLoggedIn = true;
                 currentUser = { email, username: users[email].username || email.split('@')[0], avatar: users[email].avatar };
                 localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                console.log('Logged in user:', currentUser);
 
                 closeLogin();
                 updateNavButtons();
@@ -202,6 +209,7 @@
                 isLoggedIn = true;
                 currentUser = { email, username: email.split('@')[0], avatar: 'https://via.placeholder.com/40' };
                 localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                console.log('New user created and logged in:', currentUser);
 
                 closeLogin();
                 updateNavButtons();
