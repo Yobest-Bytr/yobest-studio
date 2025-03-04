@@ -1,5 +1,5 @@
 body {
-    background-color: #0a1f3d; /* Dark blue inspired by xAI */
+    background-color: #0a1f3d; /* Dark blue from the image */
     color: #ffffff;
     font-family: 'Inter', sans-serif;
     margin: 0;
@@ -22,7 +22,7 @@ body {
 
 .title-frame {
     font-size: 2.5em;
-    color: #00ffcc;
+    color: #00ffcc; /* Neon blue from the image */
     margin: 0;
     font-family: 'Inter', sans-serif;
     animation: slideIn 1s ease-in;
@@ -37,9 +37,9 @@ body {
 }
 
 .highlight {
-    color: #00ff99;
+    color: #ff00ff; /* Purple from the image */
     font-family: 'Inter', sans-serif;
-    text-shadow: 0 0 10px rgba(0, 255, 153, 0.5);
+    text-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
 }
 
 .nav-container {
@@ -61,10 +61,10 @@ body {
     cursor: pointer;
     font-family: 'Inter', sans-serif;
     font-size: 1em;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(15px);
+    backdrop-filter: blur(10px);
     z-index: 1;
 }
 
@@ -85,7 +85,7 @@ body {
     height: 100%;
     background: linear-gradient(to left, rgba(255, 255, 255, 0.15), transparent);
     transform: skewX(45deg) translateX(0);
-    transition: 0.8s;
+    transition: 0.5s;
     z-index: -1;
 }
 
@@ -101,9 +101,9 @@ body {
     top: -5px;
     width: 30px;
     height: 10px;
-    background: #ff1f71; /* Red for some buttons */
+    background: #ff00ff; /* Purple from the image */
     border-radius: 10px;
-    transition: 0.8s;
+    transition: 0.5s;
     transition-delay: 0s;
     z-index: -1;
 }
@@ -113,23 +113,18 @@ body {
     height: 50%;
     width: 80%;
     border-radius: 25px;
-    transition-delay: 0.5s;
-}
-
-.socialbtn::after {
-    background: #2bd2ff; /* Blue for social buttons */
-    box-shadow: 0 0 5px #2bd2ff, 0 0 15px #2bd2ff, 0 0 30px #2bd2ff, 0 0 60px #2bd2ff;
+    transition-delay: 0.3s;
 }
 
 .socialbtn {
-    background: linear-gradient(45deg, #00ffcc, #00ff99);
+    background: linear-gradient(45deg, #00ffcc, #ff00ff);
     color: #0a1f3d;
     font-weight: bold;
     font-family: 'Inter', sans-serif;
 }
 
 .socialbtn:hover {
-    background: linear-gradient(45deg, #00ff99, #00ffcc);
+    background: linear-gradient(45deg, #ff00ff, #00ffcc);
     transform: scale(1.05);
     box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
 }
@@ -192,7 +187,7 @@ body {
 
 .animate-section {
     padding: 40px 0;
-    background: linear-gradient(135deg, #0a1f3d, #153f6e);
+    background: linear-gradient(135deg, #0a1f3d, #1a3a6d);
     animation: fadeIn 1s ease-in;
     box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
 }
@@ -233,7 +228,7 @@ body {
 
 .animate-btn {
     animation: pulse 1.5s infinite ease-in-out;
-    background: linear-gradient(45deg, #00ffcc, #00ff99);
+    background: linear-gradient(45deg, #00ffcc, #ff00ff);
     color: #0a1f3d;
     border: none;
     padding: 12px 24px;
@@ -247,7 +242,7 @@ body {
 }
 
 .animate-btn:hover {
-    background: linear-gradient(45deg, #00ff99, #00ffcc);
+    background: linear-gradient(45deg, #ff00ff, #00ffcc);
     transform: scale(1.05);
     box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
 }
@@ -282,7 +277,7 @@ body {
 }
 
 .btn.actionbtn, .btn.send-btn {
-    background: linear-gradient(45deg, #00ffcc, #00ff99);
+    background: linear-gradient(45deg, #00ffcc, #ff00ff);
     color: #0a1f3d;
     border: none;
     padding: 12px 24px;
@@ -296,7 +291,7 @@ body {
 }
 
 .btn.actionbtn:hover, .btn.send-btn:hover {
-    background: linear-gradient(45deg, #00ff99, #00ffcc);
+    background: linear-gradient(45deg, #ff00ff, #00ffcc);
     transform: scale(1.05);
     box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
 }
@@ -323,78 +318,6 @@ body {
     border-color: #00ffcc;
     transform: scale(1.05);
     box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
-}
-
-.reaction-btn {
-    position: relative;
-    padding: 10px 20px;
-    border-radius: 25px;
-    text-decoration: none;
-    color: white;
-    background: linear-gradient(45deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.8));
-    border: 2px solid transparent;
-    transition: all 0.3s ease;
-    cursor: pointer;
-    font-family: 'Inter', sans-serif;
-    font-size: 0.9em;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(15px);
-    z-index: 1;
-    margin: 5px;
-}
-
-.reaction-btn:hover {
-    background: linear-gradient(45deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9));
-    border-color: #00ffcc;
-    transform: scale(1.05);
-    box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
-    letter-spacing: 2px;
-}
-
-.reaction-btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 50%;
-    height: 100%;
-    background: linear-gradient(to left, rgba(255, 255, 255, 0.15), transparent);
-    transform: skewX(45deg) translateX(0);
-    transition: 0.8s;
-    z-index: -1;
-}
-
-.reaction-btn:hover::before {
-    transform: skewX(45deg) translateX(200%);
-}
-
-.reaction-btn::after {
-    content: '';
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    top: -5px;
-    width: 30px;
-    height: 10px;
-    background: #ff1f71; /* Red for reaction buttons */
-    border-radius: 10px;
-    transition: 0.8s;
-    transition-delay: 0s;
-    z-index: -1;
-}
-
-.reaction-btn:hover::after {
-    top: 0;
-    height: 50%;
-    width: 80%;
-    border-radius: 25px;
-    transition-delay: 0.5s;
-}
-
-.reaction-btn.reacted {
-    animation: react-pulse 0.5s ease-in-out;
 }
 
 .or-divider {
@@ -481,11 +404,15 @@ body {
     margin: 5px 0;
 }
 
-.reaction-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 10px;
+.video-player {
+    margin: 20px 0;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0, 255, 204, 0.2);
+}
+
+.video-player iframe {
+    border: none;
 }
 
 .game-previews, .downloads, .blog-teaser, .ad-section, .account-settings {
@@ -582,7 +509,7 @@ body {
 
 .ai-tools {
     padding: 40px 0;
-    background: linear-gradient(135deg, #0a1f3d, #153f6e);
+    background: linear-gradient(135deg, #0a1f3d, #1a3a6d);
     animation: fadeIn 1s ease-in;
     box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
 }
@@ -716,7 +643,7 @@ body {
 }
 
 .tab-btn:hover, .tab-btn.active {
-    background: linear-gradient(45deg, #00ffcc, #00ff99);
+    background: linear-gradient(45deg, #00ffcc, #ff00ff);
     color: #0a1f3d;
     transform: scale(1.05);
     box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
@@ -767,7 +694,7 @@ body {
 
 .ad-section {
     padding: 20px 0;
-    background: linear-gradient(135deg, #0a1f3d, #153f6e);
+    background: linear-gradient(135deg, #0a1f3d, #1a3a6d);
     margin: 20px 0;
 }
 
@@ -784,6 +711,11 @@ body {
     top: 100px;
     width: 160px;
     height: 600px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 15px;
+    box-shadow: 0 0 10px rgba(0, 255, 204, 0.2);
+    backdrop-filter: blur(5px);
+    border: 2px solid #00ffcc;
 }
 
 .sidebar-ad ins {
@@ -831,6 +763,81 @@ body {
     outline: none;
     box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
     transform: scale(1.01);
+}
+
+.community-chat {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    width: 300px;
+    height: 400px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 15px;
+    box-shadow: 0 0 10px rgba(0, 255, 204, 0.2);
+    backdrop-filter: blur(5px);
+    border: 2px solid #ff00ff;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.community-chat h3 {
+    color: #00ffcc;
+    font-size: 1.2em;
+    margin-bottom: 10px;
+    text-shadow: 0 0 5px rgba(0, 255, 204, 0.5);
+}
+
+.community-chat .chat-messages {
+    flex-grow: 1;
+    overflow-y: auto;
+    color: #a0a0a0;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9em;
+    padding: 5px;
+}
+
+.community-chat form {
+    margin-top: 10px;
+    display: flex;
+    gap: 5px;
+}
+
+.community-chat input {
+    flex-grow: 1;
+    padding: 8px;
+    border-radius: 15px;
+    border: none;
+    background: rgba(0, 0, 0, 0.3);
+    color: #ffffff;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9em;
+    box-shadow: 0 0 5px rgba(0, 255, 204, 0.2);
+    backdrop-filter: blur(5px);
+}
+
+.community-chat input:focus {
+    outline: none;
+    box-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+}
+
+.community-chat button {
+    padding: 8px 15px;
+    border-radius: 15px;
+    border: none;
+    background: linear-gradient(45deg, #00ffcc, #ff00ff);
+    color: #0a1f3d;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 5px rgba(0, 255, 204, 0.2);
+}
+
+.community-chat button:hover {
+    background: linear-gradient(45deg, #ff00ff, #00ffcc);
+    transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
 }
 
 @keyframes fadeIn {
@@ -893,10 +900,4 @@ body {
     0% { box-shadow: 0 0 5px rgba(0, 255, 204, 0.2); }
     50% { box-shadow: 0 0 20px rgba(0, 255, 204, 0.8); }
     100% { box-shadow: 0 0 5px rgba(0, 255, 204, 0.2); }
-}
-
-@keyframes react-pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.2); box-shadow: 0 0 20px rgba(255, 31, 113, 0.8); }
-    100% { transform: scale(1); }
 }
