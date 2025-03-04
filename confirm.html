@@ -66,7 +66,7 @@
             <h2 class="title-frame animate-text">Confirm Tasks to Download</h2>
             <p class="animate-text">Complete the following tasks to unlock the download link for the game.</p>
             <div class="task-grid">
-                <!-- Subscribe Task (HTML-only, no JavaScript for task logic) -->
+                <!-- Subscribe Task -->
                 <div class="task-card">
                     <h3>Subscribe to Yobest Studio on YouTube</h3>
                     <p>Visit <a href="https://www.youtube.com/channel/UCsV3X3EyEowLEdRW1RileuA" target="_blank">our YouTube channel</a> and subscribe.</p>
@@ -105,13 +105,5 @@
     </footer>
 
     <script src="script.js"></script>
-    <script>
-        function checkTask(button, taskType) {
-            if (confirm(`Have you completed the ${taskType.replace('-', ' ')} task?`)) {
-                button.parentElement.classList.add('completed');
-                checkAllTasks();
-            }
-        }
-    </script>
 </body>
 </html>
