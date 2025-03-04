@@ -36,9 +36,9 @@
                 <button class="tab-btn" onclick="openTab('security')">Security</button>
             </div>
             <div id="profile" class="tab-content active">
-                <form onsubmit="event.preventDefault(); updateProfile();">
+                <form onsubmit="event.preventDefault(); updateAccount(document.getElementById('username').value, document.getElementById('new-email').value || '', (message) => { document.getElementById('profile-message').textContent = message; document.getElementById('profile-message').classList.add(message.includes('successful') ? 'animate-success' : 'animate-error'); setTimeout(() => document.getElementById('profile-message').textContent = '', 3000); })">
                     <input type="text" id="username" placeholder="Username" required class="auth-input">
-                    <input type="email" id="email" placeholder="Email" required class="auth-input">
+                    <input type="email" id="new-email" placeholder="New Email (optional)" class="auth-input">
                     <input type="file" id="avatar-upload" accept="image/*" onchange="previewAvatar(this)" class="auth-input">
                     <img id="avatar-preview" src="https://via.placeholder.com/40" alt="Avatar Preview" class="avatar-preview" style="display: none; width: 40px; height: 40px; border-radius: 50%; margin: 10px 0;">
                     <button type="submit" class="btn actionbtn animate-btn">Save Profile</button>
@@ -46,10 +46,9 @@
                 </form>
             </div>
             <div id="security" class="tab-content">
-                <form onsubmit="event.preventDefault(); updateSecurity();">
+                <form onsubmit="event.preventDefault(); updateAccount('', document.getElementById('new-password').value, (message) => { document.getElementById('security-message').textContent = message; document.getElementById('security-message').classList.add(message.includes('successful') ? 'animate-success' : 'animate-error'); setTimeout(() => document.getElementById('security-message').textContent = '', 3000); })">
                     <input type="password" id="current-password" placeholder="Current Password" required class="auth-input">
                     <input type="password" id="new-password" placeholder="New Password" required class="auth-input">
-                    <input type="password" id="confirm-password" placeholder="Confirm New Password" required class="auth-input">
                     <button type="submit" class="btn actionbtn animate-btn">Update Password</button>
                     <p id="security-message" class="reaction-text animate-text"></p>
                 </form>
@@ -71,232 +70,9 @@
         </div>
     </footer>
 
+    <script src="script.js"></script>
     <script>
-        // Global variables
-        let isLoggedIn = false;
-        let currentUser = null;
-
-        // Check login state on page load
-        document.addEventListener('DOMContentLoaded', () => {
-            checkLoginState();
-            loadAccountInfo();
-            displayCounters(); // Display site visitors and total downloads
-        });
-
-        function openLogin() {
-            document.getElementById('login-modal').style.display = 'block';
-        }
-
-        function closeLogin() {
-            document.getElementById('login-modal').style.display = 'none';
-        }
-
-        function openAccountSettings() {
-            // This function is not needed here as the page is already account-settings
-        }
-
-        function closeAccountSettings() {
-            // No modal to close here
-        }
-
-        function checkLoginState() {
-            const savedUser = JSON.parse(localStorage.getItem('currentUser'));
-            if (savedUser) {
-                isLoggedIn = true;
-                currentUser = savedUser;
-                document.getElementById('login-btn').style.display = 'none';
-                document.getElementById('account-btn').style.display = 'inline-block';
-                document.getElementById('account-pic').style.display = 'inline-block';
-                document.getElementById('account-pic').src = savedUser.avatar || 'https://via.placeholder.com/40';
-            } else {
-                isLoggedIn = false;
-                currentUser = null;
-                document.getElementById('login-btn').style.display = 'inline-block';
-                document.getElementById('account-btn').style.display = 'none';
-                document.getElementById('account-pic').style.display = 'none';
-                window.location.href = 'index.html'; // Redirect to homepage if not logged in
-            }
-        }
-
-        function loadAccountInfo() {
-            if (currentUser) {
-                document.getElementById('username').value = currentUser.username || currentUser.email.split('@')[0];
-                document.getElementById('email').value = currentUser.email;
-                document.getElementById('avatar-preview').src = currentUser.avatar || 'https://via.placeholder.com/40';
-                document.getElementById('avatar-preview').style.display = currentUser.avatar ? 'block' : 'none';
-            }
-        }
-
-        function handleLogin(event) {
-            event.preventDefault();
-            const email = document.getElementById('email-login').value;
-            const password = document.getElementById('password-login').value;
-            const message = document.getElementById('login-error');
-            const users = JSON.parse(localStorage.getItem('users') || '{}');
-
-            if (users[email] && users[email].password === password) {
-                isLoggedIn = true;
-                currentUser = { email, username: users[email].username || email.split('@')[0], avatar: users[email].avatar };
-                localStorage.setItem('currentUser', JSON.stringify(currentUser));
-
-                closeLogin();
-                updateNavButtons();
-                checkLoginState();
-                message.textContent = 'Login successful!';
-                message.classList.add('animate-success');
-                setTimeout(() => message.textContent = '', 3000);
-            } else if (!users[email]) {
-                // Create new user
-                users[email] = { password, username: email.split('@')[0], avatar: 'https://via.placeholder.com/40' };
-                localStorage.setItem('users', JSON.stringify(users));
-                isLoggedIn = true;
-                currentUser = { email, username: email.split('@')[0], avatar: 'https://via.placeholder.com/40' };
-                localStorage.setItem('currentUser', JSON.stringify(currentUser));
-
-                closeLogin();
-                updateNavButtons();
-                checkLoginState();
-                message.textContent = 'Account created and logged in successfully!';
-                message.classList.add('animate-success');
-                setTimeout(() => message.textContent = '', 3000);
-            } else {
-                message.textContent = 'Invalid email or password.';
-                message.classList.add('animate-error');
-                setTimeout(() => message.textContent = '', 3000);
-            }
-        }
-
-        function updateProfile() {
-            const username = document.getElementById('username').value;
-            const email = document.getElementById('email').value;
-            const file = document.getElementById('avatar-upload').files[0];
-            const message = document.getElementById('profile-message');
-
-            if (!currentUser) {
-                message.textContent = 'Please log in first.';
-                message.classList.add('animate-error');
-                setTimeout(() => message.textContent = '', 3000);
-                return;
-            }
-
-            const users = JSON.parse(localStorage.getItem('users') || '{}');
-            if (users[email] && email !== currentUser.email) {
-                message.textContent = 'Email already registered.';
-                message.classList.add('animate-error');
-                setTimeout(() => message.textContent = '', 3000);
-                return;
-            }
-
-            currentUser.username = username || currentUser.email.split('@')[0];
-            currentUser.email = email;
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    currentUser.avatar = e.target.result;
-                    users[email] = { password: users[currentUser.email].password, username: currentUser.username, avatar: currentUser.avatar };
-                    delete users[currentUser.email];
-                    localStorage.setItem('users', JSON.stringify(users));
-                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                    document.getElementById('account-pic').src = currentUser.avatar;
-                    document.getElementById('avatar-preview').src = currentUser.avatar;
-                    message.textContent = 'Profile updated successfully!';
-                    message.classList.add('animate-success');
-                    setTimeout(() => message.textContent = '', 3000);
-                };
-                reader.readAsDataURL(file);
-            } else {
-                users[email] = { password: users[currentUser.email].password, username: currentUser.username, avatar: currentUser.avatar };
-                delete users[currentUser.email];
-                localStorage.setItem('users', JSON.stringify(users));
-                localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                message.textContent = 'Profile updated successfully!';
-                message.classList.add('animate-success');
-                setTimeout(() => message.textContent = '', 3000);
-            }
-        }
-
-        function updateSecurity() {
-            const currentPassword = document.getElementById('current-password').value;
-            const newPassword = document.getElementById('new-password').value;
-            const confirmPassword = document.getElementById('confirm-password').value;
-            const message = document.getElementById('security-message');
-
-            if (!currentUser) {
-                message.textContent = 'Please log in first.';
-                message.classList.add('animate-error');
-                setTimeout(() => message.textContent = '', 3000);
-                return;
-            }
-
-            const users = JSON.parse(localStorage.getItem('users') || '{}');
-            if (users[currentUser.email].password !== currentPassword) {
-                message.textContent = 'Current password is incorrect.';
-                message.classList.add('animate-error');
-                setTimeout(() => message.textContent = '', 3000);
-                return;
-            }
-
-            if (newPassword !== confirmPassword) {
-                message.textContent = 'New passwords do not match.';
-                message.classList.add('animate-error');
-                setTimeout(() => message.textContent = '', 3000);
-                return;
-            }
-
-            users[currentUser.email].password = newPassword;
-            localStorage.setItem('users', JSON.stringify(users));
-            message.textContent = 'Password updated successfully!';
-            message.classList.add('animate-success');
-            setTimeout(() => message.textContent = '', 3000);
-        }
-
-        function logout() {
-            isLoggedIn = false;
-            currentUser = null;
-            localStorage.removeItem('currentUser');
-            document.getElementById('login-btn').style.display = 'inline-block';
-            document.getElementById('account-btn').style.display = 'none';
-            document.getElementById('account-pic').style.display = 'none';
-            alert('Logged out successfully.');
-            window.location.href = 'index.html'; // Redirect to homepage after logout
-        }
-
-        function updateNavButtons() {
-            const loginBtn = document.getElementById('login-btn');
-            const accountBtn = document.getElementById('account-btn');
-            const accountPic = document.getElementById('account-pic');
-            if (isLoggedIn) {
-                loginBtn.style.display = 'none';
-                accountBtn.style.display = 'inline-block';
-                accountPic.style.display = 'inline-block';
-            } else {
-                loginBtn.style.display = 'inline-block';
-                accountBtn.style.display = 'none';
-                accountPic.style.display = 'none';
-            }
-        }
-
-        function previewAvatar(input) {
-            const preview = document.getElementById('avatar-preview');
-            const file = input.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    preview.src = e.target.result;
-                    preview.style.display = 'block';
-                    if (currentUser) {
-                        currentUser.avatar = e.target.result;
-                        const users = JSON.parse(localStorage.getItem('users') || '{}');
-                        users[currentUser.email].avatar = currentUser.avatar;
-                        localStorage.setItem('users', JSON.stringify(users));
-                        localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                        document.getElementById('account-pic').src = currentUser.avatar;
-                    }
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
+        // Minimal inline JavaScript for non-login tasks (site stats and tabs)
         function openTab(tabName) {
             const tabContents = document.querySelectorAll('.tab-content');
             const tabButtons = document.querySelectorAll('.tab-btn');
@@ -308,7 +84,6 @@
             document.querySelector(`.tab-btn[onclick="openTab('${tabName}')"]`).classList.add('active');
         }
 
-        // Track and display site visitors and total downloads
         function trackVisitor() {
             let visitors = parseInt(localStorage.getItem('siteVisitors') || '0') + 1;
             localStorage.setItem('siteVisitors', visitors.toString());
@@ -322,11 +97,13 @@
         }
 
         function displayCounters() {
-            const siteVisitorsElement = document.getElementById('site-visitors');
-            const totalDownloadsElement = document.getElementById('total-downloads');
-            if (siteVisitorsElement) siteVisitorsElement.textContent = localStorage.getItem('siteVisitors') || '0';
-            if (totalDownloadsElement) totalDownloadsElement.textContent = localStorage.getItem('totalDownloads') || '0';
+            document.getElementById('site-visitors').textContent = localStorage.getItem('siteVisitors') || '0';
+            document.getElementById('total-downloads').textContent = localStorage.getItem('totalDownloads') || '0';
         }
+
+        // Call on page load
+        trackVisitor();
+        displayCounters();
     </script>
 </body>
 </html>
