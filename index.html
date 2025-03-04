@@ -83,6 +83,15 @@
         <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
     </aside>
 
+    <aside class="community-chat">
+        <h3>Community Chat</h3>
+        <div class="chat-messages" id="chat-messages"></div>
+        <form id="chat-form" onsubmit="event.preventDefault(); sendChatMessage()">
+            <input type="text" id="chat-input" placeholder="Say something..." required>
+            <button type="submit" class="btn animate-btn">Send <i class="fas fa-paper-plane"></i></button>
+        </form>
+    </aside>
+
     <section id="games" class="game-previews animate-section">
         <div class="container">
             <h2 class="title-large animate-text" style="color: #00ffcc;">Game Previews</h2>
@@ -119,15 +128,6 @@
                     <div class="button-group">
                         <a href="blog.html" class="btn-small animate-btn">Read More <i class="fas fa-arrow-right"></i></a>
                     </div>
-                    <div class="reaction-buttons">
-                        <button class="reaction-btn" data-reaction="Like"><i class="fas fa-thumbs-up"></i> Like</button>
-                        <button class="reaction-btn" data-reaction="Love"><i class="fas fa-heart"></i> Love</button>
-                        <button class="reaction-btn" data-reaction="Wow"><i class="fas fa-star"></i> Wow</button>
-                    </div>
-                    <div class="writing-frame">
-                        <textarea class="writing-input" placeholder="Write your thoughts here..."></textarea>
-                        <button class="btn actionbtn animate-btn" onclick="saveWriting()">Save <i class="fas fa-save"></i></button>
-                    </div>
                 </article>
             </div>
         </div>
@@ -139,6 +139,18 @@
             <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
         </div>
     </section>
+
+    <section id="comment-section" class="comment-section" style="display: none;">
+        <div class="container">
+            <h2 class="title-large animate-text" style="color: #00ffcc;">Site Comments</h2>
+            <form onsubmit="event.preventDefault(); addSiteComment()">
+                <input type="text" id="site-comment-input" class="auth-input" placeholder="Add a comment for the site..." required>
+                <button type="submit" class="btn actionbtn animate-btn">Submit <i class="fas fa-paper-plane"></i></button>
+            </form>
+            <div id="site-comments-list" class="comments-list"></div>
+        </div>
+    </section>
+    <button id="toggle-site-comments" class="btn actionbtn animate-btn" onclick="updateSiteCommentVisibility()">Toggle Site Comments <i class="fas fa-comment"></i></button>
 
     <footer class="animate-section">
         <div class="container">
@@ -156,5 +168,64 @@
     </footer>
 
     <script src="script.js"></script>
+    <script>
+        // Chat Functions
+        function initializeChat() {
+            const chatMessages = document.getElementById('chat-messages');
+            const chatForm = document.getElementById('chat-form');
+            const chatInput = document.getElementById('chat-input');
+
+            if (chatMessages && chatForm) {
+                loadChatMessages();
+                chatForm.addEventListener('submit', sendChatMessage);
+            }
+        }
+
+        function sendChatMessage() {
+            const chatInput = document.getElementById('chat-input');
+            const message = chatInput?.value.trim();
+            if (message && isLoggedIn) {
+                const chatMessages = document.getElementById('chat-messages');
+                if (chatMessages) {
+                    const messageDiv = document.createElement('div');
+                    messageDiv.className = 'chat-message animate-card';
+                    messageDiv.textContent = `${currentUser.username || currentUser.email}: ${message} - ${new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`;
+                    messageDiv.style.color = '#a0a0a0';
+                    messageDiv.style.fontFamily = '"Inter", sans-serif';
+                    chatMessages.appendChild(messageDiv);
+                    chatInput.value = '';
+                    saveChatMessages();
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }
+            } else {
+                alert('Please log in to send a message!');
+            }
+        }
+
+        function saveChatMessages() {
+            const chatMessages = document.getElementById('chat-messages');
+            if (chatMessages) {
+                const messages = Array.from(chatMessages.children).map(message => message.textContent);
+                localStorage.setItem('chatMessages', JSON.stringify(messages));
+            }
+        }
+
+        function loadChatMessages() {
+            const messages = JSON.parse(localStorage.getItem('chatMessages') || '[]');
+            const chatMessages = document.getElementById('chat-messages');
+            if (chatMessages) {
+                chatMessages.innerHTML = '';
+                messages.forEach(message => {
+                    const messageDiv = document.createElement('div');
+                    messageDiv.className = 'chat-message animate-card';
+                    messageDiv.textContent = message;
+                    messageDiv.style.color = '#a0a0a0';
+                    messageDiv.style.fontFamily = '"Inter", sans-serif';
+                    chatMessages.appendChild(messageDiv);
+                });
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+        }
+    </script>
 </body>
 </html>
