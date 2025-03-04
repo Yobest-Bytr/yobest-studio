@@ -5,6 +5,7 @@ body {
     margin: 0;
     padding: 0;
     text-align: center;
+    overflow-x: hidden; /* Prevent horizontal overflow */
 }
 
 .container {
@@ -13,7 +14,23 @@ body {
     padding: 20px;
 }
 
+.site-content {
+    display: grid;
+    grid-template-areas:
+        "header header"
+        "hero sidebar-ad"
+        "games sidebar-ad"
+        "ad1 sidebar-ad"
+        "downloads sidebar-ad"
+        "blog sidebar-ad"
+        "ad2 sidebar-ad"
+        "comments sidebar-ad";
+    gap: 20px;
+    padding: 20px;
+}
+
 .header-animate {
+    grid-area: header;
     background-color: #0a1f3d;
     padding: 20px 0;
     animation: fadeIn 1s ease-in;
@@ -21,12 +38,53 @@ body {
 }
 
 .title-frame {
+    position: relative;
     font-size: 2.5em;
-    color: #00ffcc; /* Neon blue from the image */
     margin: 0;
     font-family: 'Inter', sans-serif;
-    animation: slideIn 1s ease-in;
-    text-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+    text-align: center;
+}
+
+.neon-text {
+    color: #00ffcc; /* Neon blue from the image */
+    text-shadow: 0 0 10px #00ffcc, 0 0 20px #00ffcc, 0 0 30px #00ffcc;
+    position: relative;
+    z-index: 2;
+}
+
+.neon-frame {
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    width: 100%;
+    height: 100%;
+    border: 2px solid #00ffcc;
+    border-radius: 15px;
+    box-shadow: 0 0 20px #00ffcc, 0 0 40px #00ffcc, 0 0 60px #00ffcc;
+    animation: neonPulse 2s infinite alternate;
+    z-index: 1;
+}
+
+.neon-glow {
+    color: #ff00ff; /* Purple from the image */
+    text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff, 0 0 30px #ff00ff;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+.circuit-lines {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><path d="M0 50 L100 50 M50 0 L50 100" stroke="%2300ffcc" stroke-width="2" stroke-dasharray="5"/></svg>') repeat;
+    opacity: 0.3;
+    z-index: 1;
 }
 
 .site-name {
@@ -191,6 +249,14 @@ body {
     animation: fadeIn 1s ease-in;
     box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
 }
+
+.hero { grid-area: hero; }
+.game-previews { grid-area: games; }
+.ad-section:nth-child(3) { grid-area: ad1; }
+.downloads { grid-area: downloads; }
+.blog-teaser { grid-area: blog; }
+.ad-section:nth-child(5) { grid-area: ad2; }
+.comment-section { grid-area: comments; }
 
 .animate-text {
     animation: fadeIn 1s ease-in;
@@ -706,8 +772,8 @@ body {
 }
 
 .sidebar-ad {
-    position: fixed;
-    right: 20px;
+    grid-area: sidebar-ad;
+    position: sticky;
     top: 100px;
     width: 160px;
     height: 600px;
@@ -779,6 +845,7 @@ body {
     padding: 10px;
     display: flex;
     flex-direction: column;
+    z-index: 1000; /* Ensure it stays above other content */
 }
 
 .community-chat h3 {
@@ -837,6 +904,24 @@ body {
 .community-chat button:hover {
     background: linear-gradient(45deg, #ff00ff, #00ffcc);
     transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+}
+
+.chat-message {
+    margin: 5px 0;
+    padding: 5px;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 5px;
+    animation: slideUp 0.5s ease-in;
+    color: #a0a0a0;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9em;
+    box-shadow: 0 0 5px rgba(0, 255, 204, 0.2);
+    backdrop-filter: blur(5px);
+}
+
+.chat-message:hover {
+    transform: scale(1.02);
     box-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
 }
 
@@ -900,4 +985,9 @@ body {
     0% { box-shadow: 0 0 5px rgba(0, 255, 204, 0.2); }
     50% { box-shadow: 0 0 20px rgba(0, 255, 204, 0.8); }
     100% { box-shadow: 0 0 5px rgba(0, 255, 204, 0.2); }
+}
+
+@keyframes neonPulse {
+    0% { box-shadow: 0 0 10px #00ffcc, 0 0 20px #00ffcc, 0 0 30px #00ffcc; }
+    100% { box-shadow: 0 0 20px #00ffcc, 0 0 40px #00ffcc, 0 0 60px #00ffcc; }
 }
