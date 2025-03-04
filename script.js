@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     handlePageTasks();
     initializePrism(); // Initialize Prism.js for Lua highlighting
     initializeButtonAnimations(); // Initialize button animations
+    initializeReactionButtons(); // Initialize reaction buttons
 });
 
 // Utility Functions for Prism.js
@@ -22,7 +23,7 @@ function initializePrism() {
 
 // Button Animation Initialization
 function initializeButtonAnimations() {
-    const buttons = document.querySelectorAll('.btn, .nav-btn, .socialbtn, .actionbtn, .send-btn');
+    const buttons = document.querySelectorAll('.btn, .nav-btn, .socialbtn, .actionbtn, .send-btn, .reaction-btn');
     buttons.forEach(button => {
         button.addEventListener('mouseover', () => {
             button.classList.add('glow');
@@ -33,6 +34,19 @@ function initializeButtonAnimations() {
         button.addEventListener('click', () => {
             button.classList.add('pulse-click');
             setTimeout(() => button.classList.remove('pulse-click'), 500);
+        });
+    });
+}
+
+// Reaction Button Initialization
+function initializeReactionButtons() {
+    const reactionButtons = document.querySelectorAll('.reaction-btn');
+    reactionButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const reaction = button.getAttribute('data-reaction');
+            alert(`You reacted with ${reaction}!`);
+            button.classList.add('reacted');
+            setTimeout(() => button.classList.remove('reacted'), 1000);
         });
     });
 }
@@ -254,6 +268,11 @@ function renderVideos(videos) {
                     <p><i class="fas fa-thumbs-up"></i> Loading likes...</p>
                 </div>
                 <h3 class="animate-text">${item.snippet.title}</h3>
+                <div class="reaction-buttons">
+                    <button class="reaction-btn" data-reaction="Like"><i class="fas fa-thumbs-up"></i> Like</button>
+                    <button class="reaction-btn" data-reaction="Love"><i class="fas fa-heart"></i> Love</button>
+                    <button class="reaction-btn" data-reaction="Wow"><i class="fas fa-star"></i> Wow</button>
+                </div>
             </a>
         </div>
     `).join('');
@@ -305,6 +324,15 @@ function loadGameDetails() {
                         <p><i class="fas fa-eye"></i> ${loadVideoStat(video.snippet.resourceId.videoId, 'viewCount') || 'Loading views...'}</p>
                         <p><i class="fas fa-thumbs-up"></i> ${loadVideoStat(video.snippet.resourceId.videoId, 'likeCount') || 'Loading likes...'}</p>
                         <p><i class="fas fa-download"></i> ${localStorage.getItem('totalDownloads') || '0'} Downloads</p>
+                    </div>
+                    <div class="reaction-buttons">
+                        <button class="reaction-btn" data-reaction="Like"><i class="fas fa-thumbs-up"></i> Like</button>
+                        <button class="reaction-btn" data-reaction="Love"><i class="fas fa-heart"></i> Love</button>
+                        <button class="reaction-btn" data-reaction="Wow"><i class="fas fa-star"></i> Wow</button>
+                    </div>
+                    <div class="writing-frame">
+                        <textarea class="writing-input" placeholder="Write your thoughts here..."></textarea>
+                        <button class="btn actionbtn animate-btn" onclick="saveWriting()">Save <i class="fas fa-save"></i></button>
                     </div>
                 `;
             }
@@ -391,7 +419,7 @@ function simulateAIResponse(query) {
 
 function generateAIInterface(responseElementId = 'ai-response') {
     return `
-        <div class="ai-interface animate-card" style="background-color: rgba(0, 0, 0, 0.8); color: #ffffff; font-family: 'Inter', sans-serif; text-align: center; padding: 20px; border-radius: 15px; margin: 10px; border: 2px solid #00ffcc; backdrop-filter: blur(10px);">
+        <div class="ai-interface animate-card" style="background: linear-gradient(45deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.8)); color: #ffffff; font-family: 'Inter', sans-serif; text-align: center; padding: 20px; border-radius: 15px; margin: 10px; border: 2px solid #00ffcc; backdrop-filter: blur(15px);">
             <h2 class="title-large animate-text" style="color: #00ffcc;">Artificial Intelligence in Roblox</h2>
             <p class="body-text animate-text" style="color: #a0a0a0;">Here's how to implement AI in your Roblox game using Lua: <i class="fas fa-robot"></i></p>
             <div class="video-container">
@@ -431,7 +459,7 @@ ai:addAgent("EnemyBot", "Patrol and Attack")
 ai:runAgent("EnemyBot")
 `, Prism.languages.lua, 'lua')}</code></pre>
             <p class="body-text animate-text" style="color: #a0a0a0;">Click the image above to see a demo of AI in action! <i class="fas fa-play"></i></p>
-            <button class="btn actionbtn animate-btn" style="background: linear-gradient(45deg, #00ffcc, #00ff99); color: #121212; border: none; padding: 12px 24px; border-radius: 25px; cursor: pointer; font-weight: bold; transition: all 0.3s ease; font-family: 'Inter', sans-serif; font-size: 1em; box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);">Expand Details <i class="fas fa-expand"></i></button>
+            <button class="btn actionbtn animate-btn" style="background: linear-gradient(45deg, #00ffcc, #00ff99); color: #0a1f3d; border: none; padding: 12px 24px; border-radius: 25px; cursor: pointer; font-weight: bold; transition: all 0.3s ease; font-family: 'Inter', sans-serif; font-size: 1em; box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);">Expand Details <i class="fas fa-expand"></i></button>
         </div>
         <script>
             function expandAIInterface(responseElementId) {
@@ -496,6 +524,18 @@ function loadComments(commentsListId = 'comments-list') {
             commentDiv.style.fontFamily = '"Inter", sans-serif';
             commentsList.appendChild(commentDiv);
         });
+    }
+}
+
+// Writing Frame Functions
+function saveWriting() {
+    const writingInput = document.querySelector('.writing-input');
+    const text = writingInput?.value.trim();
+    if (text && isLoggedIn) {
+        alert(`Your writing has been saved: ${text}`);
+        writingInput.value = '';
+    } else {
+        alert('Please log in to save your writing!');
     }
 }
 
