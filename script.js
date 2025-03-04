@@ -234,7 +234,6 @@ function renderVideos(videos) {
                 <div class="video-stats">
                     <p><i class="fas fa-eye"></i> Loading views...</p>
                     <p><i class="fas fa-thumbs-up"></i> Loading likes...</p>
-                    <p><i class="fas fa-thumbs-down"></i> Loading dislikes...</p>
                 </div>
                 <h3 class="animate-text">${item.snippet.title}</h3>
             </a>
@@ -258,7 +257,6 @@ async function loadVideoStats(videos) {
                 if (videoCard) {
                     videoCard.querySelector('p:nth-child(1)').innerHTML = `<i class="fas fa-eye"></i> ${stats.viewCount || 0} Views`;
                     videoCard.querySelector('p:nth-child(2)').innerHTML = `<i class="fas fa-thumbs-up"></i> ${stats.likeCount || 0} Likes`;
-                    videoCard.querySelector('p:nth-child(3)').innerHTML = `<i class="fas fa-thumbs-down"></i> N/A`;
                 }
             }
         } catch (error) {
@@ -267,7 +265,6 @@ async function loadVideoStats(videos) {
             if (videoCard) {
                 videoCard.querySelector('p:nth-child(1)').innerHTML = `<i class="fas fa-eye"></i> Failed to load views`;
                 videoCard.querySelector('p:nth-child(2)').innerHTML = `<i class="fas fa-thumbs-up"></i> Failed to load likes`;
-                videoCard.querySelector('p:nth-child(3)').innerHTML = `<i class="fas fa-thumbs-down"></i> N/A`;
             }
         }
     }
@@ -283,8 +280,8 @@ function loadGameDetails() {
             const gameContent = document.querySelector('.game-content');
             if (gameContent) {
                 gameContent.innerHTML = `
-                    <h3 class="animate-text">${video.snippet.title}</h3>
-                    <p class="animate-text">Description of the game, featuring exciting gameplay and features...</p>
+                    <h3 class="animate-text title-large">${video.snippet.title}</h3>
+                    <p class="animate-text body-text">Description of the game, featuring exciting gameplay and features...</p>
                     <img src="${video.snippet.thumbnails?.medium?.url || 'https://via.placeholder.com/300'}" alt="${video.snippet.title}" class="game-screenshot animate-image">
                     <div class="video-stats">
                         <p><i class="fas fa-eye"></i> ${loadVideoStat(video.snippet.resourceId.videoId, 'viewCount') || 'Loading views...'}</p>
@@ -343,10 +340,13 @@ function sendToAI(inputElementId = 'script-input', responseElementId = 'ai-respo
                 let response;
                 if (query.includes('artificial intelligence')) {
                     response = generateAIInterface(responseElementId);
+                    responseDiv.innerHTML = response; // Ensure the HTML is set correctly
+                    initializePrism(); // Reinitialize Prism for new content
                 } else {
                     response = simulateAIResponse(query);
+                    responseDiv.innerHTML = response;
+                    initializePrism(); // Reinitialize Prism for new content
                 }
-                responseDiv.innerHTML = response;
                 responseDiv.classList.remove('animate-loading');
                 responseDiv.classList.add('animate-success');
             }, 2000);
@@ -372,11 +372,11 @@ function simulateAIResponse(query) {
 
 function generateAIInterface(responseElementId = 'ai-response') {
     return `
-        <div class="ai-interface animate-card" style="background-color: #121212; color: white; font-family: Arial, sans-serif; text-align: center; padding: 20px; border-radius: 5px; margin: 10px;">
-            <h2 class="animate-text">Artificial Intelligence in Roblox</h2>
-            <p class="animate-text">Here's how to implement AI in your Roblox game using Lua:</p>
+        <div class="ai-interface animate-card" style="background-color: #121212; color: white; font-family: 'Roboto', sans-serif; text-align: center; padding: 20px; border-radius: 10px; margin: 10px; border: 2px solid #00ffb7;">
+            <h2 class="title-large animate-text" style="color: #00ffb7;">Artificial Intelligence in Roblox</h2>
+            <p class="body-text animate-text" style="color: #a0a0a0;">Here's how to implement AI in your Roblox game using Lua:</p>
             <div class="video-container">
-                <img src="https://via.placeholder.com/200" alt="AI Demo" class="animate-image" style="width: 200px; height: auto; cursor: pointer; margin: 10px;" onclick="alert('Click to view AI demo video!')">
+                <img src="https://via.placeholder.com/200" alt="AI Demo" class="animate-image" style="width: 200px; height: auto; cursor: pointer; margin: 10px; border-radius: 8px; border: 2px solid #00ffb7;" onclick="alert('Click to view AI demo video!')">
             </div>
             <pre class="language-lua"><code>${Prism.highlight(`
 local AIService = {}
@@ -411,13 +411,14 @@ local ai = AIService.new()
 ai:addAgent("EnemyBot", "Patrol and Attack")
 ai:runAgent("EnemyBot")
 `, Prism.languages.lua, 'lua')}</code></pre>
-            <p class="animate-text">Click the image above to see a demo of AI in action!</p>
-            <button class="btn actionbtn animate-btn" onclick="expandAIInterface('${responseElementId}')">Expand Details</button>
+            <p class="body-text animate-text" style="color: #a0a0a0;">Click the image above to see a demo of AI in action!</p>
+            <button class="btn actionbtn animate-btn" style="background-color: #00ffb7; color: #121212; border: none; padding: 12px 24px; border-radius: 25px; cursor: pointer; font-weight: bold; transition: all 0.3s ease; font-family: 'Roboto', sans-serif;">Expand Details</button>
         </div>
         <script>
             function expandAIInterface(responseElementId) {
                 const responseDiv = document.getElementById(responseElementId);
-                responseDiv.innerHTML += '<p class="animate-text">Expanding AI details: Use Roblox\'s PathfindingService for navigation, Behavior Trees for decision-making, and NPC models for AI characters. Example: local path = game:GetService("PathfindingService"):CreatePath()</p>';
+                responseDiv.innerHTML += '<p class="body-text animate-text" style="color: #a0a0a0;">Expanding AI details: Use Roblox\'s PathfindingService for navigation, Behavior Trees for decision-making, and NPC models for AI characters. Example: local path = game:GetService("PathfindingService"):CreatePath()</p>';
+                initializePrism(); // Reinitialize Prism for new content
             }
         </script>
     `;
@@ -444,6 +445,8 @@ function addComment(commentInputId = 'comment-input', commentsListId = 'comments
             const commentDiv = document.createElement('div');
             commentDiv.className = 'comment animate-card';
             commentDiv.textContent = `${currentUser.username || currentUser.email}: ${commentText}`;
+            commentDiv.style.color = '#a0a0a0';
+            commentDiv.style.fontFamily = '"Roboto", sans-serif';
             commentsList.appendChild(commentDiv);
             commentInput.value = '';
             saveComments(commentsListId);
@@ -470,6 +473,8 @@ function loadComments(commentsListId = 'comments-list') {
             const commentDiv = document.createElement('div');
             commentDiv.className = 'comment animate-card';
             commentDiv.textContent = comment;
+            commentDiv.style.color = '#a0a0a0';
+            commentDiv.style.fontFamily = '"Roboto", sans-serif';
             commentsList.appendChild(commentDiv);
         });
     }
@@ -494,10 +499,15 @@ function checkAllTasks() {
         if (successMessage) {
             successMessage.style.display = 'block';
             successMessage.classList.add('animate-success');
+            successMessage.style.color = '#00ffb7';
+            successMessage.style.fontFamily = '"Roboto", sans-serif';
+            successMessage.style.fontSize = '1.1em';
         }
         if (downloadLink) {
             downloadLink.style.display = 'inline-block';
             downloadLink.classList.add('animate-btn');
+            downloadLink.style.fontFamily = '"Roboto", sans-serif';
+            downloadLink.style.fontSize = '1em';
         }
     } else {
         if (successMessage) {
@@ -551,7 +561,7 @@ function trackPageVisitors() {
     console.log(`Game page visited ${pageVisits} times`);
 }
 
-// Tab Switching for Account Settings
+// Response Handlers
 function handleAuthResponse(response) {
     const errorDiv = document.getElementById('login-error');
     if (errorDiv) {
@@ -559,6 +569,9 @@ function handleAuthResponse(response) {
         errorDiv.style.display = response.success ? 'none' : 'block';
         errorDiv.classList.remove('animate-error');
         errorDiv.classList.add(response.success ? 'animate-success' : 'animate-error');
+        errorDiv.style.color = response.success ? '#00ffb7' : '#ff0000';
+        errorDiv.style.fontFamily = '"Roboto", sans-serif';
+        errorDiv.style.fontSize = '1em';
         if (response.success) {
             window.location.href = 'index.html';
         }
@@ -573,6 +586,9 @@ function handleAccountResponse(response) {
         messageDiv.style.display = response.success ? 'block' : 'none';
         messageDiv.classList.remove('animate-error');
         messageDiv.classList.add(response.success ? 'animate-success' : 'animate-error');
+        messageDiv.style.color = response.success ? '#00ffb7' : '#ff0000';
+        messageDiv.style.fontFamily = '"Roboto", sans-serif';
+        messageDiv.style.fontSize = '1em';
         setTimeout(() => messageDiv.textContent = '', 3000);
     }
 }
