@@ -1,7 +1,7 @@
 body {
     background-color: #0a1f3d; /* Dark blue from the image */
     color: #ffffff;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Poppins', sans-serif;
     margin: 0;
     padding: 0;
     text-align: center;
@@ -386,6 +386,12 @@ body {
     box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
 }
 
+.btn-small {
+    padding: 6px 12px;
+    margin: 5px;
+    font-size: 0.8em;
+}
+
 .or-divider {
     margin: 15px 0;
     color: #888;
@@ -395,7 +401,7 @@ body {
 }
 
 .auth-input {
-    width: 100%;
+    width: 70%;
     padding: 12px;
     margin: 10px 0;
     border: none;
@@ -470,6 +476,37 @@ body {
     margin: 5px 0;
 }
 
+.video-info-frame {
+    background: linear-gradient(45deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.8));
+    border-radius: 15px;
+    padding: 20px;
+    margin: 20px 0;
+    border: 2px solid #00ffcc;
+    box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
+    backdrop-filter: blur(5px);
+}
+
+.video-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.video-stats-grid p {
+    margin: 5px 0;
+    color: #a0a0a0;
+    font-family: 'Inter', sans-serif;
+    font-size: 1em;
+    text-shadow: 0 0 5px rgba(0, 255, 204, 0.3);
+}
+
+.video-stats-grid i {
+    color: #00ffcc;
+    margin-right: 5px;
+    text-shadow: 0 0 5px rgba(0, 255, 204, 0.5);
+}
+
 .video-player {
     margin: 20px 0;
     border-radius: 15px;
@@ -501,11 +538,60 @@ body {
     box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
 }
 
+.youtube-comments {
+    margin: 20px 0;
+    background: linear-gradient(45deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.8));
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 0 10px rgba(0, 255, 204, 0.2);
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+    border: 2px solid #00ffcc;
+}
+
+.youtube-comments:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
+}
+
+.youtube-comment {
+    background: linear-gradient(45deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9));
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 10px;
+    animation: slideUp 0.5s ease-in;
+    color: #a0a0a0;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9em;
+    box-shadow: 0 0 5px rgba(0, 255, 204, 0.2);
+    backdrop-filter: blur(5px);
+    position: relative;
+}
+
+.youtube-comment::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    width: calc(100% + 10px);
+    height: calc(100% + 10px);
+    border: 2px solid #00ffcc;
+    border-radius: 12px;
+    box-shadow: 0 0 20px #00ffcc, 0 0 40px #00ffcc, 0 0 60px #00ffcc;
+    animation: neonPulse 2s infinite alternate;
+    z-index: -1;
+}
+
+.youtube-comment:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+}
+
 .comment-section {
     margin: 20px 0;
     background: linear-gradient(45deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.8));
     padding: 20px;
-    border-radius: 10px;
+    border-radius: 15px;
     box-shadow: 0 0 10px rgba(0, 255, 204, 0.2);
     transition: all 0.3s ease;
     backdrop-filter: blur(5px);
@@ -516,11 +602,11 @@ body {
     box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
 }
 
-.comment {
+.site-comment {
     background: linear-gradient(45deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9));
-    padding: 10px;
-    margin: 5px 0;
-    border-radius: 5px;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 10px;
     animation: slideUp 0.5s ease-in;
     color: #a0a0a0;
     font-family: 'Inter', sans-serif;
@@ -529,13 +615,44 @@ body {
     backdrop-filter: blur(5px);
 }
 
-.comment:hover {
+.site-comment:hover {
     transform: scale(1.02);
     box-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
 }
 
-.comments-list {
+.comment-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.comment-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #00ffcc;
+    box-shadow: 0 0 5px rgba(0, 255, 204, 0.2);
+}
+
+.comment-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     margin-top: 10px;
+}
+
+.comment-actions button {
+    font-size: 0.8em;
+    padding: 6px 12px;
+}
+
+.response {
+    background: rgba(0, 0, 0, 0.7);
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 10px;
+    border-left: 3px solid #00ffcc;
 }
 
 .task-grid {
