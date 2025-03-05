@@ -400,7 +400,10 @@ function sendToAI(inputElementId = 'ai-input', responseElementId = 'chat-history
 
 function simulateThoughtfulAIResponse(query, history) {
     // Simulate deep thinking using NLP, deep learning, and big data analysis
-    console.log('AI is analyzing:', query);
+    console.log('AI is processing:', query);
+    console.log('Analyzing context:', context);
+
+    // Context-aware response based on chat history
     const context = history.map(msg => msg.text.toLowerCase()).join(' ').replace(/[^\w\s]/gi, '');
     const responses = {
         // General Roblox development queries with detailed, thoughtful responses
@@ -527,10 +530,6 @@ moveToTarget(Vector3.new(10, 0, 10)) -- Example target position
     }
     return responses['default'];
 }
-
-// ... (rest of the code remains unchanged until the end)
-
-// ... (rest of the code remains unchanged)
 
 // Comment Functions for Site (Unified for index.html and game.html)
 function addSiteComment(commentInputId = 'site-comment-input', commentsListId = 'site-comments-list') {
