@@ -73,36 +73,14 @@
     <main class="site-content">
         <section class="ai-tools animate-section">
             <div class="container">
-                <h2 class="title-large animate-text" style="color: #00ffcc;">AI Tools for Roblox Development</h2>
-                <p class="body-text animate-text" style="color: #a0a0a0;">Enhance your Roblox games with AI-powered tools. <i class="fas fa-robot"></i></p>
-                <div class="ai-container">
-                    <div class="ai-categories">
-                        <div class="category-card animate-card" onclick="setCategory('Build')">
-                            <i class="fas fa-tools"></i>
-                            <h3 class="body-text animate-text" style="color: #ffffff;">Build</h3>
-                            <p class="small-text animate-text" style="color: #a0a0a0;">Scripting and design tips for Roblox.</p>
-                        </div>
-                        <div class="category-card animate-card" onclick="setCategory('Grow')">
-                            <i class="fas fa-users"></i>
-                            <h3 class="body-text animate-text" style="color: #ffffff;">Grow</h3>
-                            <p class="small-text animate-text" style="color: #a0a0a0;">Grow your Roblox community.</p>
-                        </div>
-                        <div class="category-card animate-card" onclick="setCategory('Monetize')">
-                            <i class="fas fa-dollar-sign"></i>
-                            <h3 class="body-text animate-text" style="color: #ffffff;">Monetize</h3>
-                            <p class="small-text animate-text" style="color: #a0a0a0;">Monetization strategies for Roblox.</p>
-                        </div>
-                        <div class="category-card animate-card" onclick="setCategory('ArtificialIntelligence')">
-                            <i class="fas fa-brain"></i>
-                            <h3 class="body-text animate-text" style="color: #ffffff;">Artificial Intelligence</h3>
-                            <p class="small-text animate-text" style="color: #a0a0a0;">Implement AI in your Roblox games.</p>
-                        </div>
-                    </div>
+                <h2 class="title-large animate-text" style="color: #00ffcc;">AI Chat for Roblox Development</h2>
+                <p class="body-text animate-text" style="color: #a0a0a0;">Ask any question about Roblox development—I’ll respond like ChatGPT! <i class="fas fa-robot"></i></p>
+                <div class="ai-chat-container">
+                    <div id="chat-history" class="chat-history animate-card"></div>
                     <div class="button-group" style="margin: 20px 0;">
-                        <input type="text" id="script-input" class="ai-input" placeholder="Ask a question about Roblox development...">
-                        <button class="btn actionbtn animate-btn" onclick="sendToAI()">Send <i class="fas fa-paper-plane"></i></button>
+                        <input type="text" id="ai-input" class="ai-input" placeholder="Ask a question about Roblox development...">
+                        <button class="btn actionbtn animate-btn" onclick="sendToAI('ai-input', 'chat-history')"><i class="fas fa-paper-plane"></i> Send</button>
                     </div>
-                    <div id="ai-response" class="ai-response animate-card"></div>
                 </div>
             </div>
         </section>
