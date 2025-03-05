@@ -398,12 +398,14 @@ function sendToAI(inputElementId = 'ai-input', responseElementId = 'chat-history
     }
 }
 
+// ... (previous code remains unchanged until simulateChatGPTResponse)
+
 function simulateChatGPTResponse(query, history) {
     // Context-aware response based on chat history
     const context = history.map(msg => msg.text.toLowerCase()).join(' ').replace(/[^\w\s]/gi, '');
     const responses = {
         // General Roblox development queries
-        'how do i add background music': `To add background music to your Roblox experience, you can use a Sound object. Here’s how:\n1. Insert a Sound object into a part or directly into Workspace.\n2. Set the `SoundId` property to a Roblox audio asset ID (e.g., "rbxassetid://123456789").\n3. Play it using `sound:Play()` in a Lua script.\nExample:\n<pre class="language-lua"><code>${Prism.highlight('local sound = Instance.new("Sound")\nsound.SoundId = "rbxassetid://123456789"\nsound.Parent = game.Workspace\nsound:Play()', Prism.languages.lua, 'lua')}</code></pre>\nEnsure the audio asset is uploaded to Roblox and you have the necessary permissions. Would you like tips on managing audio volume, looping, or cross-fading?`,
+        'how do i add background music': `To add background music to your Roblox experience, you can use a Sound object. Here’s how:\n1. Insert a Sound object into a part or directly into Workspace.\n2. Set the SoundId property to a Roblox audio asset ID (e.g., "rbxassetid://123456789").\n3. Play it using sound:Play() in a Lua script.\nExample:\n<pre class="language-lua"><code>${Prism.highlight('local sound = Instance.new("Sound")\nsound.SoundId = "rbxassetid://123456789"\nsound.Parent = game.Workspace\nsound:Play()', Prism.languages.lua, 'lua')}</code></pre>\nEnsure the audio asset is uploaded to Roblox and you have the necessary permissions. Would you like tips on managing audio volume, looping, or cross-fading?`,
 
         'how do i bring new users': `Attracting new users to your Roblox experience involves several strategies:\n- **Promote on Social Media**: Share your game on platforms like Twitter, Discord, and Roblox groups.\n- **Use Roblox Ads**: Leverage the Developer Marketplace for targeted advertising.\n- **Collaborate with Creators**: Partner with other developers for cross-promotion.\n- **Engage Your Community**: Host events or giveaways to draw attention.\nHere’s a Lua script to track player joins:\n<pre class="language-lua"><code>${Prism.highlight(`local Players = game:GetService("Players")\nPlayers.PlayerAdded:Connect(function(player)\n    print(player.Name .. " joined the game!")\nend)`, Prism.languages.lua, 'lua')}</code></pre>\nDo you want advice on specific promotion tactics, analytics tools, or community engagement strategies?`,
 
@@ -442,13 +444,13 @@ ai:runAgent("EnemyBot")
 `, Prism.languages.lua, 'lua')}</code></pre>\nWould you like examples for pathfinding, decision-making, integrating with Roblox Studio plugins, or advanced AI techniques like machine learning?`,
 
         // Context-aware responses
-        'volume tips': `For managing audio volume in Roblox, you can adjust the `Volume` property of a Sound object (0 to 1, where 1 is max volume). Example:\n<pre class="language-lua"><code>${Prism.highlight('local sound = Instance.new("Sound")\nsound.SoundId = "rbxassetid://123456789"\nsound.Volume = 0.5 -- 50% volume\nsound.Parent = game.Workspace\nsound:Play()', Prism.languages.lua, 'lua')}</code></pre>\nYou can also use `sound:Pause()` or `sound:Stop()` to control playback. Would you like to learn about fading effects or sound prioritization?`,
+        'volume tips': `For managing audio volume in Roblox, you can adjust the Volume property of a Sound object (0 to 1, where 1 is max volume). Example:\n<pre class="language-lua"><code>${Prism.highlight('local sound = Instance.new("Sound")\nsound.SoundId = "rbxassetid://123456789"\nsound.Volume = 0.5 -- 50% volume\nsound.Parent = game.Workspace\nsound:Play()', Prism.languages.lua, 'lua')}</code></pre>\nYou can also use sound:Pause() or sound:Stop() to control playback. Would you like to learn about fading effects, sound prioritization, or audio mixing?`,
 
-        'promotion tactics': `Here are specific promotion tactics for your Roblox experience:\n- **Social Media Campaigns**: Post engaging content on Twitter, Discord, and Roblox forums, including trailers and updates.\n- **Roblox Events**: Host in-game events or contests to attract players.\n- **Influencer Partnerships**: Collaborate with Roblox influencers or YouTubers to showcase your game.\n- **SEO Optimization**: Use relevant keywords in your game description and thumbnails.\nWould you like Lua scripts for tracking event participation or analytics tools?`,
+        'promotion tactics': `Here are specific promotion tactics for your Roblox experience:\n- **Social Media Campaigns**: Post engaging content on Twitter, Discord, and Roblox forums, including trailers and updates.\n- **Roblox Events**: Host in-game events or contests to attract players.\n- **Influencer Partnerships**: Collaborate with Roblox influencers or YouTubers to showcase your game.\n- **SEO Optimization**: Use relevant keywords in your game description and thumbnails.\nWould you like Lua scripts for tracking event participation, analytics tools, or community engagement strategies?`,
 
-        'pricing strategies': `For pricing Limited avatar items on Roblox:\n- **Market Research**: Check similar items’ prices on the marketplace to set a competitive price.\n- **Dynamic Pricing**: Start high and lower prices if demand decreases, or use auctions for rarity.\n- **Bundling**: Offer bundles with other items to increase perceived value.\n- **Scarcity Marketing**: Highlight limited stock or time-sensitive offers.\nWould you like Lua code for tracking sales or managing inventory?`,
+        'pricing strategies': `For pricing Limited avatar items on Roblox:\n- **Market Research**: Check similar items’ prices on the marketplace to set a competitive price.\n- **Dynamic Pricing**: Start high and lower prices if demand decreases, or use auctions for rarity.\n- **Bundling**: Offer bundles with other items to increase perceived value.\n- **Scarcity Marketing**: Highlight limited stock or time-sensitive offers.\nWould you like Lua code for tracking sales, managing inventory, or automating price adjustments?`,
 
-        'pathfinding': `For pathfinding in Roblox, use the `PathfindingService`. Here’s a basic example:\n<pre class="language-lua"><code>${Prism.highlight(`
+        'pathfinding': `For pathfinding in Roblox, use the PathfindingService. Here’s a basic example:\n<pre class="language-lua"><code>${Prism.highlight(`
 local PathfindingService = game:GetService("PathfindingService")
 local path = PathfindingService:CreatePath()
 local startPosition = Vector3.new(0, 0, 0)
@@ -461,7 +463,7 @@ if path.Status == Enum.PathStatus.Success then
         humanoid.MoveToFinished:Wait()
     end
 end
-`, Prism.languages.lua, 'lua')}</code></pre>\nWould you like tips on optimizing pathfinding for complex terrains or handling obstacles?`,
+`, Prism.languages.lua, 'lua')}</code></pre>\nWould you like tips on optimizing pathfinding for complex terrains, handling obstacles, or integrating with AI behaviors?`,
 
         // Fallback for generic or new queries
         'default': `I'm here to assist with Roblox development! Please provide more details about your question—whether it’s about building, growing your player base, monetizing, or implementing AI. I can offer Lua code examples, tutorials, and advice. What specific topic would you like to explore? If you’ve asked something before, feel free to build on it, and I’ll refine my response.`
@@ -475,6 +477,8 @@ end
     }
     return responses['default'];
 }
+
+// ... (rest of the code remains unchanged)
 
 // Comment Functions for Site (Unified for index.html and game.html)
 function addSiteComment(commentInputId = 'site-comment-input', commentsListId = 'site-comments-list') {
