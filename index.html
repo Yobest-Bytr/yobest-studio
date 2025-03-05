@@ -173,6 +173,11 @@
 
     <script src="script.js"></script>
     <script>
+                fetchVideos();
+        trackVisitor();
+        displayStats();
+        loadSiteComments('site-comments-list');
+        initializeChat();
         // Chat Functions
         function initializeChat() {
             const chatMessages = document.getElementById('chat-messages');
