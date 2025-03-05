@@ -442,7 +442,7 @@ function sendToAI(inputElementId = 'ai-input', responseElementId = 'chat-history
 function simulateThoughtfulAIResponse(query, history) {
     // Simulate deep speech/text analysis using NLP, deep learning, and big data
     console.log('AI is processing:', query);
-    console.log('Analyzing context:', context);
+    console.log('Analyzing context:', query);
 
     // Clean and normalize the query for better analysis
     const normalizedQuery = query.toLowerCase().replace(/[^\w\s]/gi, '').trim();
