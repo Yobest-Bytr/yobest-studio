@@ -207,10 +207,13 @@ async function fetchVideos() {
     const previewGrid = document.getElementById('preview-grid');
     const errorDiv = document.getElementById('video-error');
     const API_KEY = 'AIzaSyChwoHXMqlbmAfeh4lbRUFWx2HjIZ6VV2k'; // Replace with your actual YouTube API key
-    const CHANNEL_ID = 'UCsV3X3EyEowLEdRW1RileuA'; // Your channel ID
+    const CHANNEL_ID = 'UCsV3X3EyEowLEdRW1RileuA'; // Verify this is your channel ID
     const CACHE_EXPIRY = 24 * 60 * 60 * 1000; // Cache for 24 hours
 
-    if (!reactionDiv || !previewGrid || !errorDiv) return;
+    if (!reactionDiv || !previewGrid || !errorDiv) {
+        console.error('Required DOM elements not found for video previews.');
+        return;
+    }
 
     reactionDiv.textContent = 'Fetching videos...';
     reactionDiv.classList.add('animate-text');
@@ -226,23 +229,36 @@ async function fetchVideos() {
 
     try {
         const channelResponse = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${CHANNEL_ID}&key=${API_KEY}`);
-        if (!channelResponse.ok) throw new Error(`Channel fetch failed: ${channelResponse.statusText}`);
+        if (!channelResponse.ok) {
+            throw new Error(`Channel fetch failed: ${channelResponse.status} - ${channelResponse.statusText}`);
+        }
         const channelData = await channelResponse.json();
-        if (channelData.error || !channelData.items.length) throw new Error('Invalid channel ID or API key');
+        if (channelData.error) {
+            throw new Error(`API error: ${channelData.error.message}`);
+        }
+        if (!channelData.items.length) {
+            throw new Error('No channel data found for the provided ID.');
+        }
         const playlistId = channelData.items[0].contentDetails.relatedPlaylists.uploads;
 
         let videos = [];
         let nextPageToken = '';
         do {
             const response = await fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${playlistId}&key=${API_KEY}&maxResults=50&pageToken=${nextPageToken}`);
-            if (!response.ok) throw new Error(`Playlist fetch failed: ${response.statusText}`);
+            if (!response.ok) {
+                throw new Error(`Playlist fetch failed: ${response.status} - ${response.statusText}`);
+            }
             const data = await response.json();
-            if (data.error) throw new Error(data.error.message);
+            if (data.error) {
+                throw new Error(`API error: ${data.error.message}`);
+            }
             videos = videos.concat(data.items.filter(item => item.snippet.resourceId.kind === 'youtube#video'));
             nextPageToken = data.nextPageToken || '';
         } while (nextPageToken);
 
-        if (!videos.length) throw new Error('No videos found in the channel uploads.');
+        if (!videos.length) {
+            throw new Error('No videos found in the channel uploads.');
+        }
 
         const cacheData = { videos, timestamp: now };
         localStorage.setItem('videoCache', JSON.stringify(cacheData));
@@ -251,15 +267,40 @@ async function fetchVideos() {
         reactionDiv.textContent = `Loaded ${videos.length} videos!`;
         renderVideos(videos);
     } catch (error) {
+        console.error('Error fetching videos:', error);
         reactionDiv.textContent = '';
-        errorDiv.textContent = `Error: ${error.message}. Check API key, channel ID, or network connection.`;
+        errorDiv.textContent = `Error: ${error.message}. Please check your API key, channel ID, or network connection. Using fallback data...`;
         errorDiv.style.display = 'block';
         errorDiv.classList.add('animate-error');
+
+        // Fallback: Simulate video data for testing
+        const fallbackVideos = [
+            {
+                snippet: {
+                    title: "Epic Roblox Adventure",
+                    thumbnails: { medium: { url: "https://via.placeholder.com/150" } },
+                    resourceId: { videoId: "dQw4w9WgXcQ" } // Example YouTube video ID (Rickroll for testing)
+                }
+            },
+            {
+                snippet: {
+                    title: "Roblox Battle Royale",
+                    thumbnails: { medium: { url: "https://via.placeholder.com/150" } },
+                    resourceId: { videoId: "oHg5SJYRHA0" } // Another example YouTube video ID
+                }
+            }
+        ];
+        renderVideos(fallbackVideos);
+        localStorage.setItem('channelVideos', JSON.stringify(fallbackVideos)); // Cache fallback data
     }
 }
 
 function renderVideos(videos) {
     const previewGrid = document.getElementById('preview-grid');
+    if (!previewGrid) {
+        console.error('Preview grid not found in DOM.');
+        return;
+    }
     previewGrid.innerHTML = videos.map((item, index) => `
         <div class="video-card animate-card" data-index="${index}">
             <a href="game.html?id=${index}">
