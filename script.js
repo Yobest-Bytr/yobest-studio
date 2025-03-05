@@ -1,6 +1,7 @@
 // Global variables
 let isLoggedIn = false;
 let currentUser = null;
+let chatHistory = []; // For AI chat history
 
 // Load Prism.js for syntax highlighting
 document.addEventListener('DOMContentLoaded', () => {
@@ -9,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     handlePageTasks();
     initializePrism(); // Initialize Prism.js for Lua highlighting
     initializeButtonAnimations(); // Initialize button animations
+    loadChatHistory(); // Load AI chat history
 });
 
 // Utility Functions for Prism.js
@@ -77,11 +79,10 @@ function checkLoginState() {
 }
 
 function updateAIState() {
-    const responseDiv = document.getElementById('ai-response');
+    const responseDiv = document.getElementById('chat-history');
     if (responseDiv && !isLoggedIn) {
-        responseDiv.textContent = "Please log in to use the AI tool.";
-        responseDiv.classList.add('animate-error');
-        setTimeout(() => responseDiv.textContent = '', 3000);
+        responseDiv.innerHTML = '<p class="body-text animate-error" style="color: #ff4444;">Please log in to use the AI chat.</p>';
+        setTimeout(() => responseDiv.innerHTML = '', 3000);
     }
 }
 
@@ -337,73 +338,78 @@ function loadGameDetails() {
     }
 }
 
-// AI and Roblox Script Functions
-function setCategory(category, inputElementId = 'script-input') {
-    const input = document.getElementById(inputElementId);
-    if (input) {
-        const samples = {
-            'Build': 'How do I add background music to my Roblox experience?',
-            'Grow': 'How do I bring new users to my Roblox experience? Reply and I’ll share what I’m doing so far.',
-            'Monetize': 'How do Limited avatar items work and what are some tips to sell them?',
-            'ArtificialIntelligence': 'How can I implement artificial intelligence in my Roblox game?'
-        };
-        input.value = samples[category] || 'Ask a question about Roblox development...';
-        input.focus();
+// AI and Chat Functions
+function loadChatHistory() {
+    chatHistory = JSON.parse(localStorage.getItem('aiChatHistory') || '[]');
+    const chatHistoryDiv = document.getElementById('chat-history');
+    if (chatHistoryDiv) {
+        chatHistoryDiv.innerHTML = chatHistory.map(msg => `
+            <div class="chat-message ${msg.isUser ? 'user-message' : 'ai-message'} animate-card">
+                <p class="body-text animate-text" style="color: ${msg.isUser ? '#00ffcc' : '#a0a0a0'};">${msg.text}</p>
+                <p class="small-text animate-text" style="color: #888;">${new Date(msg.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</p>
+            </div>
+        `).join('');
+        chatHistoryDiv.scrollTop = chatHistoryDiv.scrollHeight;
     }
 }
 
-function sendToAI(inputElementId = 'script-input', responseElementId = 'ai-response') {
+function saveChatHistory() {
+    localStorage.setItem('aiChatHistory', JSON.stringify(chatHistory));
+}
+
+function sendToAI(inputElementId = 'ai-input', responseElementId = 'chat-history') {
     const input = document.getElementById(inputElementId);
     const responseDiv = document.getElementById(responseElementId);
     if (input && responseDiv) {
-        const query = input.value.trim().toLowerCase();
+        const query = input.value.trim();
         if (query && isLoggedIn) {
-            responseDiv.textContent = "Thinking...";
-            responseDiv.classList.add('animate-loading');
+            // Add user message to chat history
+            const userMessage = { text: query, isUser: true, timestamp: new Date().toISOString() };
+            chatHistory.push(userMessage);
+            responseDiv.innerHTML += `
+                <div class="chat-message user-message animate-card">
+                    <p class="body-text animate-text" style="color: #00ffcc;">${userMessage.text}</p>
+                    <p class="small-text animate-text" style="color: #888;">${new Date(userMessage.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</p>
+                </div>
+            `;
+            input.value = '';
 
+            // Simulate AI response (ChatGPT-like)
+            responseDiv.innerHTML += '<div class="chat-message ai-message animate-loading" style="color: #00ffcc;">Thinking...</div>';
             setTimeout(() => {
-                let response;
-                if (query.includes('artificial intelligence')) {
-                    response = generateAIInterface(responseElementId);
-                    responseDiv.innerHTML = response; // Ensure the HTML is set correctly
-                    initializePrism(); // Reinitialize Prism for new content
-                } else {
-                    response = simulateAIResponse(query);
-                    responseDiv.innerHTML = response;
-                    initializePrism(); // Reinitialize Prism for new content
-                }
+                const aiResponse = simulateChatGPTResponse(query, chatHistory);
+                const aiMessage = { text: aiResponse, isUser: false, timestamp: new Date().toISOString() };
+                chatHistory.push(aiMessage);
+                saveChatHistory();
+                responseDiv.innerHTML = chatHistory.map(msg => `
+                    <div class="chat-message ${msg.isUser ? 'user-message' : 'ai-message'} animate-card">
+                        <p class="body-text animate-text" style="color: ${msg.isUser ? '#00ffcc' : '#a0a0a0'};">${msg.text}</p>
+                        <p class="small-text animate-text" style="color: #888;">${new Date(msg.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</p>
+                    </div>
+                `).join('');
                 responseDiv.classList.remove('animate-loading');
                 responseDiv.classList.add('animate-success');
+                responseDiv.scrollTop = responseDiv.scrollHeight;
             }, 2000);
         } else {
-            responseDiv.textContent = isLoggedIn ? "Please enter a question!" : "Please log in to use the AI tool.";
-            responseDiv.classList.add('animate-error');
-            setTimeout(() => responseDiv.textContent = '', 3000);
+            responseDiv.innerHTML = '<p class="body-text animate-error" style="color: #ff4444;">Please log in to use the AI chat or enter a question.</p>';
+            setTimeout(() => responseDiv.innerHTML = '', 3000);
         }
     }
 }
 
-function simulateAIResponse(query) {
+function simulateChatGPTResponse(query, history) {
+    // Context-aware response based on chat history
+    const context = history.map(msg => msg.text.toLowerCase()).join(' ').replace(/[^\w\s]/gi, '');
     const responses = {
-        'background music': `To add background music to your Roblox experience:\n1. Use a Sound object:\n   - Insert a Sound into a part or Workspace.\n   - Set the SoundId to a Roblox audio asset ID (e.g., "rbxassetid://123456789").\n   - Play it with sound:Play() in a Lua script.\n   Example:\n   <pre class="language-lua"><code>${Prism.highlight('local sound = Instance.new("Sound")\nsound.SoundId = "rbxassetid://123456789"\nsound.Parent = game.Workspace\nsound:Play()', Prism.languages.lua, 'lua')}</code></pre>\n2. Ensure the audio asset is uploaded to Roblox and you have permissions.`,
-        'new users': `To bring new users to your Roblox experience:\n1. Promote on social media (Twitter, Discord, Roblox groups).\n2. Use Roblox Ads (Developer Marketplace) to target users.\n3. Collaborate with other creators for cross-promotion.\nExample Lua script for tracking players:\n<pre class="language-lua"><code>${Prism.highlight(`local Players = game:GetService("Players")\nPlayers.PlayerAdded:Connect(function(player)\n    print(player.Name .. " joined the game!")\nend)`, Prism.languages.lua, 'lua')}</code></pre>`,
-        'limited avatar items': `Limited avatar items in Roblox:\n- Limited items are rare, time-limited, or have low stock, increasing their value.\n- Tips to sell them:\n  1. List on the Roblox marketplace with a competitive price.\n  2. Promote via Roblox groups, Discord, or Twitter.\n  3. Use scarcity (e.g., “Only 100 left!”) to drive demand.\nExample Lua script to check item ownership:\n<pre class="language-lua"><code>${Prism.highlight(`local MarketplaceService = game:GetService("MarketplaceService")\nlocal player = game.Players.LocalPlayer\nlocal itemId = 123456789 -- Replace with your asset ID\nif MarketplaceService:PlayerOwnsAsset(player, itemId) then\n    print("Player owns the limited item!")\nend`, Prism.languages.lua, 'lua')}</code></pre>`
-    };
-    for (const key in responses) {
-        if (query.includes(key)) return responses[key];
-    }
-    return `I'm here to help with Roblox! Specify a category (Build, Grow, Monetize, ArtificialIntelligence) or ask a detailed question. Example Lua script:\n<pre class="language-lua"><code>${Prism.highlight(`local part = Instance.new("Part")\npart.Position = Vector3.new(0, 10, 0)\npart.Parent = game.Workspace`, Prism.languages.lua, 'lua')}</code></pre>`;
-}
+        // General Roblox development queries
+        'how do i add background music': `To add background music to your Roblox experience, you can use a Sound object. Here’s how:\n1. Insert a Sound object into a part or directly into Workspace.\n2. Set the `SoundId` property to a Roblox audio asset ID (e.g., "rbxassetid://123456789").\n3. Play it using `sound:Play()` in a Lua script.\nExample:\n<pre class="language-lua"><code>${Prism.highlight('local sound = Instance.new("Sound")\nsound.SoundId = "rbxassetid://123456789"\nsound.Parent = game.Workspace\nsound:Play()', Prism.languages.lua, 'lua')}</code></pre>\nEnsure the audio asset is uploaded to Roblox and you have the necessary permissions. Would you like tips on managing audio volume, looping, or cross-fading?`,
 
-function generateAIInterface(responseElementId = 'ai-response') {
-    return `
-        <div class="ai-interface animate-card" style="background: linear-gradient(45deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.8)); color: #ffffff; font-family: 'Inter', sans-serif; text-align: center; padding: 20px; border-radius: 15px; margin: 10px; border: 2px solid #00ffcc; backdrop-filter: blur(15px);">
-            <h2 class="title-large animate-text" style="color: #00ffcc;">Artificial Intelligence in Roblox</h2>
-            <p class="body-text animate-text" style="color: #a0a0a0;">Here's how to implement AI in your Roblox game using Lua: <i class="fas fa-robot"></i></p>
-            <div class="video-container">
-                <img src="https://via.placeholder.com/200" alt="AI Demo" class="animate-image" style="width: 200px; height: auto; cursor: pointer; margin: 10px; border-radius: 10px; border: 2px solid #00ffcc;" onclick="alert('Click to view AI demo video!')">
-            </div>
-            <pre class="language-lua"><code>${Prism.highlight(`
+        'how do i bring new users': `Attracting new users to your Roblox experience involves several strategies:\n- **Promote on Social Media**: Share your game on platforms like Twitter, Discord, and Roblox groups.\n- **Use Roblox Ads**: Leverage the Developer Marketplace for targeted advertising.\n- **Collaborate with Creators**: Partner with other developers for cross-promotion.\n- **Engage Your Community**: Host events or giveaways to draw attention.\nHere’s a Lua script to track player joins:\n<pre class="language-lua"><code>${Prism.highlight(`local Players = game:GetService("Players")\nPlayers.PlayerAdded:Connect(function(player)\n    print(player.Name .. " joined the game!")\nend)`, Prism.languages.lua, 'lua')}</code></pre>\nDo you want advice on specific promotion tactics, analytics tools, or community engagement strategies?`,
+
+        'how do limited avatar items work': `Limited avatar items in Roblox are rare or time-limited items that increase in value due to scarcity. Here’s how they work and tips to sell them:\n- **Scarcity**: Limited items have a fixed stock or are available for a limited time, making them valuable.\n- **Marketplace Listing**: List them on the Roblox marketplace with a competitive price.\n- **Promotion**: Use Roblox groups, Discord, or Twitter to promote, emphasizing rarity (e.g., “Only 100 left!”).\n- **Engagement**: Engage your community to drive demand.\nExample Lua script to check ownership:\n<pre class="language-lua"><code>${Prism.highlight(`local MarketplaceService = game:GetService("MarketplaceService")\nlocal player = game.Players.LocalPlayer\nlocal itemId = 123456789 -- Replace with your asset ID\nif MarketplaceService:PlayerOwnsAsset(player, itemId) then\n    print("Player owns the limited item!")\nend`, Prism.languages.lua, 'lua')}</code></pre>\nWould you like more details on pricing strategies, legal considerations, or marketing techniques?`,
+
+        'how can i implement ai': `Implementing artificial intelligence in Roblox can enhance gameplay with NPCs or smart systems. Here’s a basic approach using Lua:\n- **PathfindingService**: Use for NPC navigation.\n- **Behavior Trees**: Structure AI behavior (e.g., patrol, attack, retreat).\n- **NPC Models**: Create AI-controlled characters with Humanoids.\nExample:\n<pre class="language-lua"><code>${Prism.highlight(`
 local AIService = {}
 AIService.__index = AIService
 
@@ -421,7 +427,6 @@ end
 function AIService:runAgent(name)
     if self.agents[name] then
         print("Running " .. name .. " AI behavior...")
-        -- Simulate AI behavior (e.g., pathfinding, decision-making)
         local humanoid = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid")
         if humanoid then
             humanoid:MoveTo(Vector3.new(0, 10, 0)) -- Example: Move to a position
@@ -431,36 +436,47 @@ function AIService:runAgent(name)
     end
 end
 
--- Example usage
 local ai = AIService.new()
 ai:addAgent("EnemyBot", "Patrol and Attack")
 ai:runAgent("EnemyBot")
-`, Prism.languages.lua, 'lua')}</code></pre>
-            <p class="body-text animate-text" style="color: #a0a0a0;">Click the image above to see a demo of AI in action! <i class="fas fa-play"></i></p>
-            <button class="btn actionbtn animate-btn" style="background: linear-gradient(45deg, #00ffcc, #ff00ff); color: #0a1f3d; border: none; padding: 12px 24px; border-radius: 25px; cursor: pointer; font-weight: bold; transition: all 0.3s ease; font-family: 'Inter', sans-serif; font-size: 1em; box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);">Expand Details <i class="fas fa-expand"></i></button>
-        </div>
-        <script>
-            function expandAIInterface(responseElementId) {
-                const responseDiv = document.getElementById(responseElementId);
-                responseDiv.innerHTML += '<p class="body-text animate-text" style="color: #a0a0a0;">Expanding AI details: Use Roblox\'s PathfindingService for navigation, Behavior Trees for decision-making, and NPC models for AI characters. Example: local path = game:GetService("PathfindingService"):CreatePath() <i class="fas fa-info-circle"></i></p>';
-                initializePrism(); // Reinitialize Prism for new content
-            }
-        </script>
-    `;
-}
+`, Prism.languages.lua, 'lua')}</code></pre>\nWould you like examples for pathfinding, decision-making, integrating with Roblox Studio plugins, or advanced AI techniques like machine learning?`,
 
-// Comment Functions for Site
-function updateSiteCommentVisibility(commentSectionId = 'site-comment-section', toggleButtonId = 'toggle-site-comments') {
-    const commentSection = document.getElementById(commentSectionId);
-    const toggleButton = document.getElementById(toggleButtonId);
-    if (commentSection && toggleButton) {
-        const isVisible = commentSection.style.display === 'block';
-        commentSection.style.display = isVisible ? 'none' : 'block';
-        toggleButton.textContent = isVisible ? 'Show Site Comments' : 'Hide Site Comments';
-        toggleButton.classList.add('animate-btn');
+        // Context-aware responses
+        'volume tips': `For managing audio volume in Roblox, you can adjust the `Volume` property of a Sound object (0 to 1, where 1 is max volume). Example:\n<pre class="language-lua"><code>${Prism.highlight('local sound = Instance.new("Sound")\nsound.SoundId = "rbxassetid://123456789"\nsound.Volume = 0.5 -- 50% volume\nsound.Parent = game.Workspace\nsound:Play()', Prism.languages.lua, 'lua')}</code></pre>\nYou can also use `sound:Pause()` or `sound:Stop()` to control playback. Would you like to learn about fading effects or sound prioritization?`,
+
+        'promotion tactics': `Here are specific promotion tactics for your Roblox experience:\n- **Social Media Campaigns**: Post engaging content on Twitter, Discord, and Roblox forums, including trailers and updates.\n- **Roblox Events**: Host in-game events or contests to attract players.\n- **Influencer Partnerships**: Collaborate with Roblox influencers or YouTubers to showcase your game.\n- **SEO Optimization**: Use relevant keywords in your game description and thumbnails.\nWould you like Lua scripts for tracking event participation or analytics tools?`,
+
+        'pricing strategies': `For pricing Limited avatar items on Roblox:\n- **Market Research**: Check similar items’ prices on the marketplace to set a competitive price.\n- **Dynamic Pricing**: Start high and lower prices if demand decreases, or use auctions for rarity.\n- **Bundling**: Offer bundles with other items to increase perceived value.\n- **Scarcity Marketing**: Highlight limited stock or time-sensitive offers.\nWould you like Lua code for tracking sales or managing inventory?`,
+
+        'pathfinding': `For pathfinding in Roblox, use the `PathfindingService`. Here’s a basic example:\n<pre class="language-lua"><code>${Prism.highlight(`
+local PathfindingService = game:GetService("PathfindingService")
+local path = PathfindingService:CreatePath()
+local startPosition = Vector3.new(0, 0, 0)
+local endPosition = Vector3.new(10, 0, 10)
+
+path:ComputeAsync(startPosition, endPosition)
+if path.Status == Enum.PathStatus.Success then
+    for _, waypoint in pairs(path:GetWaypoints()) do
+        humanoid:MoveTo(waypoint.Position)
+        humanoid.MoveToFinished:Wait()
+    end
+end
+`, Prism.languages.lua, 'lua')}</code></pre>\nWould you like tips on optimizing pathfinding for complex terrains or handling obstacles?`,
+
+        // Fallback for generic or new queries
+        'default': `I'm here to assist with Roblox development! Please provide more details about your question—whether it’s about building, growing your player base, monetizing, or implementing AI. I can offer Lua code examples, tutorials, and advice. What specific topic would you like to explore? If you’ve asked something before, feel free to build on it, and I’ll refine my response.`
+    };
+
+    // Check for specific keywords or phrases, considering context from history
+    for (const key in responses) {
+        if (query.toLowerCase().includes(key)) {
+            return responses[key];
+        }
     }
+    return responses['default'];
 }
 
+// Comment Functions for Site (Unified for index.html and game.html)
 function addSiteComment(commentInputId = 'site-comment-input', commentsListId = 'site-comments-list') {
     const commentInput = document.getElementById(commentInputId);
     const commentText = commentInput?.value.trim();
@@ -476,8 +492,8 @@ function addSiteComment(commentInputId = 'site-comment-input', commentsListId = 
                 date: new Date().toISOString(),
                 owner: currentUser.email // Track comment owner for edit/delete
             };
-            saveSiteComment(comment);
-            loadSiteComments();
+            saveSiteComment(comment, commentsListId);
+            loadSiteComments(commentsListId);
             commentInput.value = '';
         }
     } else {
@@ -485,14 +501,16 @@ function addSiteComment(commentInputId = 'site-comment-input', commentsListId = 
     }
 }
 
-function saveSiteComment(comment) {
-    let comments = JSON.parse(localStorage.getItem('siteGameComments') || '[]');
+function saveSiteComment(comment, commentsListId) {
+    let commentsKey = commentsListId === 'site-comments-list' ? 'siteComments' : 'siteGameComments';
+    let comments = JSON.parse(localStorage.getItem(commentsKey) || '[]');
     comments.push(comment);
-    localStorage.setItem('siteGameComments', JSON.stringify(comments));
+    localStorage.setItem(commentsKey, JSON.stringify(comments));
 }
 
 function loadSiteComments(commentsListId = 'site-comments-list') {
-    const comments = JSON.parse(localStorage.getItem('siteGameComments') || '[]');
+    let commentsKey = commentsListId === 'site-comments-list' ? 'siteComments' : 'siteGameComments';
+    const comments = JSON.parse(localStorage.getItem(commentsKey) || '[]');
     const commentsList = document.getElementById(commentsListId);
     if (commentsList) {
         commentsList.innerHTML = '';
@@ -507,10 +525,10 @@ function loadSiteComments(commentsListId = 'site-comments-list') {
                 </div>
                 <p class="body-text animate-text" style="color: #a0a0a0;">${comment.content}</p>
                 <div class="comment-actions">
-                    <button class="btn-small animate-btn" onclick="likeSiteComment('${comment.date}')"><i class="fas fa-thumbs-up"></i> ${comment.likes}</button>
+                    <button class="btn-small animate-btn" onclick="likeSiteComment('${comment.date}', '${commentsListId}')"><i class="fas fa-thumbs-up"></i> ${comment.likes}</button>
                     ${isOwner ? `
-                        <button class="btn-small animate-btn" onclick="editSiteComment('${comment.date}')"><i class="fas fa-edit"></i> Edit</button>
-                        <button class="btn-small animate-btn" onclick="deleteSiteComment('${comment.date}')"><i class="fas fa-trash"></i> Delete</button>
+                        <button class="btn-small animate-btn" onclick="editSiteComment('${comment.date}', '${commentsListId}')"><i class="fas fa-edit"></i> Edit</button>
+                        <button class="btn-small animate-btn" onclick="deleteSiteComment('${comment.date}', '${commentsListId}')"><i class="fas fa-trash"></i> Delete</button>
                     ` : ''}
                     <p class="small-text animate-text" style="color: #888;">${new Date(comment.date).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })}</p>
                 </div>
@@ -523,30 +541,32 @@ function loadSiteComments(commentsListId = 'site-comments-list') {
     }
 }
 
-function likeSiteComment(commentDate) {
+function likeSiteComment(commentDate, commentsListId) {
     if (isLoggedIn) {
-        let comments = JSON.parse(localStorage.getItem('siteGameComments') || '[]');
+        let commentsKey = commentsListId === 'site-comments-list' ? 'siteComments' : 'siteGameComments';
+        let comments = JSON.parse(localStorage.getItem(commentsKey) || '[]');
         const comment = comments.find(c => c.date === commentDate);
         if (comment) {
             comment.likes = (comment.likes || 0) + 1;
-            localStorage.setItem('siteGameComments', JSON.stringify(comments));
-            loadSiteComments();
+            localStorage.setItem(commentsKey, JSON.stringify(comments));
+            loadSiteComments(commentsListId);
         }
     } else {
         alert('Please log in to like a comment!');
     }
 }
 
-function editSiteComment(commentDate) {
+function editSiteComment(commentDate, commentsListId) {
     if (isLoggedIn) {
-        let comments = JSON.parse(localStorage.getItem('siteGameComments') || '[]');
+        let commentsKey = commentsListId === 'site-comments-list' ? 'siteComments' : 'siteGameComments';
+        let comments = JSON.parse(localStorage.getItem(commentsKey) || '[]');
         const comment = comments.find(c => c.date === commentDate);
         if (comment && currentUser.email === comment.owner) {
             const newContent = prompt('Edit your comment:', comment.content);
             if (newContent && newContent.trim()) {
                 comment.content = newContent.trim();
-                localStorage.setItem('siteGameComments', JSON.stringify(comments));
-                loadSiteComments();
+                localStorage.setItem(commentsKey, JSON.stringify(comments));
+                loadSiteComments(commentsListId);
             }
         } else {
             alert('You can only edit your own comments!');
@@ -556,15 +576,16 @@ function editSiteComment(commentDate) {
     }
 }
 
-function deleteSiteComment(commentDate) {
+function deleteSiteComment(commentDate, commentsListId) {
     if (isLoggedIn) {
-        let comments = JSON.parse(localStorage.getItem('siteGameComments') || '[]');
+        let commentsKey = commentsListId === 'site-comments-list' ? 'siteComments' : 'siteGameComments';
+        let comments = JSON.parse(localStorage.getItem(commentsKey) || '[]');
         const commentIndex = comments.findIndex(c => c.date === commentDate);
         if (commentIndex !== -1 && currentUser.email === comments[commentIndex].owner) {
             if (confirm('Are you sure you want to delete this comment?')) {
                 comments.splice(commentIndex, 1);
-                localStorage.setItem('siteGameComments', JSON.stringify(comments));
-                loadSiteComments();
+                localStorage.setItem(commentsKey, JSON.stringify(comments));
+                loadSiteComments(commentsListId);
             }
         } else {
             alert('You can only delete your own comments!');
@@ -658,14 +679,14 @@ function handlePageTasks() {
         fetchVideos();
         trackVisitor();
         displayStats();
-        loadSiteComments();
+        loadSiteComments('site-comments-list');
         initializeChat();
     } else if (path.includes('game.html')) {
         trackPageVisitors();
         loadGameDetails();
         loadVideoStats();
         loadYouTubeComments();
-        loadSiteComments();
+        loadSiteComments('site-comments-list');
         initializeChat();
     } else if (path.includes('ai.html')) {
         trackVisitor();
