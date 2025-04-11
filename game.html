@@ -3,121 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yobest Studio - Game Details</title>
+    <title>Game Details - Yobest Studio</title>
     <link rel="stylesheet" href="styles.css">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2925220406728611" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-kqNfk8EL0Vsx5pqskqQ57pq+BwR55rYwtVmswqLxMQ52R9ETg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/png" href="yobest_studio_logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
-    <header class="header-animate">
+    <header>
         <div class="container">
-            <h1 class="title-frame">
-                <span class="neon-text">Yobest Studio</span>
-                <span class="highlight neon-glow"></span>
-            </h1>
-            <nav class="nav-container">
-                <a href="index.html" class="nav-btn"><i class="fas fa-home"></i> Home</a>
-                <a href="https://discord.gg/jKASqrc7H3" target="_blank" class="btn socialbtn"><i class="fab fa-discord"></i> Discord</a>
-                <a href="https://x.com/Yobest_BYTR" target="_blank" class="btn socialbtn"><i class="fab fa-x"></i> X</a>
-                <a href="https://www.youtube.com/@YobestRobloxStudio" target="_blank" class="btn socialbtn"><i class="fab fa-youtube"></i> YouTube</a>
-                <a href="#" id="login-btn" class="btn socialbtn" onclick="openLogin()">Login <i class="fas fa-sign-in-alt"></i></a>
-                <a href="#" id="account-btn" class="btn socialbtn" onclick="openAccountSettings()" style="display: none;">Account <i class="fas fa-user"></i></a>
-                <img src="https://via.placeholder.com/40" alt="Account" class="account-pic" id="account-pic" style="display: none;" onclick="openAccountSettings();">
+            <h1><a href="index.html">Yobest Studio</a></h1>
+            <nav>
+                <a href="index.html" class="nav-btn">Home</a>
+                <a href="scripts.html" class="nav-btn">Scripts</a>
+                <a href="ai.html" class="nav-btn">AI Tools</a>
+                <a href="contact.html" class="nav-btn">Contact</a>
+                <a href="https://www.youtube.com/@YobestRobloxStudio" target="_blank" class="social-btn"><i class="fab fa-youtube"></i></a>
+                <a href="https://x.com/Yobest_BYTR" target="_blank" class="social-btn"><i class="fab fa-x-twitter"></i></a>
+                <a href="https://discord.gg/jKASqrc7H3" target="_blank" class="social-btn"><i class="fab fa-discord"></i></a>
+                <a href="#" id="login-btn" class="btn" onclick="openLogin()">Login</a>
+                <a href="#" id="account-btn" class="btn" onclick="openAccount()" style="display: none;">Account</a>
             </nav>
         </div>
     </header>
 
     <div id="login-modal" class="modal">
         <div class="modal-content">
-            <span class="close-btn" onclick="closeLogin()">×</span>
-            <h2 class="title-large animate-text" style="color: #00ffcc;">Login or Create Account</h2>
-            <form id="login-form" onsubmit="event.preventDefault(); authUser(document.getElementById('login-username').value, document.getElementById('login-password').value, document.getElementById('login-email').value, handleAuthResponse)">
-                <input type="text" id="login-username" class="auth-input" placeholder="Username" required>
-                <input type="password" id="login-password" class="auth-input" placeholder="Password" required>
-                <input type="email" id="login-email" class="auth-input" placeholder="Email (optional)">
-                <button type="submit" class="btn actionbtn animate-btn">Sign In / Create <i class="fas fa-arrow-right"></i></button>
-                <div id="login-error" class="reaction-text animate-error" style="display: none;"></div>
+            <span class="close-btn" onclick="closeModal('login-modal')">&times;</span>
+            <h2>Login or Sign Up</h2>
+            <form id="auth-form" onsubmit="event.preventDefault(); authUser()">
+                <input type="text" id="username" placeholder="Username" required>
+                <input type="password" id="password" placeholder="Password" required>
+                <input type="email" id="email" placeholder="Email (optional)">
+                <button type="submit" class="btn">Sign In / Sign Up</button>
             </form>
+            <p id="auth-message"></p>
         </div>
     </div>
 
-    <div id="account-settings-modal" class="modal">
+    <div id="account-modal" class="modal">
         <div class="modal-content">
-            <span class="close-btn" onclick="closeAccountSettings()">×</span>
-            <h2 class="title-large animate-text" style="color: #00ffcc;">Account Settings</h2>
-            <form id="account-form" onsubmit="event.preventDefault(); updateAccount(document.getElementById('username').value, document.getElementById('email').value, document.getElementById('new-password').value, handleAccountResponse)">
-                <input type="text" id="username" class="auth-input" placeholder="Username" required>
-                <input type="email" id="email" class="auth-input" placeholder="Email (optional)">
-                <input type="password" id="new-password" class="auth-input" placeholder="New Password (optional)">
-                <input type="file" id="avatar-upload" accept="image/*" onchange="previewAvatar(this)" class="auth-input">
-                <img id="avatar-preview" src="https://via.placeholder.com/40" alt="Avatar Preview" class="avatar-preview" style="display: none; width: 40px; height: 40px; border-radius: 50%; margin: 10px 0; border: 2px solid #00ffcc;">
-                <button type="submit" class="btn actionbtn animate-btn">Save Changes <i class="fas fa-save"></i></button>
-                <button type="button" class="btn actionbtn animate-btn" onclick="logout()">Logout <i class="fas fa-sign-out-alt"></i></button>
-                <div id="account-message" class="reaction-text animate-error" style="display: none;"></div>
+            <span class="close-btn" onclick="closeModal('account-modal')">&times;</span>
+            <h2>Account Settings</h2>
+            <form id="account-form" onsubmit="event.preventDefault(); updateAccount()">
+                <input type="text" id="account-username" placeholder="Username" required>
+                <input type="email" id="account-email" placeholder="Email (optional)">
+                <input type="password" id="account-password" placeholder="New Password (optional)">
+                <button type="submit" class="btn">Save Changes</button>
+                <button type="button" class="btn" onclick="logout()">Logout</button>
             </form>
+            <p id="account-message"></p>
         </div>
     </div>
 
-    <main class="site-content">
-        <section class="game-details animate-section">
+    <main>
+        <section class="game-details">
             <div class="container">
-                <h2 class="title-large animate-text" id="game-title" style="color: #00ffcc;"></h2>
-                <div class="video-container">
-                    <iframe id="game-video" width="560" height="315" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <div class="video-frame">
+                    <iframe id="video-player" width="100%" height="400" frameborder="0" allowfullscreen></iframe>
+                    <h2 id="video-title"></h2>
+                    <p id="video-description"></p>
+                    <div class="video-stats">
+                        <p><i class="fas fa-eye"></i> Views: <span id="video-views"></span></p>
+                        <p><i class="fas fa-thumbs-up"></i> Likes: <span id="video-likes"></span></p>
+                        <p><i class="fas fa-calendar"></i> Published: <span id="video-date"></span></p>
+                        <p><i class="fas fa-money-bill"></i> Price: <span id="video-price"></span></p>
+                    </div>
+                    <div class="rating">
+                        <span class="star" data-value="1">&#9733;</span>
+                        <span class="star" data-value="2">&#9733;</span>
+                        <span class="star" data-value="3">&#9733;</span>
+                        <span class="star" data-value="4">&#9733;</span>
+                        <span class="star" data-value="5">&#9733;</span>
+                        <p id="rating-message"></p>
+                    </div>
+                    <a id="download-btn" href="#" class="btn" target="_blank">Download</a>
                 </div>
-                <div class="video-stats">
-                    <p><i class="fas fa-eye"></i> Site Views: <span id="site-views">0</span> | YouTube Views: <span id="youtube-views">0</span></p>
-                    <p><i class="fas fa-thumbs-up"></i> Site Likes: <span id="site-likes">0</span> | YouTube Likes: <span id="youtube-likes">0</span></p>
-                    <p><i class="fas fa-clock"></i> Uploaded: <span id="timestamp"></span></p>
-                    <p><i class="fas fa-user"></i> Creator: <span id="creator"></span></p>
-                    <p><i class="fas fa-coins"></i> Price: <span id="price"></span></p>
-                    <a id="download-link" href="#" target="_blank" class="btn actionbtn animate-btn">Download <i class="fas fa-download"></i></a>
-                </div>
-                <div class="rating-section">
-                    <h3 class="title-large animate-text" style="color: #00ffcc;">Rate This Game</h3>
-                    <div id="rating-stars" class="rating-stars"></div>
-                    <p id="rating-message" class="body-text animate-text" style="color: #a0a0a0;"></p>
-                </div>
-                <div class="video-description">
-                    <h3 class="title-large animate-text" style="color: #00ffcc;">Description</h3>
-                    <p id="description" class="body-text animate-text" style="color: #a0a0a0;"></p>
-                </div>
-                <div class="youtube-comments">
-                    <h3 class="title-large animate-text" style="color: #00ffcc;">YouTube Comments</h3>
-                    <div id="youtube-comments-list"></div>
-                </div>
-                <div class="comment-section">
-                    <h3 class="title-large animate-text" style="color: #00ffcc;">Website Comments</h3>
-                    <form id="site-comment-form" onsubmit="event.preventDefault(); addSiteComment('site-comment-input', 'site-comments-list')">
-                        <input type="text" id="site-comment-input" class="auth-input" placeholder="Add a comment..." required>
-                        <button type="submit" class="btn actionbtn animate-btn">Comment <i class="fas fa-comment"></i></button>
+                <section class="ad-section">
+                    <div class="ad-placeholder">Inline Ad (728x90)</div>
+                </section>
+                <section class="comments">
+                    <h3>Site Comments</h3>
+                    <form id="comment-form" onsubmit="event.preventDefault(); addComment()">
+                        <input type="text" id="comment-input" placeholder="Add a comment..." required>
+                        <button type="submit" class="btn">Submit</button>
                     </form>
-                    <div id="site-comments-list"></div>
-                </div>
+                    <div id="site-comments"></div>
+                </section>
+                <section class="youtube-comments">
+                    <h3>YouTube Comments</h3>
+                    <div id="youtube-comments"></div>
+                </section>
             </div>
         </section>
 
-        <!-- Sidebar Ad -->
         <aside class="sidebar-ad">
-            <ins class="adsbygoogle" style="display:block; width: 160px; height: 600px;" data-ad-client="ca-pub-2925220406728611" data-ad-slot="YYYYYYYYYY" data-ad-format="vertical" data-full-width-responsive="true"></ins>
-            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+            <div class="ad-placeholder">Sidebar Ad (160x600)</div>
         </aside>
     </main>
 
-    <footer class="animate-section">
+    <footer>
         <div class="container">
-            <p class="small-text animate-text" style="color: #888;">© 2025 Yobest Studio. All Rights Reserved. <i class="fas fa-copyright"></i></p>
+            <p>&copy; 2025 Yobest Studio. All Rights Reserved.</p>
             <div class="social-links">
-                <a href="https://www.youtube.com/@YobestRobloxStudio" target="_blank" class="btn socialbtn animate-btn"><i class="fab fa-youtube"></i> YouTube</a>
-                <a href="https://discord.gg/jKASqrc7H3" target="_blank" class="btn socialbtn animate-btn"><i class="fab fa-discord"></i> Discord</a>
-                <a href="https://x.com/Yobest_BYTR" target="_blank" class="btn socialbtn animate-btn"><i class="fab fa-x"></i> X</a>
+                <a href="https://www.youtube.com/@YobestRobloxStudio" target="_blank"><i class="fab fa-youtube"></i> YouTube</a>
+                <a href="https://x.com/Yobest_BYTR" target="_blank"><i class="fab fa-x-twitter"></i> Twitter</a>
+                <a href="https://discord.gg/jKASqrc7H3" target="_blank"><i class="fab fa-discord"></i> Discord</a>
             </div>
-            <div class="footer-ad">
-                <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-2925220406728611" data-ad-slot="YYYYYYYYYY" data-ad-format="horizontal" data-full-width-responsive="true"></ins>
-                <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-            </div>
+            <div class="ad-placeholder">Footer Ad (728x90)</div>
         </div>
     </footer>
 
