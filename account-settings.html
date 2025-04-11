@@ -3,70 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Account Settings - Yobest Studio</title>
+    <title>Account - Yobest Studio</title>
     <link rel="stylesheet" href="styles.css">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2925220406728611" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <header class="header-animate">
+    <div id="notification" class="notification"></div>
+
+    <header>
         <div class="container">
-            <h1 class="title-frame"><a href="index.html" class="site-name">Yobest Studio<span class="highlight"></span></a></h1>
-            <nav class="nav-container">
-                <a href="blog.html" class="nav-btn">Blog</a>
-                <a href="contact.html" class="nav-btn">Contact</a>
+            <h1><a href="index.html">Yobest Studio</a></h1>
+            <nav>
                 <a href="index.html" class="nav-btn">Home</a>
                 <a href="ai.html" class="nav-btn">AI Tools</a>
-                <a href="https://discord.gg/jKASqrc7H3" target="_blank" class="btn socialbtn"><i class="fab fa-discord"></i> Discord</a>
-                <a href="https://x.com/Yobest_BYTR" target="_blank" class="btn socialbtn"><i class="fab fa-x"></i> X</a>
-                <a href="#" id="login-btn" class="btn socialbtn" onclick="openLogin()" style="display: inline-block;">Login</a>
-                <a href="#" id="account-btn" class="btn socialbtn" onclick="openAccountSettings()" style="display: none;">Account</a>
-                <img src="https://via.placeholder.com/40" alt="Account" class="account-pic" id="account-pic" style="display: none;" onclick="window.location.href='account-settings.html';">
+                <a href="contact.html" class="nav-btn">Contact</a>
+                <a href="https://www.youtube.com/@YobestRobloxStudio" target="_blank" class="social-btn"><i class="fab fa-youtube"></i></a>
+                <a href="https://x.com/Yobest_BYTR" target="_blank" class="social-btn"><i class="fab fa-x-twitter"></i></a>
+                <a href="https://discord.gg/jKASqrc7H3" target="_blank" class="social-btn"><i class="fab fa-discord"></i></a>
+                <a href="login.html" id="login-btn" class="btn">Login</a>
+                <a href="account.html" id="account-btn" class="btn" style="display: none;">Account</a>
             </nav>
         </div>
     </header>
 
-    <section class="account-settings animate-section">
-        <div class="container">
-            <h2 class="title-frame animate-text">Account Settings</h2>
-            <p class="animate-text">Site Visitors | Total Downloads: <span id="site-stats">0</span></p>
-            <div class="settings-tabs">
-                <button class="tab-btn" onclick="openTab('profile')">Profile</button>
-                <button class="tab-btn" onclick="openTab('security')">Security</button>
-            </div>
-            <div id="profile" class="tab-content active">
-                <form onsubmit="event.preventDefault(); updateAccount(document.getElementById('username').value, document.getElementById('email').value, '', (message) => { document.getElementById('profile-message').textContent = message; document.getElementById('profile-message').classList.add(message.includes('successful') ? 'animate-success' : 'animate-error'); setTimeout(() => document.getElementById('profile-message').textContent = '', 3000); })">
-                    <input type="text" id="username" placeholder="Username" required class="auth-input">
-                    <input type="email" id="email" placeholder="Email" required class="auth-input">
-                    <input type="file" id="avatar-upload" accept="image/*" onchange="previewAvatar(this)" class="auth-input">
-                    <img id="avatar-preview" src="https://via.placeholder.com/40" alt="Avatar Preview" class="avatar-preview" style="display: none; width: 40px; height: 40px; border-radius: 50%; margin: 10px 0;">
-                    <button type="submit" class="btn actionbtn animate-btn">Save Profile</button>
-                    <p id="profile-message" class="reaction-text animate-text"></p>
+    <main>
+        <section class="account-details">
+            <div class="container">
+                <h2>Account Details</h2>
+                <div class="account-stats">
+                    <p>Username: <span id="account-username-display"></span></p>
+                    <p>Email: <span id="account-email-display"></span></p>
+                    <p>Downloads: <span id="user-downloads">0</span></p>
+                    <p>Site Visits: <span id="user-visits">0</span></p>
+                </div>
+                <form id="account-form" onsubmit="event.preventDefault(); updateAccount()">
+                    <div class="form-group">
+                        <label for="account-password">New Password</label>
+                        <input type="password" id="account-password" placeholder="New Password (optional)">
+                    </div>
+                    <div class="form-group">
+                        <label for="account-email">Update Email</label>
+                        <input type="email" id="account-email" placeholder="Email (optional)">
+                    </div>
+                    <div class="form-group">
+                        <label for="account-bio">Profile Bio</label>
+                        <textarea id="account-bio" placeholder="Tell us about yourself..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="favorite-games">Favorite Games (comma-separated)</label>
+                        <input type="text" id="favorite-games" placeholder="e.g., TTD Up4, Anime">
+                    </div>
+                    <button type="submit" class="btn btn-green">Save Changes</button>
+                    <button type="button" class="btn btn-red" onclick="logout()">Logout</button>
                 </form>
+                <p id="account-message"></p>
             </div>
-            <div id="security" class="tab-content">
-                <form onsubmit="event.preventDefault(); updateAccount('', '', document.getElementById('new-password').value, (message) => { document.getElementById('security-message').textContent = message; document.getElementById('security-message').classList.add(message.includes('successful') ? 'animate-success' : 'animate-error'); setTimeout(() => document.getElementById('security-message').textContent = '', 3000); })">
-                    <input type="password" id="current-password" placeholder="Current Password" required class="auth-input">
-                    <input type="password" id="new-password" placeholder="New Password" required class="auth-input">
-                    <button type="submit" class="btn actionbtn animate-btn">Update Password</button>
-                    <p id="security-message" class="reaction-text animate-text"></p>
-                </form>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2025 Yobest Studio. All Rights Reserved.</p>
+            <div class="social-links">
+                <a href="https://www.youtube.com/@YobestRobloxStudio" target="_blank"><i class="fab fa-youtube"></i> YouTube</a>
+                <a href="https://x.com/Yobest_BYTR" target="_blank"><i class="fab fa-x-twitter"></i> Twitter</a>
+                <a href="https://discord.gg/jKASqrc7H3" target="_blank"><i class="fab fa-discord"></i> Discord</a>
             </div>
-            <button type="button" onclick="logout()" class="btn actionbtn animate-btn">Logout</button>
-        </div>
-    </section>
-
-    <section class="ad-section">
-        <div class="container">
-            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-2925220406728611" data-ad-slot="YYYYYYYYYY" data-ad-format="auto" data-full-width-responsive="true"></ins>
-            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-        </div>
-    </section>
-
-    <footer class="animate-section">
-        <div class="container">
-            <p class="animate-text">© 2025 Yobest Studio. All Rights Reserved.</p>
+            <div class="ad-placeholder">Footer Ad (728x90)</div>
         </div>
     </footer>
 
