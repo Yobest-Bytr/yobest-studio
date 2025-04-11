@@ -1,12 +1,12 @@
 :root {
-    --primary-bg: #1a1a1a;
-    --secondary-bg: #2c2c2c;
+    --primary-bg: #1e1e2f;
+    --secondary-bg: #2a2a3d;
     --accent-cyan: #00f7ff;
     --accent-purple: #b100ff;
-    --text-light: #ffffff;
-    --text-muted: #cccccc;
-    --shadow-color: rgba(0, 247, 255, 0.5);
-    --modal-bg: rgba(0, 0, 0, 0.7);
+    --text-light: #e0e0e0;
+    --text-muted: #a0a0a0;
+    --shadow-color: rgba(0, 247, 255, 0.3);
+    --modal-bg: rgba(0, 0, 0, 0.8);
 }
 
 * {
@@ -16,7 +16,7 @@
 }
 
 body {
-    background: linear-gradient(135deg, #1a1a1a, #2c2c2c);
+    background: var(--primary-bg);
     color: var(--text-light);
     font-family: 'Roboto', sans-serif;
     line-height: 1.6;
@@ -47,8 +47,8 @@ body {
 
 .loading-logo {
     font-size: 2em;
-    color: #00c4b4;
-    background: #000;
+    color: #fff;
+    background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
     border-radius: 50%;
     width: 50px;
     height: 50px;
@@ -72,7 +72,7 @@ body {
 }
 
 .notification.success {
-    background: #00f7ff;
+    background: var(--accent-cyan);
     color: #000;
 }
 
@@ -82,12 +82,13 @@ body {
 }
 
 header {
-    background: transparent;
+    background: var(--secondary-bg);
     padding: 15px 0;
     position: fixed;
     width: 100%;
     top: 0;
     z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
 header .container {
@@ -101,10 +102,7 @@ header h1 a {
     text-decoration: none;
     font-size: 1.8em;
     font-weight: 700;
-    text-shadow: 0 0 10px var(--shadow-color);
-    background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 5px var(--shadow-color);
 }
 
 nav {
@@ -115,22 +113,25 @@ nav {
 
 .nav-btn, .btn, .social-btn {
     padding: 10px 20px;
-    border-radius: 25px;
+    border-radius: 5px;
     text-decoration: none;
     color: var(--text-light);
-    background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
+    background: var(--secondary-bg);
     transition: all 0.3s ease;
     font-size: 1em;
     font-weight: 500;
-    border: none;
+    border: 1px solid var(--accent-cyan);
 }
 
 .nav-btn:hover, .btn:hover, .social-btn:hover {
+    background: var(--accent-cyan);
+    color: #000;
     transform: scale(1.05);
-    box-shadow: 0 0 15px var(--shadow-color);
+    box-shadow: 0 0 10px var(--shadow-color);
 }
 
 .social-btn {
+    background: var(--accent-purple);
     padding: 10px;
 }
 
@@ -152,8 +153,8 @@ nav {
     width: 90%;
     max-width: 400px;
     border-radius: 10px;
-    border: 2px solid var(--accent-cyan);
-    animation: slideDown 0.5s ease;
+    border: 1px solid var(--accent-cyan);
+    box-shadow: 0 0 20px var(--shadow-color);
 }
 
 .close-btn {
@@ -172,7 +173,7 @@ form input {
     padding: 10px;
     margin: 10px 0;
     border-radius: 5px;
-    border: none;
+    border: 1px solid var(--accent-cyan);
     background: #3c3c3c;
     color: var(--text-light);
     font-size: 1em;
@@ -187,24 +188,50 @@ main {
     margin-top: 80px;
 }
 
-.hero {
-    background: transparent;
-    padding: 100px 0;
+.ad-section .ad-placeholder {
+    background: #3c3c3c;
+    padding: 20px;
     text-align: center;
+    border-radius: 5px;
     margin: 20px 0;
+    font-size: 1em;
+    color: var(--text-muted);
+    border: 1px solid var(--accent-purple);
+}
+
+.sidebar-ad {
+    position: sticky;
+    top: 100px;
+    width: 160px;
+    float: right;
+}
+
+.sidebar-ad .ad-placeholder {
+    height: 600px;
+    line-height: 600px;
+    border: 1px solid var(--accent-purple);
+}
+
+.hero {
+    background: var(--secondary-bg);
+    padding: 60px 0;
+    text-align: center;
+    border-radius: 10px;
+    margin: 20px 0;
+    border: 1px solid var(--accent-cyan);
+    box-shadow: 0 0 15px var(--shadow-color);
 }
 
 .hero h2 {
-    font-size: 3em;
-    color: var(--text-light);
-    text-shadow: 0 0 10px var(--shadow-color);
-    margin-bottom: 20px;
+    font-size: 2.5em;
+    color: var(--accent-cyan);
+    text-shadow: 0 0 5px var(--shadow-color);
 }
 
 .hero p {
     font-size: 1.2em;
     color: var(--text-muted);
-    margin-bottom: 20px;
+    margin: 15px 0;
 }
 
 .stats {
@@ -221,7 +248,8 @@ main {
 }
 
 .hero .btn {
-    background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
+    background: var(--accent-cyan);
+    color: #000;
     padding: 15px 30px;
     font-size: 1.2em;
 }
@@ -234,9 +262,6 @@ main {
     font-size: 2em;
     color: var(--accent-cyan);
     margin-bottom: 15px;
-    background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
 }
 
 .video-grid p {
@@ -247,21 +272,23 @@ main {
 
 #video-list {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 20px;
 }
 
 .video-card {
-    background: transparent;
+    background: var(--secondary-bg);
     border-radius: 10px;
     overflow: hidden;
     transition: all 0.3s ease;
-    border: 2px solid var(--accent-cyan);
+    border: 1px solid var(--accent-cyan);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
 .video-card:hover {
     transform: scale(1.05);
     box-shadow: 0 0 20px var(--shadow-color);
+    border-color: var(--accent-purple);
 }
 
 .video-card img {
@@ -270,11 +297,20 @@ main {
     object-fit: cover;
 }
 
+.video-card .info {
+    padding: 15px;
+}
+
+.video-card h3 {
+    font-size: 1.2em;
+    color: var(--accent-cyan);
+    margin-bottom: 10px;
+}
+
 .video-card p {
-    text-align: center;
-    padding: 10px;
     font-size: 0.9em;
     color: var(--text-muted);
+    margin: 5px 0;
 }
 
 .game-details {
@@ -285,8 +321,14 @@ main {
     background: var(--secondary-bg);
     border-radius: 10px;
     padding: 20px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
     margin-bottom: 20px;
+    border: 1px solid var(--accent-cyan);
+}
+
+.video-frame:hover {
+    box-shadow: 0 0 20px var(--shadow-color);
+    border-color: var(--accent-purple);
 }
 
 .video-frame iframe {
@@ -339,6 +381,8 @@ main {
 #download-btn {
     display: inline-block;
     margin-top: 15px;
+    background: var(--accent-purple);
+    color: #fff;
 }
 
 .comments, .youtube-comments {
@@ -368,11 +412,13 @@ main {
     margin: 10px 0;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     transition: all 0.3s ease;
+    border: 1px solid var(--accent-cyan);
 }
 
 .comment:hover {
     transform: scale(1.02);
     box-shadow: 0 0 15px var(--shadow-color);
+    border-color: var(--accent-purple);
 }
 
 .comment-header {
@@ -401,6 +447,16 @@ main {
 .comment-actions button {
     padding: 5px 10px;
     font-size: 0.8em;
+    background: var(--accent-cyan);
+    color: #000;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.comment-actions button:hover {
+    background: var(--accent-purple);
+    color: #fff;
 }
 
 .ai-tools {
@@ -423,7 +479,8 @@ main {
     background: var(--secondary-bg);
     border-radius: 10px;
     padding: 20px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--accent-cyan);
 }
 
 .community-chat {
@@ -435,26 +492,26 @@ main {
 }
 
 .chat-header {
-    background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
+    background: var(--accent-cyan);
     padding: 10px;
-    border-radius: 10px 10px 0 0;
+    border-radius: 5px 5px 0 0;
     cursor: pointer;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    color: #000;
 }
 
 .chat-header h3 {
     font-size: 1.2em;
-    color: var(--text-light);
 }
 
 .chat-content {
     display: none;
     background: var(--secondary-bg);
-    border: 2px solid var(--accent-cyan);
+    border: 1px solid var(--accent-cyan);
     border-top: none;
-    border-radius: 0 0 10px 10px;
+    border-radius: 0 0 5px 5px;
     padding: 15px;
 }
 
@@ -479,11 +536,12 @@ main {
 
 #ai-input {
     flex-grow: 1;
-    border: 2px solid var(--accent-purple);
+    border: 1px solid var(--accent-purple);
 }
 
 #ai-form .btn {
     background: var(--accent-purple);
+    color: #fff;
 }
 
 .contact {
@@ -513,6 +571,7 @@ footer {
     background: var(--secondary-bg);
     padding: 20px 0;
     margin-top: 40px;
+    border-top: 1px solid var(--accent-cyan);
 }
 
 footer p {
