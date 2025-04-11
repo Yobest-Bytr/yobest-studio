@@ -9,9 +9,19 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
+    <div id="loading-overlay">
+        <div class="loading-content">
+            <div class="loading-logo">W</div>
+            <p>work.ink</p>
+            <p>Checking your browser... This takes about 5 seconds</p>
+        </div>
+    </div>
+
+    <div id="notification" class="notification"></div>
+
     <header>
         <div class="container">
-            <h1><a href="index.html">Yobest Studio</a></h1>
+            <h1><a href="index.html">YOBEST STUDIO</a></h1>
             <nav>
                 <a href="index.html" class="nav-btn">Home</a>
                 <a href="ai.html" class="nav-btn">AI Tools</a>
@@ -66,9 +76,19 @@
             </div>
         </section>
 
-        <aside class="sidebar-ad">
-            <div class="ad-placeholder">Sidebar Ad (160x600)</div>
-        </aside>
+        <div class="community-chat">
+            <div class="chat-header" onclick="toggleChat()">
+                <h3>Community Chat</h3>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="chat-content">
+                <div id="chat-history"></div>
+                <form id="ai-form" onsubmit="event.preventDefault(); sendToAI()">
+                    <input type="text" id="ai-input" placeholder="Say anything..." required>
+                    <button type="submit" class="btn">Send</button>
+                </form>
+            </div>
+        </div>
     </main>
 
     <footer>
@@ -79,7 +99,6 @@
                 <a href="https://x.com/Yobest_BYTR" target="_blank"><i class="fab fa-x-twitter"></i> Twitter</a>
                 <a href="https://discord.gg/jKASqrc7H3" target="_blank"><i class="fab fa-discord"></i> Discord</a>
             </div>
-            <div class="ad-placeholder">Footer Ad (728x90)</div>
         </div>
     </footer>
 
