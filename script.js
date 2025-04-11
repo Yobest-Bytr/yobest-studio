@@ -123,11 +123,35 @@ function closeModal(modalId) {
 // YouTube API Integration
 const API_KEY = 'AIzaSyChwoHXMqlbmAfeh4lbRUFWx2HjIZ6VV2k';
 let gamePreviews = [
-    {
+    {//ttd up4
         creator: "Yobest",
         videoLink: "https://www.youtube.com/watch?v=6mDovQ4d87M",
         downloadLink: "https://workink.net/1RdO/m0wpmz0s",
         price: "Free"
+    },
+    {//ttd up3
+        creator: "Yobest",
+        videoLink: "https://www.youtube.com/watch?v=IKmXPPhLeLk",
+        downloadLink: "https://workink.net/1RdO/m0wpmz0s",
+        price: "Free"
+    },
+    {//anime
+        creator: "Yobest",
+        videoLink: "https://www.youtube.com/watch?v=sPauNcqbkBU",
+        downloadLink: "https://workink.net/1RdO/lmm1ufst",
+        price: "Free"
+    },
+    {//anime 1
+        creator: "Yobest",
+        videoLink: "https://www.youtube.com/watch?v=97f1sqtWy6o",
+        downloadLink: "https://workink.net/1RdO/lmm1ufst",
+        price: "Free"
+    },
+    {//trade
+        creator: "Yobest",
+        videoLink: "https://www.youtube.com/watch?v=pMrRFF7dHYM",
+        downloadLink: "https://workink.net/1RdO/lu5jed0c",
+        price: "Free "
     }
 ];
 
