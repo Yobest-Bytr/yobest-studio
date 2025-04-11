@@ -29,40 +29,11 @@
                 <a href="https://www.youtube.com/@YobestRobloxStudio" target="_blank" class="social-btn"><i class="fab fa-youtube"></i></a>
                 <a href="https://x.com/Yobest_BYTR" target="_blank" class="social-btn"><i class="fab fa-x-twitter"></i></a>
                 <a href="https://discord.gg/jKASqrc7H3" target="_blank" class="social-btn"><i class="fab fa-discord"></i></a>
-                <a href="#" id="login-btn" class="btn" onclick="openLogin()">Login</a>
-                <a href="#" id="account-btn" class="btn" onclick="openAccount()" style="display: none;">Account</a>
+                <a href="login.html" id="login-btn" class="btn">Login</a>
+                <a href="account.html" id="account-btn" class="btn" style="display: none;">Account</a>
             </nav>
         </div>
     </header>
-
-    <div id="login-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeModal('login-modal')">×</span>
-            <h2>Login or Sign Up</h2>
-            <form id="auth-form" onsubmit="event.preventDefault(); authUser()">
-                <input type="text" id="username" placeholder="Username" required>
-                <input type="password" id="password" placeholder="Password" required>
-                <input type="email" id="email" placeholder="Email (optional)">
-                <button type="submit" class="btn">Sign In / Sign Up</button>
-            </form>
-            <p id="auth-message"></p>
-        </div>
-    </div>
-
-    <div id="account-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeModal('account-modal')">×</span>
-            <h2>Account Settings</h2>
-            <form id="account-form" onsubmit="event.preventDefault(); updateAccount()">
-                <input type="text" id="account-username" placeholder="Username" required>
-                <input type="email" id="account-email" placeholder="Email (optional)">
-                <input type="password" id="account-password" placeholder="New Password (optional)">
-                <button type="submit" class="btn">Save Changes</button>
-                <button type="button" class="btn" onclick="logout()">Logout</button>
-            </form>
-            <p id="account-message"></p>
-        </div>
-    </div>
 
     <main>
         <section class="ad-section">
@@ -84,6 +55,7 @@
                         <p><i class="fas fa-money-bill"></i> Price: <span id="video-price"></span></p>
                     </div>
                     <div class="rating">
+                        <h3>Rate this Game</h3>
                         <span class="star" data-value="1">★</span>
                         <span class="star" data-value="2">★</span>
                         <span class="star" data-value="3">★</span>
@@ -91,13 +63,24 @@
                         <span class="star" data-value="5">★</span>
                         <p id="rating-message"></p>
                     </div>
-                    <a id="download-btn" href="#" class="btn" target="_blank">Download</a>
+                    <div class="public-ratings">
+                        <h3>Public Ratings</h3>
+                        <div class="rating-bars">
+                            <div class="rating-bar"><span>5</span><div class="bar" id="bar-5"></div></div>
+                            <div class="rating-bar"><span>4</span><div class="bar" id="bar-4"></div></div>
+                            <div class="rating-bar"><span>3</span><div class="bar" id="bar-3"></div></div>
+                            <div class="rating-bar"><span>2</span><div class="bar" id="bar-2"></div></div>
+                            <div class="rating-bar"><span>1</span><div class="bar" id="bar-1"></div></div>
+                        </div>
+                        <p>Average Rating: <span id="average-rating">0</span> (<span id="total-ratings">0</span> ratings)</p>
+                    </div>
+                    <a id="download-btn" href="#" class="btn btn-purple" target="_blank">Download</a>
                 </div>
                 <section class="comments">
                     <h3>Site Comments</h3>
                     <form id="comment-form" onsubmit="event.preventDefault(); addComment()">
                         <input type="text" id="comment-input" placeholder="Add a comment..." required>
-                        <button type="submit" class="btn">Submit</button>
+                        <button type="submit" class="btn btn-green">Submit</button>
                     </form>
                     <div id="site-comments"></div>
                 </section>
@@ -121,7 +104,7 @@
                 <div id="chat-history"></div>
                 <form id="ai-form" onsubmit="event.preventDefault(); sendToAI()">
                     <input type="text" id="ai-input" placeholder="Ask about Roblox development..." required>
-                    <button type="submit" class="btn">Send</button>
+                    <button type="submit" class="btn btn-purple">Send</button>
                 </form>
             </div>
         </div>
