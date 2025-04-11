@@ -16,7 +16,7 @@
 }
 
 body {
-    background-color: var(--primary-bg);
+    background: linear-gradient(135deg, #1a1a1a, #2c2c2c);
     color: var(--text-light);
     font-family: 'Roboto', sans-serif;
     line-height: 1.6;
@@ -28,8 +28,61 @@ body {
     padding: 0 20px;
 }
 
+#loading-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    z-index: 3000;
+    justify-content: center;
+    align-items: center;
+}
+
+.loading-content {
+    text-align: center;
+}
+
+.loading-logo {
+    font-size: 2em;
+    color: #00c4b4;
+    background: #000;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    margin: 0 auto 10px;
+}
+
+.loading-content p {
+    color: #000;
+    font-size: 1em;
+}
+
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 20px;
+    border-radius: 5px;
+    z-index: 2000;
+    display: none;
+}
+
+.notification.success {
+    background: #00f7ff;
+    color: #000;
+}
+
+.notification.error {
+    background: #ff4444;
+    color: #fff;
+}
+
 header {
-    background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
+    background: transparent;
     padding: 15px 0;
     position: fixed;
     width: 100%;
@@ -44,11 +97,14 @@ header .container {
 }
 
 header h1 a {
-    color: var(--text-light);
+    color: var(--accent-cyan);
     text-decoration: none;
     font-size: 1.8em;
     font-weight: 700;
     text-shadow: 0 0 10px var(--shadow-color);
+    background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 nav {
@@ -62,22 +118,19 @@ nav {
     border-radius: 25px;
     text-decoration: none;
     color: var(--text-light);
-    background: var(--secondary-bg);
+    background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
     transition: all 0.3s ease;
     font-size: 1em;
     font-weight: 500;
-    border: 2px solid transparent;
+    border: none;
 }
 
 .nav-btn:hover, .btn:hover, .social-btn:hover {
-    background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
     transform: scale(1.05);
     box-shadow: 0 0 15px var(--shadow-color);
-    border-color: var(--accent-cyan);
 }
 
 .social-btn {
-    background: var(--accent-purple);
     padding: 10px;
 }
 
@@ -135,45 +188,42 @@ main {
 }
 
 .hero {
-    background: var(--secondary-bg);
-    padding: 60px 0;
+    background: transparent;
+    padding: 100px 0;
     text-align: center;
-    border-radius: 10px;
     margin: 20px 0;
-    box-shadow: 0 0 20px var(--shadow-color);
 }
 
 .hero h2 {
-    font-size: 2.5em;
-    color: var(--accent-cyan);
+    font-size: 3em;
+    color: var(--text-light);
     text-shadow: 0 0 10px var(--shadow-color);
+    margin-bottom: 20px;
 }
 
 .hero p {
     font-size: 1.2em;
     color: var(--text-muted);
+    margin-bottom: 20px;
 }
 
-.ad-section .ad-placeholder {
-    background: #3c3c3c;
-    padding: 20px;
-    text-align: center;
-    border-radius: 10px;
+.stats {
     margin: 20px 0;
-    font-size: 1em;
+}
+
+.stats p {
+    font-size: 1.1em;
     color: var(--text-muted);
 }
 
-.sidebar-ad {
-    position: sticky;
-    top: 100px;
-    width: 160px;
-    float: right;
+.stats span {
+    color: var(--accent-cyan);
 }
 
-.sidebar-ad .ad-placeholder {
-    height: 600px;
-    line-height: 600px;
+.hero .btn {
+    background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
+    padding: 15px 30px;
+    font-size: 1.2em;
 }
 
 .video-grid {
@@ -183,21 +233,30 @@ main {
 .video-grid h2 {
     font-size: 2em;
     color: var(--accent-cyan);
+    margin-bottom: 15px;
+    background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.video-grid p {
+    font-size: 1em;
+    color: var(--text-muted);
     margin-bottom: 20px;
 }
 
 #video-list {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 20px;
 }
 
 .video-card {
-    background: var(--secondary-bg);
+    background: transparent;
     border-radius: 10px;
     overflow: hidden;
     transition: all 0.3s ease;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    border: 2px solid var(--accent-cyan);
 }
 
 .video-card:hover {
@@ -211,20 +270,11 @@ main {
     object-fit: cover;
 }
 
-.video-card .info {
-    padding: 15px;
-}
-
-.video-card h3 {
-    font-size: 1.2em;
-    color: var(--accent-cyan);
-    margin-bottom: 10px;
-}
-
 .video-card p {
+    text-align: center;
+    padding: 10px;
     font-size: 0.9em;
     color: var(--text-muted);
-    margin: 5px 0;
 }
 
 .game-details {
@@ -376,10 +426,42 @@ main {
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
 }
 
+.community-chat {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 300px;
+    z-index: 1000;
+}
+
+.chat-header {
+    background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
+    padding: 10px;
+    border-radius: 10px 10px 0 0;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.chat-header h3 {
+    font-size: 1.2em;
+    color: var(--text-light);
+}
+
+.chat-content {
+    display: none;
+    background: var(--secondary-bg);
+    border: 2px solid var(--accent-cyan);
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+    padding: 15px;
+}
+
 #chat-history {
-    max-height: 400px;
+    max-height: 200px;
     overflow-y: auto;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
 .ai-message {
@@ -397,6 +479,11 @@ main {
 
 #ai-input {
     flex-grow: 1;
+    border: 2px solid var(--accent-purple);
+}
+
+#ai-form .btn {
+    background: var(--accent-purple);
 }
 
 .contact {
