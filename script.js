@@ -1,3 +1,23 @@
+// Notification System
+function showNotification(message, type = 'success') {
+    const notification = document.getElementById('notification');
+    notification.textContent = message;
+    notification.className = `notification ${type}`;
+    notification.style.display = 'block';
+    setTimeout(() => {
+        notification.style.display = 'none';
+    }, 3000);
+}
+
+// Loading Overlay
+function showLoading() {
+    document.getElementById('loading-overlay').style.display = 'flex';
+}
+
+function hideLoading() {
+    document.getElementById('loading-overlay').style.display = 'none';
+}
+
 // Authentication
 let currentUser = null;
 
@@ -5,7 +25,6 @@ function authUser() {
     const username = document.getElementById('username').value.trim();
     const password = document.getElementById('password').value;
     const email = document.getElementById('email').value.trim();
-    const message = document.getElementById('auth-message');
 
     let users = JSON.parse(localStorage.getItem('users') || '{}');
 
@@ -13,23 +32,20 @@ function authUser() {
         if (users[username].password === password) {
             currentUser = { username, email: users[username].email };
             localStorage.setItem('currentUser', JSON.stringify(currentUser));
-            message.textContent = 'Login successful!';
-            message.style.color = '#00f7ff';
+            showNotification('Login successful!', 'success');
             setTimeout(() => {
                 closeModal('login-modal');
                 updateUI();
             }, 1000);
         } else {
-            message.textContent = 'Incorrect password!';
-            message.style.color = '#ff4444';
+            showNotification('Incorrect password!', 'error');
         }
     } else {
         users[username] = { password, email };
         localStorage.setItem('users', JSON.stringify(users));
         currentUser = { username, email };
         localStorage.setItem('currentUser', JSON.stringify(currentUser));
-        message.textContent = 'Account created and logged in!';
-        message.style.color = '#00f7ff';
+        showNotification('Account created and logged in!', 'success');
         setTimeout(() => {
             closeModal('login-modal');
             updateUI();
@@ -41,14 +57,12 @@ function updateAccount() {
     const username = document.getElementById('account-username').value.trim();
     const email = document.getElementById('account-email').value.trim();
     const password = document.getElementById('account-password').value;
-    const message = document.getElementById('account-message');
 
     if (currentUser) {
         let users = JSON.parse(localStorage.getItem('users') || '{}');
         if (users[currentUser.username]) {
             if (username !== currentUser.username && users[username]) {
-                message.textContent = 'Username already exists!';
-                message.style.color = '#ff4444';
+                showNotification('Username already exists!', 'error');
                 return;
             }
             users[username] = {
@@ -61,8 +75,7 @@ function updateAccount() {
             localStorage.setItem('users', JSON.stringify(users));
             currentUser = { username, email };
             localStorage.setItem('currentUser', JSON.stringify(currentUser));
-            message.textContent = 'Account updated!';
-            message.style.color = '#00f7ff';
+            showNotification('Account updated!', 'success');
             setTimeout(() => closeModal('account-modal'), 1000);
             updateUI();
         }
@@ -72,6 +85,7 @@ function updateAccount() {
 function logout() {
     currentUser = null;
     localStorage.removeItem('currentUser');
+    showNotification('Logged out successfully!', 'success');
     updateUI();
     closeModal('account-modal');
 }
@@ -111,15 +125,18 @@ const API_KEY = 'AIzaSyChwoHXMqlbmAfeh4lbRUFWx2HjIZ6VV2k';
 let gamePreviews = [];
 
 async function fetchYouTubeVideos() {
+    showLoading();
     const channelId = 'UCy5L9Q_14N8Xzq-o5nQU9OA'; // Replace with your channel ID if different
     const url = `https://www.googleapis.com/youtube/v3/search?key=${API_KEY}&channelId=${channelId}&part=snippet,id&order=date&maxResults=10`;
     
     try {
         const response = await fetch(url);
+        if (!response.ok) throw new Error('Failed to fetch videos');
         const data = await response.json();
         const videoIds = data.items.map(item => item.id.videoId).join(',');
         const statsUrl = `https://www.googleapis.com/youtube/v3/videos?key=${API_KEY}&id=${videoIds}&part=snippet,statistics`;
         const statsResponse = await fetch(statsUrl);
+        if (!statsResponse.ok) throw new Error('Failed to fetch video stats');
         const statsData = await statsResponse.json();
 
         gamePreviews = statsData.items.map(item => ({
@@ -135,39 +152,37 @@ async function fetchYouTubeVideos() {
         }));
 
         loadVideos();
+        hideLoading();
     } catch (error) {
         console.error('Error fetching YouTube data:', error);
+        showNotification('Failed to load videos. Using fallback data.', 'error');
         gamePreviews = [{
             creator: "Yobest",
             videoLink: "https://www.youtube.com/watch?v=6mDovQ4d87M",
             downloadLink: "https://workink.net/1RdO/m0wpmz0s",
             title: "Roblox Studio Tutorial - Advanced Game Mechanics",
             thumbnail: "https://img.youtube.com/vi/6mDovQ4d87M/maxresdefault.jpg",
-            views: "10K",
+            views: "10000",
             likes: "500",
             date: "2025-03-01",
             price: "Free"
         }];
         loadVideos();
+        hideLoading();
     }
 }
 
 function loadVideos() {
     const videoList = document.getElementById('video-list');
+    const videoCount = document.getElementById('video-count');
     if (videoList) {
         videoList.innerHTML = gamePreviews.map(video => `
             <div class="video-card" onclick="window.location.href='game.html?video=${encodeURIComponent(video.videoLink)}'">
                 <img src="${video.thumbnail}" alt="${video.title}">
-                <div class="info">
-                    <h3>${video.title}</h3>
-                    <p><i class="fas fa-user"></i> ${video.creator}</p>
-                    <p><i class="fas fa-eye"></i> ${video.views}</p>
-                    <p><i class="fas fa-thumbs-up"></i> ${video.likes}</p>
-                    <p><i class="fas fa-calendar"></i> ${video.date}</p>
-                    <p><i class="fas fa-money-bill"></i> ${video.price}</p>
-                </div>
+                <p>${video.views} Views</p>
             </div>
         `).join('');
+        if (videoCount) videoCount.textContent = gamePreviews.length;
     }
 }
 
@@ -184,6 +199,8 @@ function loadGameDetails() {
         document.getElementById('video-date').textContent = video.date;
         document.getElementById('video-price').textContent = video.price;
         document.getElementById('download-btn').href = video.downloadLink;
+    } else {
+        showNotification('Video not found!', 'error');
     }
     loadComments();
     loadYouTubeComments();
@@ -193,7 +210,7 @@ function loadGameDetails() {
 // Comments
 function addComment() {
     if (!currentUser) {
-        alert('Please log in to comment!');
+        showNotification('Please log in to comment!', 'error');
         return;
     }
     const input = document.getElementById('comment-input');
@@ -209,6 +226,7 @@ function addComment() {
         });
         localStorage.setItem('comments', JSON.stringify(comments));
         input.value = '';
+        showNotification('Comment added!', 'success');
         loadComments();
     }
 }
@@ -238,7 +256,7 @@ function loadComments() {
 
 function likeComment(date) {
     if (!currentUser) {
-        alert('Please log in to like comments!');
+        showNotification('Please log in to like comments!', 'error');
         return;
     }
     const comments = JSON.parse(localStorage.getItem('comments') || '[]');
@@ -246,6 +264,7 @@ function likeComment(date) {
     if (comment) {
         comment.likes++;
         localStorage.setItem('comments', JSON.stringify(comments));
+        showNotification('Comment liked!', 'success');
         loadComments();
     }
 }
@@ -258,6 +277,7 @@ function editComment(date) {
         if (newContent) {
             comment.content = newContent.trim();
             localStorage.setItem('comments', JSON.stringify(comments));
+            showNotification('Comment updated!', 'success');
             loadComments();
         }
     }
@@ -268,6 +288,7 @@ function deleteComment(date) {
         let comments = JSON.parse(localStorage.getItem('comments') || '[]');
         comments = comments.filter(c => c.date !== date || c.owner !== currentUser.username);
         localStorage.setItem('comments', JSON.stringify(comments));
+        showNotification('Comment deleted!', 'success');
         loadComments();
     }
 }
@@ -297,7 +318,7 @@ function setupRating() {
     stars.forEach(star => {
         star.addEventListener('click', () => {
             if (!currentUser) {
-                alert('Please log in to rate!');
+                showNotification('Please log in to rate!', 'error');
                 return;
             }
             const value = star.dataset.value;
@@ -305,7 +326,7 @@ function setupRating() {
             for (let i = 0; i < value; i++) {
                 stars[i].classList.add('active');
             }
-            document.getElementById('rating-message').textContent = `Rated ${value} stars!`;
+            showNotification(`Rated ${value} stars!`, 'success');
             setTimeout(() => document.getElementById('rating-message').textContent = '', 2000);
         });
     });
@@ -325,7 +346,7 @@ const aiTopics = {
         keywords: ['design', 'game', 'build', 'create'],
         synonyms: ['make', 'construct'],
         responses: [
-            `Game design in Roblox is all about creativity! Start with a clear theme, like sci-fi or adventure. Use Studio tools to build terrain, add lighting, and scriptслу interactions. For example, a basic teleporter:\n\n\`\`\`lua\nlocal teleporter = game.Workspace.Teleporter\nteleporter.Touched:Connect(function(hit)\n    hit.Parent.HumanoidRootPart.Position = Vector3.new(100, 10, 100)\nend)\n\`\`\`\n\nNeed tips on level design or mechanics?`,
+            `Game design in Roblox is all about creativity! Start with a clear theme, like sci-fi or adventure. Use Studio tools to build terrain, add lighting, and script interactions. For example, a basic teleporter:\n\n\`\`\`lua\nlocal teleporter = game.Workspace.Teleporter\nteleporter.Touched:Connect(function(hit)\n    hit.Parent.HumanoidRootPart.Position = Vector3.new(100, 10, 100)\nend)\n\`\`\`\n\nNeed tips on level design or mechanics?`,
             `Building a Roblox game? Focus on player engagement. Add checkpoints, rewards, and smooth controls. A simple reward script:\n\n\`\`\`lua\nlocal player = game.Players.LocalPlayer\nplayer.leaderstats.Coins.Value += 100\n\`\`\`\n\nWant advice on specific design elements?`
         ]
     }
@@ -364,6 +385,20 @@ function sendToAI() {
     history.innerHTML += `<div class="ai-message">AI: ${response}</div>`;
     history.scrollTop = history.scrollHeight;
     input.value = '';
+}
+
+function toggleChat() {
+    const chatContent = document.querySelector('.chat-content');
+    const chevron = document.querySelector('.chat-header i');
+    if (chatContent.style.display === 'block') {
+        chatContent.style.display = 'none';
+        chevron.classList.remove('fa-chevron-up');
+        chevron.classList.add('fa-chevron-down');
+    } else {
+        chatContent.style.display = 'block';
+        chevron.classList.remove('fa-chevron-down');
+        chevron.classList.add('fa-chevron-up');
+    }
 }
 
 // Initialization
