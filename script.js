@@ -106,20 +106,51 @@ function closeModal(modalId) {
     if (message) message.textContent = '';
 }
 
-// Video Data
-const gamePreviews = [
-    {
-        creator: "Yobest",
-        videoLink: "https://www.youtube.com/watch?v=6mDovQ4d87M",
-        downloadLink: "https://workink.net/1RdO/m0wpmz0s",
-        title: "Roblox Studio Tutorial - Advanced Game Mechanics",
-        thumbnail: "https://img.youtube.com/vi/6mDovQ4d87M/maxresdefault.jpg",
-        views: "10K",
-        likes: "500",
-        date: "2025-03-01",
-        price: "Free"
+// YouTube API Integration
+const API_KEY = 'AIzaSyChwoHXMqlbmAfeh4lbRUFWx2HjIZ6VV2k';
+let gamePreviews = [];
+
+async function fetchYouTubeVideos() {
+    const channelId = 'UCy5L9Q_14N8Xzq-o5nQU9OA'; // Replace with your channel ID if different
+    const url = `https://www.googleapis.com/youtube/v3/search?key=${API_KEY}&channelId=${channelId}&part=snippet,id&order=date&maxResults=10`;
+    
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        const videoIds = data.items.map(item => item.id.videoId).join(',');
+        const statsUrl = `https://www.googleapis.com/youtube/v3/videos?key=${API_KEY}&id=${videoIds}&part=snippet,statistics`;
+        const statsResponse = await fetch(statsUrl);
+        const statsData = await statsResponse.json();
+
+        gamePreviews = statsData.items.map(item => ({
+            creator: "Yobest",
+            videoLink: `https://www.youtube.com/watch?v=${item.id}`,
+            downloadLink: "https://workink.net/1RdO/m0wpmz0s", // Placeholder, update as needed
+            title: item.snippet.title,
+            thumbnail: item.snippet.thumbnails.high.url,
+            views: item.statistics.viewCount,
+            likes: item.statistics.likeCount,
+            date: item.snippet.publishedAt.split('T')[0],
+            price: "Free" // Adjust as needed
+        }));
+
+        loadVideos();
+    } catch (error) {
+        console.error('Error fetching YouTube data:', error);
+        gamePreviews = [{
+            creator: "Yobest",
+            videoLink: "https://www.youtube.com/watch?v=6mDovQ4d87M",
+            downloadLink: "https://workink.net/1RdO/m0wpmz0s",
+            title: "Roblox Studio Tutorial - Advanced Game Mechanics",
+            thumbnail: "https://img.youtube.com/vi/6mDovQ4d87M/maxresdefault.jpg",
+            views: "10K",
+            likes: "500",
+            date: "2025-03-01",
+            price: "Free"
+        }];
+        loadVideos();
     }
-];
+}
 
 function loadVideos() {
     const videoList = document.getElementById('video-list');
@@ -147,7 +178,7 @@ function loadGameDetails() {
     if (video) {
         document.getElementById('video-player').src = `https://www.youtube.com/embed/${videoLink.split('v=')[1]}`;
         document.getElementById('video-title').textContent = video.title;
-        document.getElementById('video-description').textContent = "Learn advanced game mechanics in this comprehensive Roblox Studio tutorial.";
+        document.getElementById('video-description').textContent = "Learn advanced game mechanics in this comprehensive Roblox Studio tutorial."; // Update with API if available
         document.getElementById('video-views').textContent = video.views;
         document.getElementById('video-likes').textContent = video.likes;
         document.getElementById('video-date').textContent = video.date;
@@ -241,13 +272,13 @@ function deleteComment(date) {
     }
 }
 
-function loadYouvair Comments() {
+function loadYouTubeComments() {
     const commentsList = document.getElementById('youtube-comments');
     if (commentsList) {
         const comments = [
             { username: "RobloxFan", content: "Amazing script!", date: "2025-03-02" },
             { username: "GameDev", content: "Really helpful tutorial!", date: "2025-03-01" }
-        ];
+        ]; // Placeholder, integrate YouTube API comments if needed
         commentsList.innerHTML = comments.map(c => `
             <div class="comment">
                 <div class="comment-header">
@@ -294,7 +325,7 @@ const aiTopics = {
         keywords: ['design', 'game', 'build', 'create'],
         synonyms: ['make', 'construct'],
         responses: [
-            `Game design in Roblox is all about creativity! Start with a clear theme, like sci-fi or adventure. Use Studio tools to build terrain, add lighting, and script interactions. For example, a basic teleporter:\n\n\`\`\`lua\nlocal teleporter = game.Workspace.Teleporter\nteleporter.Touched:Connect(function(hit)\n    hit.Parent.HumanoidRootPart.Position = Vector3.new(100, 10, 100)\nend)\n\`\`\`\n\nNeed tips on level design or mechanics?`,
+            `Game design in Roblox is all about creativity! Start with a clear theme, like sci-fi or adventure. Use Studio tools to build terrain, add lighting, and scriptслу interactions. For example, a basic teleporter:\n\n\`\`\`lua\nlocal teleporter = game.Workspace.Teleporter\nteleporter.Touched:Connect(function(hit)\n    hit.Parent.HumanoidRootPart.Position = Vector3.new(100, 10, 100)\nend)\n\`\`\`\n\nNeed tips on level design or mechanics?`,
             `Building a Roblox game? Focus on player engagement. Add checkpoints, rewards, and smooth controls. A simple reward script:\n\n\`\`\`lua\nlocal player = game.Players.LocalPlayer\nplayer.leaderstats.Coins.Value += 100\n\`\`\`\n\nWant advice on specific design elements?`
         ]
     }
@@ -339,9 +370,9 @@ function sendToAI() {
 document.addEventListener('DOMContentLoaded', () => {
     currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
     updateUI();
-    if (window.location.pathname.includes('index.html') || window.location.pathname.includes('scripts.html')) {
-        loadVideos();
+    if (window.location.pathname.includes('index.html') || window.location.pathname === '/') {
+        fetchYouTubeVideos();
     } else if (window.location.pathname.includes('game.html')) {
-        loadGameDetails();
+        fetchYouTubeVideos().then(loadGameDetails);
     }
 });
