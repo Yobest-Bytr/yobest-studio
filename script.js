@@ -1,4 +1,4 @@
-// Notification System bytr
+// Notification System
 function showNotification(message, type = 'success') {
     const notification = document.getElementById('notification');
     notification.textContent = message;
@@ -122,51 +122,50 @@ function closeModal(modalId) {
 
 // YouTube API Integration
 const API_KEY = 'AIzaSyChwoHXMqlbmAfeh4lbRUFWx2HjIZ6VV2k';
-let gamePreviews = [];
+let gamePreviews = [
+    {
+        creator: "Yobest",
+        videoLink: "https://www.youtube.com/watch?v=6mDovQ4d87M",
+        downloadLink: "https://workink.net/1RdO/m0wpmz0s",
+        price: "Free"
+    }
+];
 
 async function fetchYouTubeVideos() {
     showLoading();
-    const channelId = 'UCy5L9Q_14N8Xzq-o5nQU9OA'; // Replace with your channel ID if different
-    const url = `https://www.googleapis.com/youtube/v3/search?key=${API_KEY}&channelId=${channelId}&part=snippet,id&order=date&maxResults=10`;
+    const videoIds = gamePreviews.map(video => video.videoLink.split('v=')[1]).join(',');
+    const url = `https://www.googleapis.com/youtube/v3/videos?key=${API_KEY}&id=${videoIds}&part=snippet,statistics`;
     
     try {
         const response = await fetch(url);
-        if (!response.ok) throw new Error('Failed to fetch videos');
+        if (!response.ok) throw new Error('Failed to fetch video data');
         const data = await response.json();
-        const videoIds = data.items.map(item => item.id.videoId).join(',');
-        const statsUrl = `https://www.googleapis.com/youtube/v3/videos?key=${API_KEY}&id=${videoIds}&part=snippet,statistics`;
-        const statsResponse = await fetch(statsUrl);
-        if (!statsResponse.ok) throw new Error('Failed to fetch video stats');
-        const statsData = await statsResponse.json();
 
-        gamePreviews = statsData.items.map(item => ({
-            creator: "Yobest",
-            videoLink: `https://www.youtube.com/watch?v=${item.id}`,
-            downloadLink: "https://workink.net/1RdO/m0wpmz0s", // Placeholder, update as needed
-            title: item.snippet.title,
-            thumbnail: item.snippet.thumbnails.high.url,
-            views: item.statistics.viewCount,
-            likes: item.statistics.likeCount,
-            date: item.snippet.publishedAt.split('T')[0],
-            price: "Free" // Adjust as needed
-        }));
+        gamePreviews = gamePreviews.map((video, index) => {
+            const item = data.items[index];
+            return {
+                ...video,
+                title: item.snippet.title,
+                thumbnail: item.snippet.thumbnails.high.url,
+                views: item.statistics.viewCount,
+                likes: item.statistics.likeCount,
+                date: item.snippet.publishedAt.split('T')[0]
+            };
+        });
 
         loadVideos();
         hideLoading();
     } catch (error) {
         console.error('Error fetching YouTube data:', error);
         showNotification('Failed to load videos. Using fallback data.', 'error');
-        gamePreviews = [{
-            creator: "Yobest",
-            videoLink: "https://www.youtube.com/watch?v=6mDovQ4d87M",
-            downloadLink: "https://workink.net/1RdO/m0wpmz0s",
+        gamePreviews = gamePreviews.map(video => ({
+            ...video,
             title: "Roblox Studio Tutorial - Advanced Game Mechanics",
             thumbnail: "https://img.youtube.com/vi/6mDovQ4d87M/maxresdefault.jpg",
             views: "10000",
             likes: "500",
-            date: "2025-03-01",
-            price: "Free"
-        }];
+            date: "2025-03-01"
+        }));
         loadVideos();
         hideLoading();
     }
@@ -179,7 +178,14 @@ function loadVideos() {
         videoList.innerHTML = gamePreviews.map(video => `
             <div class="video-card" onclick="window.location.href='game.html?video=${encodeURIComponent(video.videoLink)}'">
                 <img src="${video.thumbnail}" alt="${video.title}">
-                <p>${video.views} Views</p>
+                <div class="info">
+                    <h3>${video.title}</h3>
+                    <p><i class="fas fa-user"></i> ${video.creator}</p>
+                    <p><i class="fas fa-eye"></i> ${video.views}</p>
+                    <p><i class="fas fa-thumbs-up"></i> ${video.likes}</p>
+                    <p><i class="fas fa-calendar"></i> ${video.date}</p>
+                    <p><i class="fas fa-money-bill"></i> ${video.price}</p>
+                </div>
             </div>
         `).join('');
         if (videoCount) videoCount.textContent = gamePreviews.length;
@@ -335,19 +341,30 @@ function setupRating() {
 // AI Chat
 const aiTopics = {
     scripting: {
-        keywords: ['script', 'lua', 'code', 'programming'],
-        synonyms: ['coding', 'development'],
+        keywords: ['script', 'lua', 'code', 'programming', 'function', 'event'],
+        synonyms: ['coding', 'development', 'write', 'program'],
         responses: [
-            `Let's dive into Roblox scripting! Here's a basic Lua script for a simple part spawner:\n\n\`\`\`lua\nlocal part = Instance.new("Part")\npart.Size = Vector3.new(5, 1, 5)\npart.Position = Vector3.new(0, 10, 0)\npart.Anchored = true\npart.Parent = game.Workspace\n\`\`\`\n\nWant to explore specific scripting topics like events, GUI, or physics?`,
-            `Roblox Lua is powerful! For example, to detect player touch:\n\n\`\`\`lua\nlocal part = game.Workspace.Part\npart.Touched:Connect(function(hit)\n    local player = game.Players:GetPlayerFromCharacter(hit.Parent)\n    if player then\n        print(player.Name .. " touched the part!")\n    end\nend)\n\`\`\`\n\nWhat scripting challenge are you facing?`
+            `Let's dive into Roblox scripting! Here's a basic Lua script for a part spawner:\n\n\`\`\`lua\nlocal part = Instance.new("Part")\npart.Size = Vector3.new(5, 1, 5)\npart.Position = Vector3.new(0, 10, 0)\npart.Anchored = true\npart.Parent = game.Workspace\n\`\`\`\n\nWhat scripting topic would you like to explore? (e.g., events, GUI, physics)`,
+            `Roblox Lua is powerful! For example, to detect a player touch event:\n\n\`\`\`lua\nlocal part = game.Workspace.Part\npart.Touched:Connect(function(hit)\n    local player = game.Players:GetPlayerFromCharacter(hit.Parent)\n    if player then\n        print(player.Name .. " touched the part!")\n    end\nend)\n\`\`\`\n\nWhat scripting challenge are you facing?`,
+            `Need help with a function? Here's how to create a simple function in Lua:\n\n\`\`\`lua\nlocal function spawnPart(position)\n    local part = Instance.new("Part")\n    part.Position = position\n    part.Parent = game.Workspace\nend\nspawnPart(Vector3.new(10, 5, 10))\n\`\`\`\n\nWhat kind of function do you need help with?`
         ]
     },
     game_design: {
-        keywords: ['design', 'game', 'build', 'create'],
-        synonyms: ['make', 'construct'],
+        keywords: ['design', 'game', 'build', 'create', 'level', 'mechanic'],
+        synonyms: ['make', 'construct', 'develop', 'craft'],
         responses: [
             `Game design in Roblox is all about creativity! Start with a clear theme, like sci-fi or adventure. Use Studio tools to build terrain, add lighting, and script interactions. For example, a basic teleporter:\n\n\`\`\`lua\nlocal teleporter = game.Workspace.Teleporter\nteleporter.Touched:Connect(function(hit)\n    hit.Parent.HumanoidRootPart.Position = Vector3.new(100, 10, 100)\nend)\n\`\`\`\n\nNeed tips on level design or mechanics?`,
-            `Building a Roblox game? Focus on player engagement. Add checkpoints, rewards, and smooth controls. A simple reward script:\n\n\`\`\`lua\nlocal player = game.Players.LocalPlayer\nplayer.leaderstats.Coins.Value += 100\n\`\`\`\n\nWant advice on specific design elements?`
+            `Building a Roblox game? Focus on player engagement. Add checkpoints, rewards, and smooth controls. A simple reward script:\n\n\`\`\`lua\nlocal player = game.Players.LocalPlayer\nplayer.leaderstats.Coins.Value += 100\n\`\`\`\n\nWhat design element are you working on?`,
+            `For a great game mechanic, consider adding a leaderboard. Here's a simple example:\n\n\`\`\`lua\ngame.Players.PlayerAdded:Connect(function(player)\n    local leaderstats = Instance.new("Folder")\n    leaderstats.Name = "leaderstats"\n    leaderstats.Parent = player\n    local coins = Instance.new("IntValue")\n    coins.Name = "Coins"\n    coins.Value = 0\n    coins.Parent = leaderstats\nend)\n\`\`\`\n\nWhat kind of mechanic would you like to add?`
+        ]
+    },
+    debugging: {
+        keywords: ['error', 'bug', 'fix', 'problem', 'issue', 'debug'],
+        synonyms: ['troubleshoot', 'solve', 'resolve'],
+        responses: [
+            `Debugging in Roblox can be tricky! First, check the Output window in Studio for error messages. Common issues include nil references or incorrect instance paths. For example, if you see "attempt to index nil with 'Position'", ensure the object exists:\n\n\`\`\`lua\nlocal part = game.Workspace:FindFirstChild("Part")\nif part then\n    part.Position = Vector3.new(0, 10, 0)\nelse\n    warn("Part not found!")\nend\n\`\`\`\n\nWhat error are you encountering?`,
+            `A common bug in Roblox is with events not firing. Ensure you're connecting them correctly:\n\n\`\`\`lua\nlocal part = game.Workspace.Part\npart.Touched:Connect(function(hit)\n    print("Part touched!")\nend)\n\`\`\`\nIf it's not working, check if the part exists and has collision enabled. What's the bug you're facing?`,
+            `If you're getting a script timeout or infinite loop, check for unterminated loops. For example:\n\n\`\`\`lua\nwhile true do\n    print("Looping")\n    wait(1) -- Add a wait to prevent freezing\nend\n\`\`\`\nWithout the wait, this could crash. What issue are you trying to fix?`
         ]
     }
 };
@@ -379,7 +396,7 @@ function sendToAI() {
         const responses = aiTopics[bestTopic].responses;
         response = responses[Math.floor(Math.random() * responses.length)];
     } else {
-        response = `I'm not sure about "${query}". Could you clarify? I can help with Roblox scripting, game design, or other development topics!`;
+        response = `I'm not sure about "${query}". Could you clarify? I can help with Roblox scripting, game design, debugging, or other development topics!`;
     }
 
     history.innerHTML += `<div class="ai-message">AI: ${response}</div>`;
