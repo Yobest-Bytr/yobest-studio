@@ -24,14 +24,6 @@ body {
     line-height: 1.6;
 }
 
-body.light-mode {
-    --primary-bg: #f0f0f0;
-    --secondary-bg: #ffffff;
-    --text-light: #333333;
-    --text-muted: #666666;
-    --shadow-color: rgba(0, 191, 255, 0.3);
-}
-
 body.login-page {
     background: linear-gradient(135deg, #1e3c72, #2a5298);
     display: flex;
@@ -52,31 +44,6 @@ body.login-page::before {
     background: url('https://www.pngall.com/wp-content/uploads/5/Full-Moon-PNG-Image.png') no-repeat center;
     background-size: contain;
     opacity: 0.8;
-}
-
-.animated-bg {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-}
-
-.animated-bg span {
-    font-size: 10em;
-    color: rgba(0, 247, 255, 0.1);
-    animation: pulse 5s infinite;
-}
-
-@keyframes pulse {
-    0% { transform: scale(1); opacity: 0.1; }
-    50% { transform: scale(1.1); opacity: 0.2; }
-    100% { transform: scale(1); opacity: 0.1; }
 }
 
 .login-container {
@@ -257,27 +224,6 @@ nav {
     border: 1px solid var(--accent-cyan);
 }
 
-.nav-btn.home-btn {
-    background: linear-gradient(135deg, #00f7ff, #00bfff);
-}
-
-.nav-btn.scripts-btn {
-    background: linear-gradient(135deg, #b100ff, #8a00cc);
-}
-
-.nav-btn.ai-btn {
-    background: linear-gradient(135deg, #00ff00, #00cc00);
-}
-
-.nav-btn.contact-btn {
-    background: linear-gradient(135deg, #ff Hannahs4econdary-bg);
-    color: var(--text-light);
-    transition: all 0.3s ease;
-    font-size: 1em;
-    font-weight: 500;
-    border: 1px solid var(--accent-cyan);
-}
-
 .nav-btn:hover, .btn:hover, .social-btn:hover {
     transform: scale(1.05);
     box-shadow: 0 0 15px var(--shadow-color);
@@ -333,20 +279,30 @@ main {
     margin: 20px 0;
     font-size: 1em;
     color: var(--text-muted);
-    border: 1px solid var(--accent-purple ہم
+    border: 1px solid var(--accent-purple);
+}
+
+.sidebar-ad {
+    position: sticky;
+    top: 100px;
+    width: 160px;
+    float: right;
+}
+
+.sidebar-ad .ad-placeholder {
+    height: 600px;
+    line-height: 600px;
+    border: 1px solid var(--accent-purple);
+}
 
 .hero {
-    background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+    background: var(--secondary-bg);
     padding: 60px 0;
     text-align: center;
     border-radius: 10px;
     margin: 20px 0;
     border: 1px solid var(--accent-cyan);
     box-shadow: 0 0 15px var(--shadow-color);
-}
-
-body.light-mode .hero {
-    background: linear-gradient(135deg, #00bfff, #9900cc);
 }
 
 .hero h2 {
@@ -795,6 +751,22 @@ footer p {
     color: var(--accent-purple);
 }
 
+.animated-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 10em;
+    color: var(--accent-cyan);
+    opacity: 0.1;
+    animation: pulse 5s infinite;
+}
+
 @keyframes slideDown {
     from { transform: translateY(-20px); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
@@ -803,4 +775,10 @@ footer p {
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
 }
