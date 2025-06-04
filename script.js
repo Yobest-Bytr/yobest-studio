@@ -1,3 +1,21 @@
+// Firebase configuration (replace with your Firebase project config)
+const firebaseConfig = {
+    apiKey: "YOUR_FIREBASE_API_KEY",
+    authDomain: "YOUR_FIREBASE_AUTH_DOMAIN",
+    databaseURL: "YOUR_FIREBASE_DATABASE_URL",
+    projectId: "YOUR_FIREBASE_PROJECT_ID",
+    storageBucket: "YOUR_FIREBASE_STORAGE_BUCKET",
+    messagingSenderId: "YOUR_FIREBASE_MESSAGING_SENDER_ID",
+    appId: "YOUR_FIREBASE_APP_ID"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// Grok AI API Key
+const GROK_API_KEY = 'XAI-VET7JAOPYCFCVAVUXGVBB418xatb7vecq4MGCT1GVAVYVBWTDHIBSJAZABUPO90CGLCLCT5VMHF3';
+
 // Notification System
 function showNotification(message, type = 'success') {
     const notification = document.getElementById('notification');
@@ -40,72 +58,70 @@ function detectAdBlocker() {
 let currentUser = null;
 
 async function authUser() {
-    const username = document.getElementById('username').value.trim();
-    const password = document.getElementById('password').value;
     const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const username = document.getElementById('username') ? document.getElementById('username').value.trim() : '';
 
-    let users = JSON.parse(localStorage.getItem('users') || '{}');
-    let userStats = JSON.parse(localStorage.getItem('userStats') || '{}');
-
-    if (users[username]) {
-        if (users[username].password === password) {
-            currentUser = { username, email: users[username].email, bio: users[username].bio || '', favoriteGames: users[username].favoriteGames || '' };
-            localStorage.setItem('currentUser', JSON.stringify(currentUser));
-            userStats[username] = userStats[username] || { downloads: 0, visits: 0 };
-            userStats[username].visits++;
-            localStorage.setItem('userStats', JSON.stringify(userStats));
-            showNotification('Login successful!', 'success');
-
-            // Check for AdBlocker on first login
-            const firstLogin = !localStorage.getItem('firstLogin');
-            if (firstLogin) {
-                showLoading();
-                const adBlocked = await detectAdBlocker();
-                if (adBlocked) {
-                    showNotification('Please disable AdBlocker to continue.', 'error');
-                    setTimeout(() => {
-                        logout();
-                        window.location.href = 'login.html';
-                    }, 4000);
-                    return;
-                }
-                setTimeout(() => {
-                    hideLoading();
-                    localStorage.setItem('firstLogin', 'true');
-                    window.location.href = 'index.html';
-                }, 4000);
-            } else {
-                window.location.href = 'index.html';
-            }
-        } else {
-            showNotification('Incorrect password!', 'error');
-        }
-    } else {
-        users[username] = { password, email, bio: '', favoriteGames: '' };
-        localStorage.setItem('users', JSON.stringify(users));
-        currentUser = { username, email, bio: '', favoriteGames: '' };
-        localStorage.setItem('currentUser', JSON.stringify(currentUser));
-        userStats[username] = { downloads: 0, visits: 1 };
-        localStorage.setItem('userStats', JSON.stringify(userStats));
-        showNotification('Account created and logged in!', 'success');
-
-        // Check for AdBlocker on first login
-        showLoading();
-        const adBlocked = await detectAdBlocker();
-        if (adBlocked) {
-            showNotification('Please disable AdBlocker to continue.', 'error');
-            setTimeout(() => {
-                logout();
-                window.location.href = 'login.html';
-            }, 4000);
+    if (window.isSignUp) {
+        if (!username) {
+            showNotification('Username is required for sign up!', 'error');
             return;
         }
-        setTimeout(() => {
-            hideLoading();
-            localStorage.setItem('firstLogin', 'true');
+        try {
+            const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
+            const user = userCredential.user;
+            await db.ref('users/' + user.uid).set({
+                username,
+                email,
+                bio: '',
+                favoriteGames: '',
+                visits: 1,
+                downloads: 0
+            });
+            currentUser = { uid: user.uid, username, email, bio: '', favoriteGames: '', visits: 1, downloads: 0 };
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            showNotification('Account created and logged in!', 'success');
             window.location.href = 'index.html';
-        }, 4000);
+        } catch (error) {
+            console.error('Sign up error:', error);
+            showNotification(error.message, 'error');
+        }
+    } else {
+        try {
+            const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
+            const user = userCredential.user;
+            const snapshot = await db.ref('users/' + user.uid).once('value');
+            const userData = snapshot.val();
+            currentUser = {
+                uid: user.uid,
+                username: userData.username,
+                email: userData.email,
+                bio: userData.bio || '',
+                favoriteGames: userData.favoriteGames || '',
+                visits: userData.visits || 0,
+                downloads: userData.downloads || 0
+            };
+            await db.ref('users/' + user.uid).update({ visits: currentUser.visits + 1 });
+            currentUser.visits++;
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            showNotification('Login successful!', 'success');
+            window.location.href = 'index.html';
+        } catch (error) {
+            console.error('Sign in error:', error);
+            showNotification(error.message, 'error');
+        }
     }
+}
+
+function resetPassword() {
+    const email = document.getElementById('email').value.trim();
+    if (!email) {
+        showNotification('Please enter your email to reset password!', 'error');
+        return;
+    }
+    firebase.auth().sendPasswordResetEmail(email)
+        .then(() => showNotification('Password reset email sent!', 'success'))
+        .catch(error => showNotification(error.message, 'error'));
 }
 
 function updateAccount() {
@@ -115,29 +131,38 @@ function updateAccount() {
     const favoriteGames = document.getElementById('favorite-games').value.trim();
 
     if (currentUser) {
-        let users = JSON.parse(localStorage.getItem('users') || '{}');
-        if (users[currentUser.username]) {
-            users[currentUser.username].password = password || users[currentUser.username].password;
-            users[currentUser.username].email = email || users[currentUser.username].email;
-            users[currentUser.username].bio = bio;
-            users[currentUser.username].favoriteGames = favoriteGames;
-            localStorage.setItem('users', JSON.stringify(users));
-            currentUser.email = email || currentUser.email;
-            currentUser.bio = bio;
-            currentUser.favoriteGames = favoriteGames;
-            localStorage.setItem('currentUser', JSON.stringify(currentUser));
-            showNotification('Account updated!', 'success');
-            updateAccountUI();
+        const updates = {};
+        if (password) {
+            firebase.auth().currentUser.updatePassword(password)
+                .catch(error => showNotification(error.message, 'error'));
         }
+        if (email) updates.email = email;
+        if (bio) updates.bio = bio;
+        if (favoriteGames) updates.favoriteGames = favoriteGames;
+
+        db.ref('users/' + currentUser.uid).update(updates)
+            .then(() => {
+                currentUser.email = email || currentUser.email;
+                currentUser.bio = bio;
+                currentUser.favoriteGames = favoriteGames;
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                showNotification('Account updated!', 'success');
+                updateAccountUI();
+            })
+            .catch(error => showNotification(error.message, 'error'));
     }
 }
 
 function logout() {
-    currentUser = null;
-    localStorage.removeItem('currentUser');
-    showNotification('Logged out successfully!', 'success');
-    updateUI();
-    window.location.href = 'login.html';
+    firebase.auth().signOut()
+        .then(() => {
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            showNotification('Logged out successfully!', 'success');
+            updateUI();
+            window.location.href = 'login.html';
+        })
+        .catch(error => showNotification(error.message, 'error'));
 }
 
 function updateUI() {
@@ -155,24 +180,24 @@ function updateUI() {
 }
 
 function updateStats() {
-    let siteStats = JSON.parse(localStorage.getItem('siteStats') || '{"visitors": 0, "downloads": 0}');
-    const siteVisitors = document.getElementById('site-visitors');
-    const totalDownloads = document.getElementById('total-downloads');
-    if (siteVisitors) siteVisitors.textContent = siteStats.visitors;
-    if (totalDownloads) totalDownloads.textContent = siteStats.downloads;
+    db.ref('siteStats').once('value', (snapshot) => {
+        const stats = snapshot.val() || { visitors: 0, downloads: 0 };
+        const siteVisitors = document.getElementById('site-visitors');
+        const totalDownloads = document.getElementById('total-downloads');
+        if (siteVisitors) siteVisitors.textContent = stats.visitors;
+        if (totalDownloads) totalDownloads.textContent = stats.downloads;
+    });
 }
 
 function updateAccountUI() {
     if (window.location.pathname.includes('account.html') && currentUser) {
-        const userStats = JSON.parse(localStorage.getItem('userStats') || '{}')[currentUser.username] || { downloads: 0, visits: 0 };
-        const users = JSON.parse(localStorage.getItem('users') || '{}');
         document.getElementById('account-username-display').textContent = currentUser.username;
         document.getElementById('account-email-display').textContent = currentUser.email || 'Not set';
-        document.getElementById('user-downloads').textContent = userStats.downloads;
-        document.getElementById('user-visits').textContent = userStats.visits;
+        document.getElementById('user-downloads').textContent = currentUser.downloads;
+        document.getElementById('user-visits').textContent = currentUser.visits;
         document.getElementById('account-email').value = currentUser.email || '';
-        document.getElementById('account-bio').value = users[currentUser.username].bio || '';
-        document.getElementById('favorite-games').value = users[currentUser.username].favoriteGames || '';
+        document.getElementById('account-bio').value = currentUser.bio || '';
+        document.getElementById('favorite-games').value = currentUser.favoriteGames || '';
     }
 }
 
@@ -264,14 +289,18 @@ function loadGameDetails() {
         const downloadBtn = document.getElementById('download-btn');
         downloadBtn.href = video.downloadLink;
         downloadBtn.onclick = () => {
-            let siteStats = JSON.parse(localStorage.getItem('siteStats') || '{"visitors": 0, "downloads": 0}');
-            siteStats.downloads++;
-            localStorage.setItem('siteStats', JSON.stringify(siteStats));
+            db.ref('siteStats').transaction(stats => {
+                stats = stats || { visitors: 0, downloads: 0 };
+                stats.downloads++;
+                return stats;
+            });
             if (currentUser) {
-                let userStats = JSON.parse(localStorage.getItem('userStats') || '{}');
-                userStats[currentUser.username] = userStats[currentUser.username] || { downloads: 0, visits: 0 };
-                userStats[currentUser.username].downloads++;
-                localStorage.setItem('userStats', JSON.stringify(userStats));
+                db.ref('users/' + currentUser.uid).transaction(user => {
+                    user.downloads = (user.downloads || 0) + 1;
+                    currentUser.downloads = user.downloads;
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    return user;
+                });
             }
             updateStats();
         };
@@ -461,206 +490,44 @@ function displayPublicRatings(videoLink) {
     document.getElementById('total-ratings').textContent = count;
 }
 
-// Enhanced AI Chat
-const aiResponses = {
-    scripting: {
-        keywords: ['script', 'lua', 'code', 'programming', 'function', 'event', 'variable'],
-        responses: [
-            `Let's write a Roblox script! Here's a basic part spawner:\n\n\`\`\`lua\nlocal part = Instance.new("Part")\npart.Size = Vector3.new(5, 1, 5)\npart.Position = Vector3.new(0, 10, 0)\npart.Anchored = true\npart.Parent = game.Workspace\n\`\`\`\nWhat kind of script would you like to create?`,
-            `For a player touch event in Roblox:\n\n\`\`\`lua\nlocal part = game.Workspace.Part\npart.Touched:Connect(function(hit)\n    local player = game.Players:GetPlayerFromCharacter(hit.Parent)\n    if player then\n        print(player.Name .. " touched the part!")\n    end\nend)\n\`\`\`\nWhat scripting topic do you want to explore?`,
-            `Here's how to create a function in Lua:\n\n\`\`\`lua\nlocal function spawnPart(position)\n    local part = Instance.new("Part")\n    part.Position = position\n    part.Parent = game.Workspace\nend\nspawnPart(Vector3.new(10, 5, 10))\n\`\`\`\nWhat function would you like to write?`
-        ]
-    },
-    game_design: {
-        keywords: ['design', 'game', 'build', 'create', 'level', 'mechanic', 'terrain'],
-        responses: [
-            `Game design in Roblox is all about creativity! Start with a theme like sci-fi or adventure. Here's a teleporter script:\n\n\`\`\`lua\nlocal teleporter = game.Workspace.Teleporter\nteleporter.Touched:Connect(function(hit)\n    hit.Parent.HumanoidRootPart.Position = Vector3.new(100, 10, 100)\nend)\n\`\`\`\nWhat design element are you working on?`,
-            `For player engagement, add rewards! Here's a simple coin system:\n\n\`\`\`lua\nlocal player = game.Players.LocalPlayer\nplayer.leaderstats.Coins.Value += 100\n\`\`\`\nWhat game mechanic would you like to add?`,
-            `To design a level, use Roblox Studio's terrain editor. Add lighting for atmosphere:\n\n\`\`\`lua\nlocal lighting = game.Lighting\nlighting.Ambient = Color3.fromRGB(50, 50, 50)\nlighting.Brightness = 1\n\`\`\`\nNeed help with a specific design aspect?`
-        ]
-    },
-    debugging: {
-        keywords: ['error', 'bug', 'fix', 'problem', 'issue', 'debug', 'crash'],
-        responses: [
-            `Debugging in Roblox? Check the Output window for errors. For "attempt to index nil", ensure the object exists:\n\n\`\`\`lua\nlocal part = game.Workspace:FindFirstChild("Part")\nif part then\n    part.Position = Vector3.new(0, 10, 0)\nelse\n    warn("Part not found!")\nend\n\`\`\`\nWhat's the error you're facing?`,
-            `If an event isn't firing, check your connections:\n\n\`\`\`lua\nlocal part = game.Workspace.Part\npart.Touched:Connect(function(hit)\n    print("Part touched!")\nend)\n\`\`\`\nEnsure the part exists and has collision enabled. What's the bug?`,
-            `Infinite loops can crash your game. Add a wait:\n\n\`\`\`lua\nwhile true do\n    print("Looping")\n    wait(1)\nend\n\`\`\`\nWhat issue are you trying to fix?`
-        ]
-    },
-    code_execution: {
-        keywords: ['execute', 'run', 'test', 'simulate', 'output'],
-        responses: [
-            `I can simulate simple Lua code for you! Please provide the code you'd like to execute, and I'll tell you the expected output.`,
-            `Let's run your code. Share the Lua script, and I'll simulate the result for you.`,
-            `I can execute basic Roblox scripts. Provide the code, and I'll describe what it would do.`
-        ]
-    },
-    general: {
-        keywords: ['help', 'how', 'what', 'why', 'explain'],
-        responses: [
-            `I'm here to help! What would you like to know about Roblox development? I can assist with scripting, game design, debugging, or even execute code for you.`,
-            `Need assistance? I can explain Roblox concepts, write scripts, or debug issues. What do you need?`,
-            `Let's dive into Roblox development! Ask me anything about scripting, designing, or debugging, and I'll help you out.`
-        ]
-    },
-    roblox_specific: {
-        keywords: ['roblox', 'studio', 'player', 'workspace', 'leaderstats', 'humanoid'],
-        responses: [
-            `In Roblox, you can add leaderstats for players like this:\n\n\`\`\`lua\nlocal Players = game:GetService("Players")\nPlayers.PlayerAdded:Connect(function(player)\n    local leaderstats = Instance.new("Folder")\n    leaderstats.Name = "leaderstats"\n    leaderstats.Parent = player\n    local coins = Instance.new("IntValue")\n    coins.Name = "Coins"\n    coins.Value = 0\n    coins.Parent = leaderstats\nend)\n\`\`\`\nWhat Roblox feature are you working on?`,
-            `To change a player's speed in Roblox:\n\n\`\`\`lua\nlocal player = game.Players.LocalPlayer\nlocal humanoid = player.Character and player.Character:FindFirstChild("Humanoid")\nif humanoid then\n    humanoid.WalkSpeed = 32\nend\n\`\`\`\nWhat do you want to modify in Roblox?`,
-            `For a Roblox GUI button:\n\n\`\`\`lua\nlocal button = script.Parent\nbutton.MouseButton1Click:Connect(function()\n    print("Button clicked!")\nend)\n\`\`\`\nWhat Roblox UI element are you creating?`
-        ]
-    },
-    math: {
-        keywords: ['math', 'calculate', 'number', 'random', 'position', 'vector'],
-        responses: [
-            `Let's do some math! In Roblox, you can generate a random position:\n\n\`\`\`lua\nlocal random = Random.new()\nlocal position = Vector3.new(random:NextNumber(-50, 50), 5, random:NextNumber(-50, 50))\n\`\`\`\nWhat math operation do you need help with?`,
-            `To calculate distance between two parts in Roblox:\n\n\`\`\`lua\nlocal part1 = game.Workspace.Part1\nlocal part2 = game.Workspace.Part2\nlocal distance = (part1.Position - part2.Position).Magnitude\nprint("Distance: " .. distance)\n\`\`\`\nWhat calculation do you need?`,
-            `For a smooth rotation in Roblox:\n\n\`\`\`lua\nlocal part = game.Workspace.Part\npart.CFrame = part.CFrame * CFrame.Angles(0, math.rad(90), 0)\n\`\`\`\nWhat math-related task are you working on?`
-        ]
-    }
-};
-
-// Simulate Lua code execution
-function simulateLuaCode(code) {
-    try {
-        // Basic Lua code simulation (not a full Lua interpreter, but handles common patterns)
-        let output = [];
-        let variables = {};
-
-        // Split code into lines
-        const lines = code.split('\n').map(line => line.trim()).filter(line => line);
-
-        for (let line of lines) {
-            // Handle variable declarations (e.g., local x = 5)
-            if (line.startsWith('local')) {
-                const parts = line.split('=');
-                if (parts.length === 2) {
-                    const varName = parts[0].replace('local', '').trim();
-                    let value = parts[1].trim();
-                    // Evaluate simple expressions
-                    if (value.includes('Vector3.new')) {
-                        const vecMatch = value.match(/Vector3\.new\(([^)]+)\)/);
-                        if (vecMatch) {
-                            const [x, y, z] = vecMatch[1].split(',').map(v => parseFloat(v.trim()));
-                            variables[varName] = `Vector3(${x}, ${y}, ${z})`;
-                        }
-                    } else if (value.includes('Instance.new')) {
-                        const instanceMatch = value.match(/Instance\.new\("([^"]+)"\)/);
-                        if (instanceMatch) {
-                            variables[varName] = `Instance(${instanceMatch[1]})`;
-                        }
-                    } else {
-                        variables[varName] = eval(value); // Simple number evaluation
-                    }
-                }
-            }
-            // Handle print statements
-            else if (line.startsWith('print')) {
-                const printMatch = line.match(/print\(([^)]+)\)/) || line.match(/print\("([^"]+)"\)/);
-                if (printMatch) {
-                    let value = printMatch[1];
-                    if (variables[value]) {
-                        output.push(variables[value]);
-                    } else {
-                        output.push(value.replace(/"/g, ''));
-                    }
-                }
-            }
-            // Handle property assignments (e.g., part.Position = ...)
-            else if (line.includes('=')) {
-                const [varName, value] = line.split('=').map(part => part.trim());
-                const varParts = varName.split('.');
-                if (varParts.length > 1) {
-                    const obj = varParts[0];
-                    const prop = varParts[1];
-                    if (variables[obj]) {
-                        variables[obj] = `${variables[obj]} with ${prop}=${value}`;
-                    }
-                }
-            }
-            // Handle loops (basic simulation)
-            else if (line.startsWith('for')) {
-                const loopMatch = line.match(/for (\w+) = (\d+), (\d+)/);
-                if (loopMatch) {
-                    const varName = loopMatch[1];
-                    const start = parseInt(loopMatch[2]);
-                    const end = parseInt(loopMatch[3]);
-                    for (let i = start; i <= end; i++) {
-                        variables[varName] = i;
-                        // Look for print in the loop
-                        const nextLine = lines[lines.indexOf(line) + 1];
-                        if (nextLine && nextLine.startsWith('print')) {
-                            const printMatch = nextLine.match(/print\(([^)]+)\)/);
-                            if (printMatch) {
-                                let value = printMatch[1];
-                                if (value === varName) {
-                                    output.push(i);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        return output.length > 0 ? `Output:\n${output.join('\n')}` : 'No output generated.';
-    } catch (error) {
-        return `Error simulating code: ${error.message}`;
-    }
-}
-
-function sendToAI() {
+// AI Chat with Grok Integration
+async function sendToAI() {
     const input = document.getElementById('ai-input');
     const chatHistory = document.getElementById('chat-history');
-    const message = input.value.trim().toLowerCase();
+    const message = input.value.trim();
 
     if (!message) return;
 
-    // Add user message to chat
     const userMessage = document.createElement('div');
     userMessage.className = 'ai-message';
     userMessage.innerHTML = `<strong>You:</strong> ${message}`;
     chatHistory.appendChild(userMessage);
     chatHistory.scrollTop = chatHistory.scrollHeight;
 
-    // Check for code execution request
-    if (message.includes('execute') || message.includes('run') || message.includes('simulate')) {
-        const codeMatch = message.match(/```lua\n([\s\S]*?)\n```/);
-        if (codeMatch) {
-            const code = codeMatch[1];
-            const output = simulateLuaCode(code);
-            const aiMessage = document.createElement('div');
-            aiMessage.className = 'ai-message';
-            aiMessage.innerHTML = `<strong>AI:</strong> I simulated your code. Here's the result:\n\n${output}`;
-            chatHistory.appendChild(aiMessage);
-            chatHistory.scrollTop = chatHistory.scrollHeight;
-            input.value = '';
-            return;
-        }
-    }
+    try {
+        const response = await fetch('https://api.grok.ai/v1/chat', { // Replace with actual Grok API endpoint
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${GROK_API_KEY}`
+            },
+            body: JSON.stringify({ message })
+        });
 
-    // Determine response category
-    let response = '';
-    for (let category in aiResponses) {
-        const { keywords, responses } = aiResponses[category];
-        if (keywords.some(keyword => message.includes(keyword))) {
-            response = responses[Math.floor(Math.random() * responses.length)];
-            break;
-        }
-    }
+        if (!response.ok) throw new Error('Failed to get AI response');
 
-    // Fallback to general response if no category matches
-    if (!response) {
-        response = aiResponses.general.responses[Math.floor(Math.random() * aiResponses.general.responses.length)];
-    }
+        const data = await response.json();
+        const aiReply = data.reply; // Adjust based on actual API response structure
 
-    // Add AI response to chat
-    const aiMessage = document.createElement('div');
-    aiMessage.className = 'ai-message';
-    aiMessage.innerHTML = `<strong>AI:</strong> ${response}`;
-    chatHistory.appendChild(aiMessage);
-    chatHistory.scrollTop = chatHistory.scrollHeight;
+        const aiMessage = document.createElement('div');
+        aiMessage.className = 'ai-message';
+        aiMessage.innerHTML = `<strong>AI:</strong> ${aiReply}`;
+        chatHistory.appendChild(aiMessage);
+        chatHistory.scrollTop = chatHistory.scrollHeight;
+    } catch (error) {
+        console.error('AI chat error:', error);
+        showNotification('Failed to get AI response.', 'error');
+    }
 
     input.value = '';
 }
@@ -680,30 +547,62 @@ function toggleChat() {
     }
 }
 
+// Three.js Initialization for 3D Model
+function initThreeJS() {
+    const container = document.getElementById('three-container');
+    if (!container) return;
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    container.appendChild(renderer.domElement);
+
+    const geometry = new THREE.BoxGeometry();
+    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+    const cube = new THREE.Mesh(geometry, material);
+    scene.add(cube);
+
+    camera.position.z = 5;
+
+    function animate() {
+        requestAnimationFrame(animate);
+        cube.rotation.x += 0.01;
+        cube.rotation.y += 0.01;
+        renderer.render(scene, camera);
+    }
+    animate();
+}
+
 // Initialize on Page Load
 document.addEventListener('DOMContentLoaded', () => {
-    // Load current user
     currentUser = JSON.parse(localStorage.getItem('currentUser'));
-
-    // Update site visitors
-    let siteStats = JSON.parse(localStorage.getItem('siteStats') || '{"visitors": 0, "downloads": 0}');
-    siteStats.visitors++;
-    localStorage.setItem('siteStats', JSON.stringify(siteStats));
-
-    // Update UI
-    updateUI();
-
-    // Load videos on index page
-    if (window.location.pathname.includes('index.html')) {
-        fetchYouTubeVideos();
+    if (currentUser) {
+        db.ref('users/' + currentUser.uid).once('value', (snapshot) => {
+            const userData = snapshot.val();
+            currentUser = { ...currentUser, ...userData };
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            updateUI();
+        });
     }
 
-    // Load game details on game page
+    db.ref('siteStats').transaction(stats => {
+        stats = stats || { visitors: 0, downloads: 0 };
+        stats.visitors++;
+        return stats;
+    });
+
+    updateUI();
+
+    if (window.location.pathname.includes('index.html')) {
+        fetchYouTubeVideos();
+        initThreeJS();
+    }
+
     if (window.location.pathname.includes('game.html')) {
         loadGameDetails();
     }
 
-    // Redirect to account page on cover image or "Edit Account" click
     const accountBtn = document.getElementById('account-btn');
     if (accountBtn) {
         accountBtn.addEventListener('click', () => {
