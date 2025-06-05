@@ -1,0 +1,130 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yobest Studio</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script src="https://kit.fontawesome.com/64d58efce2.js" crossorigin="anonymous"></script>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script src="https://www.googletagmanager.com/gtag/js?id=G-841WBKEVR0" async></script>
+</head>
+<body>
+    <div class="animated-bg"></div>
+    <div id="loading-overlay">
+        <div class="loader">Y</div>
+        <p>Loading... Please wait</p>
+    </div>
+
+    <header>
+        <div class="header-content">
+            <h1>Yobest Studio</h1>
+            <nav>
+                <a href="index.html" class="glass-btn">Home</a>
+                <a href="ai.html" class="glass-btn">AI Tools</a>
+                <a href="contact.html" class="glass-btn">Contact</a>
+                <a href="login.html" class="glass-btn" id="login-btn">Login</a>
+                <a href="account.html" class="glass-btn" id="account-btn">Account</a>
+                <a href="#" class="glass-btn" id="theme-toggle">Toggle Theme</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <iframe src="https://sketchfab.com/models/92bcda53d5eb4eef8cd842a1b65ff205/embed?api_version=1.8.2&api_id=1_hero-viewer&autostart=1&camera=0&graph_optimizer=1&internal=1&max_texture_size=1024&merge_materials=1&preload=0&scrollwheel=0&sound_enable=0&transparent=1&ui_animations=0&ui_annotations=0&ui_controls=0&ui_fadeout=0&ui_fullscreen=0&ui_help=0&ui_infos=0&ui_inspector=1&ui_settings=0&ui_snapshots=0&ui_stop=0&ui_theatre=0&ui_watermark=0.glb" width="100%" height="480"></iframe>
+            <h2>Welcome to Yobest Studio!</h2>
+            <p>Explore free and premium Roblox game files to enhance your creations.</p>
+            <p>Site Visitors: <span id="site-visitors">0</span> | Total Downloads: <span id="total-downloads">0</span></p>
+            <a href="#game-previews" class="glass-btn btn-teal">Check Out My Games</a>
+        </section>
+
+        <section class="game-previews">
+            <h2>Game Previews</h2>
+            <p>Loaded <span id="video-count">0</span> videos from cache!</p>
+            <div class="video-grid" id="video-list"></div>
+        </section>
+
+        <aside class="sidebar-ad">
+            <div class="ad-space">
+                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2925220586728611" crossorigin="anonymous"></script>
+                <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-2925220586728611" data-ad-slot="1234567890" data-ad-format="auto" data-full-width-responsive="true"></ins>
+                <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+            </div>
+        </aside>
+
+        <section class="community-chat">
+            <div class="chat-header" onclick="toggleChat()">
+                <h2>Community Chat</h2>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="chat-content">
+                <div id="chat-history"></div>
+                <form id="ai-form" onsubmit="event.preventDefault(); sendToAI();">
+                    <input type="text" id="ai-input" placeholder="Ask about Roblox development...">
+                    <button type="submit" class="glass-btn btn-teal">Send</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2025 Yobest Studio. All Rights Reserved.</p>
+        <div class="social-links">
+            <a href="https://youtube.com" target="_blank">YouTube</a>
+            <a href="https://twitter.com" target="_blank">Twitter</a>
+            <a href="https://discord.com" target="_blank">Discord</a>
+        </div>
+        <div class="footer-ad">
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2925220586728611" crossorigin="anonymous"></script>
+            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-2925220586728611" data-ad-slot="9876543210" data-ad-format="auto" data-full-width-responsive="true"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+    </footer>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
