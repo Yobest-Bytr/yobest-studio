@@ -53,10 +53,10 @@ function detectAdBlocker() {
 const API_KEY = 'AIzaSyChwoHXMqlbmAfeh4lbRUFWx2HjIZ6VV2k'; // Replace with a valid YouTube API key
 let gamePreviews = [
     { creator: "Yobest", videoLink: "https://www.youtube.com/watch?v=6mDovQ4d87M", downloadLink: "https://workink.net/1RdO/m0wpmz0s", download: true, gameLink: "https://www.roblox.com/games/16907652511/Yobests-Anime-Guardian-Clash-Up2#!/about", gamePlay: true, price: "150 Robux" },
-    { creator: "Yobest", videoLink: "https://www.youtube.com/watch?v=IKmXPPhLeLk", downloadLink: "https://workink.net/1RdO/m0wpmz0s", download: true, gameLink: "https://www.roblox.com/games/16907652511/Yobests-Anime-Guardian-Clash-Up2#!/about", gamePlay: true, price: "Free" },
-    { creator: "Yobest", videoLink: "https://www.youtube.com/watch?v=sPauNcqbkBU", downloadLink: "https://workink.net/1RdO/lmm1ufst", download: true, gameLink: "https://www.roblox.com/games/16907652511/Yobests-Anime-Guardian-Clash-Up2#!/about", gamePlay: true, price: "Free" },
-    { creator: "Yobest", videoLink: "https://www.youtube.com/watch?v=97f1sqtWy6o", downloadLink: "https://workink.net/1RdO/lmm1ufst", download: true, gameLink: "https://www.roblox.com/games/16907652511/Yobests-Anime-Guardian-Clash-Up2#!/about", gamePlay: true, price: "Free" },
-    { creator: "Yobest", videoLink: "https://www.youtube.com/watch?v=pMrRFF7dHYM", downloadLink: "https://workink.net/1RdO/lu5jed0c", download: true, gameLink: "https://www.roblox.com/games/16907652511/Yobests-Anime-Guardian-Clash-Up2#/about", gamePlay: true, price: "Free" }
+    { creator: "Yobest", videoLink: "https://www.youtube.com/watch?v=IKmXPPhLeLk", downloadLink: "https://workink.net/1RdO/m0wpmz0s", download: true, gameLink: "https://www.roblox.com/games/16907652511/Yobests-Anime-Guardian-Clash-Up2#!/about", gamePlay: false, price: "Free" },
+    { creator: "Yobest", videoLink: "https://www.youtube.com/watch?v=sPauNcqbkBU", downloadLink: "https://workink.net/1RdO/lmm1ufst", download: true, gameLink: "https://www.roblox.com/games/16907652511/Yobests-Anime-Guardian-Clash-Up2#!/about", gamePlay: false, price: "Free" },
+    { creator: "Yobest", videoLink: "https://www.youtube.com/watch?v=97f1sqtWy6o", downloadLink: "https://workink.net/1RdO/lmm1ufst", download: true, gameLink: "https://www.roblox.com/games/16907652511/Yobests-Anime-Guardian-Clash-Up2#!/about", gamePlay: false, price: "Free" },
+    { creator: "Yobest", videoLink: "https://www.youtube.com/watch?v=pMrRFF7dHYM", downloadLink: "https://workink.net/1RdO/lu5jed0c", download: true, gameLink: "https://www.roblox.com/games/16907652511/Yobests-Anime-Guardian-Clash-Up2#/about", gamePlay: false, price: "Free" }
 ];
 
 async function fetchYouTubeVideos() {
