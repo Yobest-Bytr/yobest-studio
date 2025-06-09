@@ -52,11 +52,21 @@ function detectAdBlocker() {
 // YouTube API Integration
 const API_KEY = 'AIzaSyChwoHXMqlbmAfeh4lbRUFWx2HjIZ6VV2k'; // Replace with a valid YouTube API key
 let gamePreviews = [
-    { creator: "Yobest", videoLink: "https://www.youtube.com/watch?v=6mDovQ4d87M", downloadLink: "https://workink.net/1RdO/m0wpmz0s", download: true, gameLink: "https://www.roblox.com/games/16907652511/Yobests-Anime-Guardian-Clash-Up2#!/about", gamePlay: true, price: "150 Robux" },
-    { creator: "Yobest", videoLink: "https://www.youtube.com/watch?v=IKmXPPhLeLk", downloadLink: "https://workink.net/1RdO/m0wpmz0s", download: true, gameLink: "https://www.roblox.com/games/16907652511/Yobests-Anime-Guardian-Clash-Up2#!/about", gamePlay: false, price: "Free" },
-    { creator: "Yobest", videoLink: "https://www.youtube.com/watch?v=sPauNcqbkBU", downloadLink: "https://workink.net/1RdO/lmm1ufst", download: true, gameLink: "https://www.roblox.com/games/16907652511/Yobests-Anime-Guardian-Clash-Up2#!/about", gamePlay: false, price: "Free" },
-    { creator: "Yobest", videoLink: "https://www.youtube.com/watch?v=97f1sqtWy6o", downloadLink: "https://workink.net/1RdO/lmm1ufst", download: true, gameLink: "https://www.roblox.com/games/16907652511/Yobests-Anime-Guardian-Clash-Up2#!/about", gamePlay: false, price: "Free" },
-    { creator: "Yobest", videoLink: "https://www.youtube.com/watch?v=pMrRFF7dHYM", downloadLink: "https://workink.net/1RdO/lu5jed0c", download: true, gameLink: "https://www.roblox.com/games/16907652511/Yobests-Anime-Guardian-Clash-Up2#/about", gamePlay: false, price: "Free" }
+    { creator: "Yobest", videoLink: "https://youtu.be/6mDovQ4d87M", downloadLink: "https://workink.net/1RdO/fhj69ej0", download: true, gameLink: "https://www.roblox.com/games/15958463952/skibidi-tower-defense-BYTR-UP-4", gamePlay: true, price: "Free" },
+    { creator: "Yobest", videoLink: "https://youtu.be/pMrRFF7dHYM", downloadLink: "https://mega.nz/file/YTd1gJqa#NzndT5ZOZS4wjo1gc9j7XHdsuBOMFvvHkb9y34EbESw", download: true, gameLink: "", gamePlay: false, price: "Free" },
+    { creator: "Yobest", videoLink: "https://youtu.be/97f1sqtWy6o", downloadLink: "https://workink.net/1RdO/lmm1ufst", download: true, gameLink: "https://www.roblox.com/games/14372275044/tower-defense-Anime", gamePlay: true, price: "Free" },
+    { creator: "Yobest", videoLink: "https://youtu.be/dsDqBZBLpfg", downloadLink: "https://workink.net/1RdO/lmfdv0b3", download: true, gameLink: "", gamePlay: false, price: "Free" },
+    { creator: "Yobest", videoLink: "https://youtu.be/sPauNcqbkBU", downloadLink: "", download: false, gameLink: "", gamePlay: false, price: "Free" },
+    { creator: "Yobest", videoLink: "https://youtu.be/IKmXPPhLeLk", downloadLink: "", download: false, gameLink: "", gamePlay: false, price: "Free" },
+    { creator: "Yobest", videoLink: "https://youtu.be/w9OLn8YValE", downloadLink: "https://workink.net/1RdO/ltk7rklv", download: true, gameLink: "", gamePlay: false, price: "Free" },
+    { creator: "Yobest", videoLink: "https://youtu.be/kXMamYt5Zd8", downloadLink: "https://workink.net/1RdO/lu5jed0c", download: true, gameLink: "", gamePlay: false, price: "Free" },
+    { creator: "Yobest", videoLink: "https://youtu.be/5BYv9x_E2Iw", downloadLink: "https://workink.net/1RdO/lsgkci8u", download: true, gameLink: "", gamePlay: false, price: "Free" },
+
+    { creator: "Yobest", videoLink: "https://youtu.be/bW3ILQnV6Rw", downloadLink: "https://workink.net/1RdO/ln08hlhk", download: true, gameLink: "", gamePlay: false, price: "Free" },
+    { creator: "Yobest", videoLink: "https://youtu.be/ofOqiIa_Q3Y", downloadLink: "https://workink.net/1RdO/lmkp2h0j", download: true, gameLink: "", gamePlay: false, price: "Free" },
+    { creator: "Yobest", videoLink: "https://youtu.be/KATJLumZSOs", downloadLink: "https://workink.net/1RdO/lm95jqw3", download: true, gameLink: "", gamePlay: false, price: "Free" },
+
+    { creator: "Yobest", videoLink: "https://www.youtube.com/watch?v=pMrRFF7dHYM", downloadLink: "https://workink.net/1RdO/lu5jed0c", download: true, gameLink: "", gamePlay: false, price: "Free" }
 ];
 
 async function fetchYouTubeVideos() {
