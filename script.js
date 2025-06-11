@@ -245,7 +245,7 @@ function updateStats() {
     db.ref('siteStats').once('value', (snapshot) => {
         const stats = snapshot.val() || { visitors: 0, downloads: 0 };
         const siteVisitors = document.getElementById('site-visitors');
-        const totalDownloads = document.getElementById('total-downloads');
+        const totalDownloads = document.getElementById(' total-downloads');
         if (siteVisitors) siteVisitors.textContent = stats.visitors;
         if (totalDownloads) totalDownloads.textContent = stats.downloads;
     });
