@@ -52,6 +52,7 @@ function detectAdBlocker() {
 // YouTube API Integration
 const API_KEY = 'AIzaSyChwoHXMqlbmAfeh4lbRUFWx2HjIZ6VV2k'; // Replace with a valid YouTube API key
 let gamePreviews = [
+    { creator: "Yobest", videoLink: "https://www.youtube.com/watch?v=gHeW6FvXmkk", downloadLink: "https://workink.net/1RdO/o1tps3s0", download: true, gameLink: "https://www.roblox.com/games/102296952865049/Yobest-Ball-Game", gamePlay: true, price: "Free" },
     { creator: "Yobest", videoLink: "https://www.youtube.com/watch?v=XiGrxZNzpZM", downloadLink: "https://workink.net/1RdO/d072o5mz", download: true, gameLink: "https://www.roblox.com/games/16907652511/Yobests-Anime-Guardian-Clash-Up2", gamePlay: true, price: "Free" },
     { creator: "Yobest", videoLink: "https://www.youtube.com/watch?v=o3VxS9r2OwY", downloadLink: "https://www.roblox.com/game-pass/1012039728/Display-All-Units", download: true, gameLink: "", gamePlay: false, price: "290 Robux" },
     { creator: "Yobest", videoLink: "https://www.youtube.com/watch?v=6mDovQ4d87M", downloadLink: "https://workink.net/1RdO/fhj69ej0", download: true, gameLink: "https://www.roblox.com/games/15958463952/skibidi-tower-defense-BYTR-UP-4", gamePlay: true, price: "Free" },
