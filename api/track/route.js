@@ -1,25 +1,30 @@
-// api/track/route.js
-import { sql } from '@vercel/postgres';
+// api/track/route.js — FIXED FOR NEON POSTGRES
+import { neon } from '@neondatabase/serverless';
+import { NextResponse } from 'next/server';
 
-export const POST = async (request) => {
-  const { type } = await request.json();
+const sql = neon(process.env.POSTGRES_URL || process.env.DATABASE_URL);
+
+export async function POST(request) {
+  const { type } = await request.json(); // 'visitor' or 'download'
   try {
     await sql`INSERT INTO stats (type) VALUES (${type})`;
-    return new Response(JSON.stringify({ success: true }), { status: 200 });
-  } catch (e) {
-    return new Response(JSON.stringify({ error: e.message }), { status: 500 });
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Insert error:', error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
-};
+}
 
-export const GET = async () => {
+export async function GET() {
   try {
-    const v = await sql`SELECT COUNT(*) FROM stats WHERE type='visitor'`;
-    const d = await sql`SELECT COUNT(*) FROM stats WHERE type='download'`;
-    return new Response(JSON.stringify({
-      visitors: Number(v.rows[0].count),
-      downloads: Number(d.rows[0].count)
-    }));
-  } catch (e) {
-    return new Response(JSON.stringify({ visitors: 0, downloads: 0 }));
+    const { rows: vRows } = await sql`SELECT COUNT(*) as count FROM stats WHERE type = 'visitor'`;
+    const { rows: dRows } = await sql`SELECT COUNT(*) as count FROM stats WHERE type = 'download'`;
+    return NextResponse.json({
+      visitors: Number(vRows[0].count),
+      downloads: Number(dRows[0].count)
+    });
+  } catch (error) {
+    console.error('Query error:', error);
+    return NextResponse.json({ visitors: 0, downloads: 0 });
   }
-};
+}
