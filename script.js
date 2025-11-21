@@ -1,43 +1,85 @@
 // ======================================================
 // YOBEST STUDIO – FINAL & FULLY FIXED script.js
-// November 21, 2025 – 100% Working on Vercel (Static Site)
-// Animated Background + Mouse Trail + Firebase Live Counters
+// November 21, 2025 – 100% Working on Vercel
 // ======================================================
 
-// YOUR FIREBASE CONFIG (Keep this – it's correct)
-const firebaseConfig = {
-  apiKey: "AIzaSyChwoHXMqlbmAfeh4lbRUFWx2HjIZ6VV2k",
-  authDomain: "yobest-studio.firebaseapp.com",
-  databaseURL: "https://yobest-studio-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "yobest-studio",
-  storageBucket: "yobest-studio.firebasestorage.app",
-  messagingSenderId: "815518467235",
-  appId: "1:815518467235:web:9e8e8d8f8e8d8f8e8d8f8e"
-};
+// === 1. FIX FontAwesome 403 – Use official CDN ===
+const faCSS = document.createElement('link');
+faCSS.rel = 'stylesheet';
+faCSS.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css';
+faCSS.integrity = 'sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==';
+faCSS.crossOrigin = 'anonymous';
+document.head.appendChild(faCSS);
 
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
+// === 2. LOAD FIREBASE FIRST (fixes "firebase is not defined") ===
+const firebaseApp = document.createElement('script');
+firebaseApp.src = 'https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js';
+document.head.appendChild(firebaseApp);
 
-// ==================== MOUSE TRAIL – FIXED FIRST (prevents "undefined" error) ====================
+const firebaseDB = document.createElement('script');
+firebaseDB.src = 'https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js';
+document.head.appendChild(firebaseDB);
+
+// === 3. MOUSE TRAIL – DEFINED IMMEDIATELY (fixes "updateTrail is not defined") ===
 window.updateTrail = function(e) {
     const trail = document.getElementById('mouse-trail');
     if (trail) {
         trail.style.left = e.clientX + 'px';
         trail.style.top = e.clientY + 'px';
         trail.style.opacity = '0.7';
-        setTimeout(() => { trail.style.opacity = '0'; }, 600);
+        setTimeout(() => trail.style.opacity = '0', 600);
     }
 };
 
-// ==================== Animated Particles Background ====================
+// === 4. Initialize Firebase + Counters (after Firebase loads) ===
+firebaseApp.onload = () => {
+    const firebaseConfig = {
+        apiKey: "AIzaSyChwoHXMqlbmAfeh4lbRUFWx2HjIZ6VV2k",
+        authDomain: "yobest-studio.firebaseapp.com",
+        databaseURL: "https://yobest-studio-default-rtdb.europe-west1.firebasedatabase.app",
+        projectId: "yobest-studio",
+        storageBucket: "yobest-studio.firebasestorage.app",
+        messagingSenderId: "815518467235",
+        appId: "1:815518467235:web:9e8e8d8f8e8d8f8e8d8f8e"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // Live Counters
+    function trackEvent(type) {
+        db.ref('stats/' + type).transaction(c => (c || 0) + 1);
+    }
+
+    function updateCounters() {
+        db.ref('stats').once('value').then(snap => {
+            const data = snap.val() || { visitors: 0, downloads: 0 };
+            const v = document.getElementById('site-visitors');
+            const d = document.getElementById('total-downloads');
+            if (v) v.textContent = Number(data.visitors || 0).toLocaleString();
+            if (d) d.textContent = Number(data.downloads || 0).toLocaleString();
+        }).catch(() => {});
+    }
+
+    trackEvent('visitors');
+    updateCounters();
+    setInterval(updateCounters, 5000);
+
+    document.addEventListener('click', e => {
+        const a = e.target.closest('a');
+        if (a && (a.id === 'download-btn' || a.href.includes('workink.net') || a.href.includes('mega.nz') || a.href.includes('roblox.com'))) {
+            trackEvent('downloads');
+        }
+    });
+};
+
+// === 5. Animated Particles Background ===
 const canvas = document.getElementById('particles-canvas');
 const ctx = canvas?.getContext('2d');
 
 if (canvas && ctx) {
     canvas.width = innerWidth;
     canvas.height = innerHeight;
-
     let particles = [];
     const numParticles = 130;
 
@@ -74,9 +116,9 @@ if (canvas && ctx) {
     function connectParticles() {
         for (let a = 0; a < particles.length; a++) {
             for (let b = a + 1; b < particles.length; b++) {
-                const distance = Math.hypot(particles[a].x - particles[b].x, particles[a].y - particles[b].y);
-                if (distance < 130) {
-                    ctx.strokeStyle = `rgba(0,238,255,${1 - distance / 130})`;
+                const d = Math.hypot(particles[a].x - particles[b].x, particles[a].y - particles[b].y);
+                if (d < 130) {
+                    ctx.strokeStyle = `rgba(0,238,255,${1 - d / 130})`;
                     ctx.lineWidth = 0.8;
                     ctx.beginPath();
                     ctx.moveTo(particles[a].x, particles[a].y);
@@ -104,40 +146,7 @@ if (canvas && ctx) {
     animate();
 }
 
-// ==================== Firebase Live Counters (100% Working) ====================
-function trackEvent(type) {
-    db.ref('stats/' + type).transaction(current => (current || 0) + 1);
-}
-
-function updateCounters() {
-    db.ref('stats').once('value').then(snapshot => {
-        const data = snapshot.val() || { visitors: 0, downloads: 0 };
-        const visitorsEl = document.getElementById('site-visitors');
-        const downloadsEl = document.getElementById('total-downloads');
-        if (visitorsEl) visitorsEl.textContent = Number(data.visitors || 0).toLocaleString();
-        if (downloadsEl) downloadsEl.textContent = Number(data.downloads || 0).toLocaleString();
-    }).catch(() => {});
-}
-
-// Track visitor on load
-trackEvent('visitors');
-updateCounters();
-setInterval(updateCounters, 5000);
-
-// Track download clicks
-document.addEventListener('click', e => {
-    const link = e.target.closest('a');
-    if (link && (
-        link.id === 'download-btn' ||
-        link.href.includes('workink.net') ||
-        link.href.includes('mega.nz') ||
-        link.href.includes('roblox.com')
-    )) {
-        trackEvent('downloads');
-    }
-});
-
-// ==================== YouTube Data ====================
+// === 6. YouTube Data ===
 const YT_API_KEY = 'AIzaSyChwoHXMqlbmAfeh4lbRUFWx2HjIZ6VV2k';
 
 let gamePreviews = [
@@ -183,7 +192,7 @@ function loadVideos() {
         <div class="video-card" onclick="openGame('${g.videoLink.split('v=')[1]}')">
             <img src="${g.thumbnail || ''}" loading="lazy" alt="${g.title || 'Game'}">
             <div class="info">
-                <h3>${g.title || 'Untitled Game'}</h3>
+                <h3>${g.title || 'Untitled'}</h3>
                 <p>${Number(g.views || 0).toLocaleString()} views • ${g.price}</p>
             </div>
         </div>
@@ -203,17 +212,19 @@ async function loadGameDetails() {
     if (!game) return location.href = 'index.html';
 
     document.getElementById('video-player').src = `https://www.youtube.com/embed/${game.videoLink.split('v=')[1]}?autoplay=1&rel=0&modestbranding=1`;
-    document.getElementById('video-title').textContent = game.title || "Amazing Game";
+    document.getElementById('video-title').textContent = game.title || "Game";
     document.getElementById('video-views').textContent = Number(game.views || 0).toLocaleString();
     document.getElementById('video-likes').textContent = Number(game.likes || 0).toLocaleString();
     document.getElementById('video-date').textContent = game.publishedAt || "2025";
     document.getElementById('video-price').textContent = game.price;
     document.getElementById('video-description').innerHTML = (game.description || "No description.").replace(/\n/g, '<br>');
 
-    const dlBtn = document.getElementById('download-btn');
-    const playBtn = document.getElementById('try-game-btn');
-    if (game.download && game.downloadLink) { dlBtn.href = game.downloadLink; dlBtn.style.display = 'inline-flex'; }
-    if (game.gamePlay && game.gameLink) { playBtn.href = game.gameLink; playBtn.style.display = 'inline-flex'; }
+    const dl = document.getElementById('download-btn');
+    const play = document.getElementById('try-game-btn');
+    if (game.download) dl.style.display = 'inline-flex'; else dl.style.display = 'none';
+    if (game.gamePlay) play.style.display = 'inline-flex'; else play.style.display = 'none';
+    dl.href = game.downloadLink || '#';
+    play.href = game.gameLink || '#';
 
     await loadYouTubeComments(game.videoLink.split('v=')[1]);
 }
@@ -224,32 +235,22 @@ async function loadYouTubeComments(videoId) {
     try {
         const res = await fetch(`https://www.googleapis.com/youtube/v3/commentThreads?key=${YT_API_KEY}&videoId=${videoId}&part=snippet&maxResults=20`);
         const data = await res.json();
-        container.innerHTML = data.items?.map(item => {
-            const c = item.snippet.topLevelComment.snippet;
-            return `<div class="comment"><div class="comment-header"><strong>${c.authorDisplayName}</strong><span>${new Date(c.publishedAt).toLocaleDateString()}</span></div><p>${c.textDisplay.replace(/</g,'&lt;')}</p><small>${c.likeCount} likes</small></div>`;
+        container.innerHTML = data.items?.map(i => {
+            const c = i.snippet.topLevelComment.snippet;
+            return `<div class="comment"><div class="comment-header"><strong>${c.authorDisplayName}</strong> <span>${new Date(c.publishedAt).toLocaleDateString()}</span></div><p>${c.textDisplay.replace(/</g,'&lt;')}</p><small>${c.likeCount} likes</small></div>`;
         }).join('') || '<p>No comments yet.</p>';
-    } catch { container.innerHTML = '<p>Comments failed to load.</p>'; }
+    } catch { container.innerHTML = '<p>Comments disabled or failed to load.</p>'; }
 }
 
-// ==================== Theme Toggle & Loading ====================
+// === 7. Theme & Loading ===
 function toggleTheme() {
     document.body.classList.toggle('light-mode');
     localStorage.setItem('theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
 }
 
-function showLoading() {
-    const overlay = document.getElementById('loading-overlay');
-    if (overlay) overlay.style.display = 'flex';
-}
+function showLoading() { document.getElementById('loading-overlay')?.style.setProperty('display', 'flex'); }
+function hideLoading() { setTimeout(() => document.getElementById('loading-overlay')?.style.setProperty('display', 'none'), 600); }
 
-function hideLoading() {
-    setTimeout(() => {
-        const overlay = document.getElementById('loading-overlay');
-        if (overlay) overlay.style.display = 'none';
-    }, 600);
-}
-
-// ==================== On Load ====================
 document.addEventListener('DOMContentLoaded', () => {
     hideLoading();
     if (localStorage.getItem('theme') === 'light') document.body.classList.add('light-mode');
@@ -257,18 +258,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (location.pathname.includes('index.html') || location.pathname === '/') {
         showLoading();
-        fetchYouTubeData().then(() => {
-            loadVideos();
-            hideLoading();
-            updateCounters();
-        });
+        fetchYouTubeData().then(() => { loadVideos(); hideLoading(); });
     }
-
     if (location.pathname.includes('game.html')) {
         showLoading();
-        fetchYouTubeData().then(() => {
-            loadGameDetails();
-            hideLoading();
-        });
+        fetchYouTubeData().then(() => { loadGameDetails(); hideLoading(); });
     }
 });
