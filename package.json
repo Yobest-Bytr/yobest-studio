@@ -1,0 +1,13 @@
+{
+  "name": "yobest-studio",
+  "version": "1.0.0",
+  "dependencies": {
+    "@neondatabase/serverless": "^0.9.0",
+    "next": "14.0.0"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  }
+}
