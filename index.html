@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yobest Studio - Home</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://kit.fontawesome.com/64d58efce2.js" crossorigin="anonymous"></script>
+    <link rel="icon" href="yobest_studio_logo.png" type="image/png">
+    <script src="https://fpyf8.com/88/tag.min.js" data-zone="152581" async data-cfasync="false"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Montserrat:wght@700&display=swap" rel="stylesheet">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <body onmousemove="updateTrail(event)">
+    <canvas id="particles-canvas"></canvas>
+    <div id="mouse-trail"></div>
+    
+    <div id="loading-overlay">Y<div>Loading... Please wait</div></div>
+    <header>
+        <div class="header-content">
+            <img src="yobest_studio_logo.png" alt="Yobest Studio" style="max-height: 50px;">
+            <nav>
+                <a href="index.html" class="glass-btn btn-teal"><i class="fas fa-home"></i> Home</a>
+                <a href="ai.html" class="glass-btn btn-magenta"><i class="fas fa-robot"></i> AI Tools</a>
+                <a href="contact.html" class="glass-btn btn-yellow"><i class="fas fa-envelope"></i> Contact</a>
+                <a href="donation.html" class="glass-btn btn-gray"><i class="fas fa-heart"></i> Donation</a>
+                <button id="theme-toggle" class="glass-btn btn-teal"><i class="fas fa-moon"></i></button>
+            </nav>
+        </div>
+    </header>
+    <main>
+        <div class="container">
+            <div class="side-ad left">
+            </div>
+            <div class="main-content">
+                <div class="hero">
+                    <h2>Welcome to Yobest Studio!</h2>
+                    <p>Explore free and premium Roblox game files to enhance your creations.</p>
+                    <p>Site Visitors: <span id="site-visitors">0</span> | Total Downloads: <span id="total-downloads">0</span></p>
+                    <iframe src="https://sketchfab.com/models/59fc99d8dcb146f3a6c16dbbcc4680da/embed?autostart=1&internal=1&tracking=0&ui_infos=0&ui_snapshots=1&ui_stop=0&ui_watermark=0" width="100%" height="480"></iframe>
+                    <a href="#game-previews" class="glass-btn btn-magenta">Check Out My Games</a>
+                </div>
+                <div class="game-previews" id="game-previews">
+                    <h2>Game Previews</h2>
+                    <p>Loaded <span id="video-count">0</span> videos from cache!</p>
+                    <div id="video-list" class="video-grid"></div>
+                </div>
+            </div>
+            <div class="side-ad right">
+            </div>
+        </div>
+        <div class="bottom-ad">
+        </div>
+    </main>
+    <footer>
+        <p>© 2025 Yobest Studio. All Rights Reserved.</p>
+        <div class="social-links">
+            <a href="https://youtube.com/@YobestRobloxStudio" target="_blank"><i class="fab fa-youtube"></i> YouTube</a>
+            <a href="https://twitter.com/Yobest_BYTR" target="_blank"><i class="fab fa-twitter"></i> Twitter</a>
+            <a href="https://discord.gg/jKASqrc7H3" target="_blank"><i class="fab fa-discord"></i> Discord</a>
+        </div>
+    </footer>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+</body>
+</html>
