@@ -5,8 +5,12 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  let sql;
   try {
-    const sql = neon(process.env.DATABASE_URL);
+    if (!process.env.DATABASE_URL) {
+      throw new Error('DATABASE_URL env var missing');
+    }
+    sql = neon(process.env.DATABASE_URL);
     const { rows } = await sql`
       SELECT metric_type, count FROM analytics 
       WHERE metric_type IN ('visitors', 'downloads')
@@ -18,9 +22,9 @@ export default async function handler(req, res) {
       return acc;
     }, { visitors: 0, downloads: 0 });
 
-    res.status(200).json(data);
+    return res.status(200).json(data);
   } catch (error) {
-    console.error('Fetch error:', error);
-    res.status(500).json({ error: 'Failed to fetch analytics' });
+    console.error('API Fetch Error Details:', error);  // Logs to Vercel dashboard
+    return res.status(500).json({ error: 'Failed to fetch analytics', details: error.message });
   }
 }
