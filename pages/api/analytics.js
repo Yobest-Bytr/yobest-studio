@@ -1,4 +1,4 @@
-// pages/api/analytics.js
+// api/analytics.js - GET: Fetch metrics
 import { neon } from '@neondatabase/serverless';
 
 export default async function handler(req, res) {
@@ -15,9 +15,9 @@ export default async function handler(req, res) {
     `;
 
     const data = rows.reduce((acc, row) => {
-      acc[row.metric_type] = row.count;
+      acc[row.metric_type] = Number(row.count); // Ensure number
       return acc;
-    }, {});
+    }, { visitors: 0, downloads: 0 });
 
     res.status(200).json(data);
   } catch (error) {
