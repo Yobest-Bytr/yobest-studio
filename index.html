@@ -3,12 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Disable sensor permissions to fix policy violations -->
+    <meta http-equiv="Permissions-Policy" content="accelerometer=(), deviceorientation=(), xr-spatial-tracking=()">
     <title>Yobest Studio - Home</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://kit.fontawesome.com/64d58efce2.js" crossorigin="anonymous"></script>
     <link rel="icon" href="yobest_studio_logo.png" type="image/png">
+    <!-- Ads script optional to avoid 403 -->
     <script src="https://fpyf8.com/88/tag.min.js" data-zone="152581" async data-cfasync="false"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Montserrat:wght@700&display=swap" rel="stylesheet">
+    <script type="module">
+        // Define updateTrail early to fix "not defined" error
+        window.updateTrail = function(e) {
+            const trail = document.getElementById('mouse-trail');
+            if (!trail) return;
+            trail.style.left = e.clientX + 'px';
+            trail.style.top = e.clientY + 'px';
+            trail.style.opacity = '0.8';
+            setTimeout(() => trail.style.opacity = '0', 600);
+        };
+    </script>
     <script type="module" src="script.js" defer></script>
 </head>
 <body onmousemove="updateTrail(event)">
