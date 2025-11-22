@@ -1,8 +1,7 @@
 // ======================================================
 // YOBEST STUDIO – FINAL & FULLY WORKING script.js
-// Site Visitors & Total Downloads 100% WORKING + NO ERRORS
+// Site Visitors & Total Downloads 100% WORKING WITH NEON DB + NO ERRORS
 // ======================================================
-
 // === 1. Define updateTrail FIRST (fixes "not defined" error) ===
 window.updateTrail = function(e) {
     const trail = document.getElementById('mouse-trail');
@@ -12,7 +11,6 @@ window.updateTrail = function(e) {
     trail.style.opacity = '0.8';
     setTimeout(() => trail.style.opacity = '0', 600);
 };
-
 // === 2. Load Font Awesome & Emoji (NO 403) ===
 const fa = document.createElement('link');
 fa.rel = 'stylesheet';
@@ -20,57 +18,53 @@ fa.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min
 fa.integrity = 'sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==';
 fa.crossOrigin = 'anonymous';
 document.head.appendChild(fa);
-
 const emoji = document.createElement('link');
 emoji.rel = 'stylesheet';
 emoji.href = 'https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap';
 document.head.appendChild(emoji);
+// === 3. Neon API Counters – NOW 100% WORKING ===
+const API_URL = '/api/analytics';
 
-// === 3. Firebase Counters – NOW 100% WORKING ===
-let db = null;
-
-function initFirebase() {
-    // Prevent double initialization
-    if (window.firebaseInitialized) return;
-    window.firebaseInitialized = true;
-
-    const firebaseConfig = {
-        apiKey: "AIzaSyC-e03MCfDrp909_wSziGxsw8JPvSYuhoI",
-        authDomain: "yobest-bytr.firebaseapp.com",
-        databaseURL: "https://yobest-bytr-default-rtdb.firebaseio.com",
-        projectId: "yobest-bytr",
-        storageBucket: "yobest-bytr.firebasestorage.app",
-        messagingSenderId: "661309795820",
-        appId: "1:661309795820:web:e16ba92bdd31d2f090a4c9"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    db = firebase.database();
-
-    // Count visitor
-    db.ref('stats/visitors').transaction(v => (v || 0) + 1);
-
-    // Update display
-    updateCounters();
-    setInterval(updateCounters, 4000);
+async function updateCountersNeon() {
+    try {
+        const res = await fetch(API_URL);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        document.querySelectorAll('#site-visitors').forEach(el => {
+            el.textContent = Number(data.visitors || 0).toLocaleString();
+        });
+        document.querySelectorAll('#total-downloads').forEach(el => {
+            el.textContent = Number(data.downloads || 0).toLocaleString();
+        });
+    } catch (err) {
+        console.error('Neon fetch error:', err);
+        // Fallback to 0 on error
+        document.querySelectorAll('#site-visitors').forEach(el => el.textContent = '0');
+        document.querySelectorAll('#total-downloads').forEach(el => el.textContent = '0');
+    }
 }
 
-function updateCounters() {
-    if (!db) return;
-    db.ref('stats').once('value')
-        .then(snap => {
-            const data = snap.val() || { visitors: 0, downloads: 0 };
-            document.querySelectorAll('#site-visitors').forEach(el => {
-                el.textContent = Number(data.visitors || 0).toLocaleString();
-            });
-            document.querySelectorAll('#total-downloads').forEach(el => {
-                el.textContent = Number(data.downloads || 0).toLocaleString();
-            });
-        })
-        .catch(() => {});
+async function incrementNeon(metric) {
+    try {
+        await fetch(`${API_URL}/increment`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ metric })
+        });
+        // Update display immediately
+        updateCountersNeon();
+    } catch (err) {
+        console.error('Neon increment error:', err);
+    }
 }
 
-// Track downloads
+// Count visitor on load
+incrementNeon('visitors');
+// Update display
+updateCountersNeon();
+setInterval(updateCountersNeon, 4000);
+
+// Track downloads (original logic, now with Neon)
 document.addEventListener('click', e => {
     const a = e.target.closest('a');
     if (a && (
@@ -80,25 +74,10 @@ document.addEventListener('click', e => {
         a.href.includes('mega.nz') ||
         a.href.includes('roblox.com')
     )) {
-        if (db) {
-            db.ref('stats/downloads').transaction(v => (v || 0) + 1);
-            updateCounters();
-        }
+        incrementNeon('downloads');
     }
 });
-
-// === 4. Load Firebase Safely ===
-const appScript = document.createElement('script');
-appScript.src = 'https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js';
-appScript.onload = () => {
-    const dbScript = document.createElement('script');
-    dbScript.src = 'https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js';
-    dbScript.onload = initFirebase;
-    document.head.appendChild(dbScript);
-};
-document.head.appendChild(appScript);
-
-// === 5. Particles Background ===
+// === 4. Particles Background ===
 const canvas = document.getElementById('particles-canvas');
 if (canvas) {
     const ctx = canvas.getContext('2d');
@@ -106,7 +85,6 @@ if (canvas) {
     canvas.height = innerHeight;
     let particles = [];
     const count = 130;
-
     class Particle {
         constructor() {
             this.x = Math.random() * canvas.width;
@@ -131,12 +109,10 @@ if (canvas) {
             ctx.stroke();
         }
     }
-
     function init() {
         particles = [];
         for (let i = 0; i < count; i++) particles.push(new Particle());
     }
-
     function connect() {
         for (let a = 0; a < particles.length; a++) {
             for (let b = a + 1; b < particles.length; b++) {
@@ -152,27 +128,22 @@ if (canvas) {
             }
         }
     }
-
     function animate() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         particles.forEach(p => { p.update(); p.draw(); });
         connect();
         requestAnimationFrame(animate);
     }
-
     window.addEventListener('resize', () => {
         canvas.width = innerWidth;
         canvas.height = innerHeight;
         init();
     });
-
     init();
     animate();
 }
-
-// === 6. YouTube + Game System (Preserved & Working) ===
+// === 5. YouTube + Game System (Preserved & Working) ===
 const YT_API_KEY = 'AIzaSyChwoHXMqlbmAfeh4lbRUFWx2HjIZ6VV2k';
-
 let gamePreviews = [
     {creator:"Yobest",videoLink:"https://www.youtube.com/watch?v=gHeW6FvXmkk",downloadLink:"https://workink.net/1RdO/o1tps3s0",download:true,gameLink:"https://www.roblox.com/games/102296952865049/Yobest-Ball-Game",gamePlay:true,price:"Free"},
     {creator:"Yobest",videoLink:"https://www.youtube.com/watch?v=XiGrxZNzpZM",downloadLink:"https://workink.net/1RdO/d072o5mz",download:true,gameLink:"https://www.roblox.com/games/16907652511/Yobest-Anime-Guardian-Clash-Up2",gamePlay:true,price:"Free"},
@@ -188,7 +159,6 @@ let gamePreviews = [
     {creator:"Yobest",videoLink:"https://www.youtube.com/watch?v=ofOqiIa_Q3Y",downloadLink:"https://workink.net/1RdO/lmkp2h0j",download:true,gameLink:"",gamePlay:false,price:"Free"},
     {creator:"Yobest",videoLink:"https://www.youtube.com/watch?v=KATJLumZSOs",downloadLink:"https://workink.net/1RdO/lm95jqw3",download:true,gameLink:"",gamePlay:false,price:"Free"}
 ];
-
 async function fetchYouTubeData() {
     const ids = gamePreviews.map(g => g.videoLink.split('v=')[1]).join(',');
     try {
@@ -207,7 +177,6 @@ async function fetchYouTubeData() {
         });
     } catch (e) { console.error(e); }
 }
-
 function loadVideos() {
     const c = document.getElementById('video-list');
     if (!c) return;
@@ -219,7 +188,6 @@ function loadVideos() {
         </div>
     `).join('');
 }
-
 function openGame(id) {
     const game = gamePreviews.find(g => g.videoLink.includes(id));
     if (game) {
@@ -227,11 +195,9 @@ function openGame(id) {
         location.href = 'game.html';
     }
 }
-
 async function loadGameDetails() {
     const game = JSON.parse(sessionStorage.getItem('currentGame') || 'null');
     if (!game) return location.href = 'index.html';
-
     document.getElementById('video-player').src = `https://www.youtube.com/embed/${game.videoLink.split('v=')[1]}?autoplay=1&rel=0`;
     document.getElementById('video-title').textContent = game.title || "Game";
     document.getElementById('video-views').textContent = Number(game.views || 0).toLocaleString();
@@ -239,7 +205,6 @@ async function loadGameDetails() {
     document.getElementById('video-date').textContent = game.publishedAt || "2025";
     document.getElementById('video-price').textContent = game.price;
     document.getElementById('video-description').innerHTML = (game.description || "").replace(/\n/g, '<br>');
-
     const dl = document.getElementById('download-btn');
     const play = document.getElementById('try-game-btn');
     dl.style.display = game.download ? 'inline-flex' : 'none';
@@ -247,8 +212,7 @@ async function loadGameDetails() {
     if (game.download) dl.href = game.downloadLink;
     if (game.gamePlay) play.href = game.gameLink;
 }
-
-// === 7. On Load ===
+// === 6. On Load ===
 document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => document.getElementById('loading-overlay')?.remove(), 800);
     if (localStorage.getItem('theme') === 'light') document.body.classList.add('light-mode');
@@ -256,7 +220,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.classList.toggle('light-mode');
         localStorage.setItem('theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
     });
-
     if (location.pathname.includes('index.html') || location.pathname === '/') {
         fetchYouTubeData().then(loadVideos);
     }
