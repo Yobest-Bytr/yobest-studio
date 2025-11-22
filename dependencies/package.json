@@ -1,14 +1,16 @@
 {
-  "dependencies": {
-    "@neondatabase/serverless": "^0.9.0",
-    "react": "^18.0.0",
-    "next": "^14.0.0"
-    // ... your other deps
-  },
+  "name": "yobest-studio",
+  "version": "1.0.0",
+  "type": "module",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start"
-    // ... others
+    "dev": "vite --host",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^0.9.0"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
   }
 }
