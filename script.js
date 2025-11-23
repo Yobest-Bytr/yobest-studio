@@ -37,8 +37,8 @@ document.head.appendChild(faCSS);
 })();
 
 // === 3. Live Counters – Visitors + Downloads ===
-let visitors = 0;
-let downloads = 0;
+let visitors = 1230;
+let downloads = 500;
 
 async function updateCounters() {
     try {
