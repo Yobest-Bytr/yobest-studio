@@ -2,6 +2,7 @@
 // YOBEST STUDIO – FINAL & FULLY WORKING script.js
 // November 23, 2025 – Vercel Blob + All Features Fixed
 // No Firebase | No Errors | Counters Work
+// hhhh
 // ======================================================
 
 console.log("%cYobest Studio Loaded – Vercel Blob Tracking ACTIVE", "color: #00ff88; font-size: 16px; font-weight: bold;");
