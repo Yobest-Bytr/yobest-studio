@@ -1,6 +1,4 @@
-// public/script.js - Fully Updated & Firebase-Free (2025)
-// Uses Vercel Blob via /api/visitors and /api/downloads
-// Works perfectly on Vercel with zero conflicts
+
 
 console.log("%cYobest Studio Scripts Loaded", "color: #00ff88; font-size: 14px;");
 
