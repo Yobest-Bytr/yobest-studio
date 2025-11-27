@@ -1,13 +1,10 @@
 // ======================================================
 // YOBEST STUDIO – FINAL & FULLY WORKING script.js
-// November 23, 2025 – Vercel Blob + All Features Fixed
-// No Firebase | No Errors | Counters Work
-// hhhh
+// November 27, 2025 – REAL WORKINK STATS LIVE (Your Key Included)
 // ======================================================
+console.log("%cYobest Studio Loaded – WorkInk Real Stats ACTIVE", "color: #00ff88; font-size: 16px; font-weight: bold;");
 
-console.log("%cYobest Studio Loaded – Vercel Blob Tracking ACTIVE", "color: #00ff88; font-size: 16px; font-weight: bold;");
-
-// === 0. FIX: Define updateTrail FIRST (so mouse trail works instantly) ===
+// === 0. Mouse Trail Fix ===
 window.updateTrail = function(e) {
     const trail = document.getElementById('mouse-trail');
     if (trail) {
@@ -18,7 +15,7 @@ window.updateTrail = function(e) {
     }
 };
 
-// === 1. FontAwesome CDN (fixes 403) ===
+// === 1. FontAwesome CDN ===
 const faCSS = document.createElement('link');
 faCSS.rel = 'stylesheet';
 faCSS.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css';
@@ -26,7 +23,7 @@ faCSS.integrity = 'sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/g
 faCSS.crossOrigin = 'anonymous';
 document.head.appendChild(faCSS);
 
-// === 2. Track Visitor on Page Load (Vercel Blob) ===
+// === 2. Track Visitor (Vercel Blob) ===
 (function trackVisitor() {
     const url = '/api/visitors';
     if (navigator.sendBeacon) {
@@ -36,32 +33,51 @@ document.head.appendChild(faCSS);
     }
 })();
 
-// === 3. Live Counters – Visitors + Downloads ===
-let visitors = 1230;
-let downloads = 500;
+// === 3. LIVE COUNTERS – REAL WORKINK STATS (YOUR KEY INCLUDED) ===
+let visitors = 0;
+let downloads = 0;
 
-async function updateCounters() {
+// YOUR REAL WORKINK API KEY (Already Inserted)
+const WORKINK_API_KEY = "e6cf95d7-6399-47ef-a89c-ad4f868db2fd";
+
+async function fetchWorkInkStats() {
     try {
-        const res = await fetch('/api/analytics');
-        if (!res.ok) throw new Error('API not ready');
-        const data = await res.json();
-        visitors = Number(data.visitors || 0);
-        downloads = Number(data.downloads || 0);
-    } catch (err) {
-        console.warn('Analytics API not ready yet – will retry...');
-    } finally {
+        const response = await fetch("https://dashboard.work.ink/_api/v1/links", {
+            method: "GET",
+            headers: {
+                "X-Api-Key": WORKINK_API_KEY,
+                "Accept": "application/json"
+            }
+        });
+
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+        const data = await response.json();
+
+        if (data.success && Array.isArray(data.links)) {
+            visitors = data.links.reduce((sum, link) => sum + (Number(link.clicks) || 0), 0);
+            downloads = data.links.reduce((sum, link) => sum + (Number(link.downloads) || 0), 0);
+        }
+
+        // Update counters on page
         const vEl = document.getElementById('site-visitors');
         const dEl = document.getElementById('total-downloads');
         if (vEl) vEl.textContent = visitors.toLocaleString();
         if (dEl) dEl.textContent = downloads.toLocaleString();
+
+        console.log(`WorkInk Stats → Visitors: ${visitors} | Downloads: ${downloads}`);
+    } catch (err) {
+        console.error("WorkInk API Error:", err.message);
+        document.getElementById('site-visitors')?.replaceChildren('!');
+        document.getElementById('total-downloads')?.replaceChildren('!');
     }
 }
 
-// Update immediately + every 6 seconds
-updateCounters();
-setInterval(updateCounters, 6000);
+// Update instantly + every 8 seconds
+fetchWorkInkStats();
+setInterval(fetchWorkInkStats, 8000);
 
-// === 4. Track Downloads on Click ===
+// === 4. Track Download Clicks ===
 document.addEventListener('click', e => {
     const link = e.target.closest('a');
     if (link && (
@@ -140,7 +156,7 @@ if (canvas) {
     animate();
 }
 
-// === 6. YouTube Data + Games ===
+// === 6. YouTube Games Data ===
 const YT_API_KEY = 'AIzaSyChwoHXMqlbmAfeh4lbRUFWx2HjIZ6VV2k';
 let gamePreviews = [
     {creator:"Yobest",videoLink:"https://www.youtube.com/watch?v=gHeW6FvXmkk",downloadLink:"https://workink.net/1RdO/o1tps3s0",download:true,gameLink:"https://www.roblox.com/games/102296952865049/Yobest-Ball-Game",gamePlay:true,price:"Free"},
@@ -247,7 +263,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (location.pathname.includes('index.html') || location.pathname === '/') {
         showLoading();
-        fetchYouTubeData().then(() => { loadVideos(); updateCounters(); hideLoading(); });
+        fetchYouTubeData().then(() => {
+            loadVideos();
+            fetchWorkInkStats();
+            hideLoading();
+        });
     }
     if (location.pathname.includes('game.html')) {
         showLoading();
@@ -255,4 +275,4 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-console.log("%cYobest Studio 100% READY – Visitors & Downloads Counting!", "color: cyan; font-weight: bold;");
+console.log("%cYobest Studio 100% LIVE – Real WorkInk Stats ACTIVE!", "color: cyan; font-weight: bold;");
