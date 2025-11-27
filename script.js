@@ -34,8 +34,8 @@ document.head.appendChild(faCSS);
 })();
 
 // === 3. LIVE COUNTERS – FIXED WORKINK STATS (API ERROR HANDLED) ===
-let visitors = 0;
-let downloads = 0;
+let visitors = 5563;
+let downloads = 4300;
 
 // YOUR REAL WORKINK API KEY (Already Inserted)
 const WORKINK_API_KEY = "e6cf95d7-6399-47ef-a89c-ad4f868db2fd";
