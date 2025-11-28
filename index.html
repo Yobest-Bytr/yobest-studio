@@ -15,7 +15,7 @@
     <script src="script.js" defer></script>
 
     <style>
-        /* === STATS COUNTER === */
+        /* === STATS COUNTER WITH ICONS === */
         .stats-counter {
             font-size: 1.5rem;
             margin: 30px 0;
@@ -29,16 +29,20 @@
             box-shadow: 0 15px 50px rgba(0, 212, 255, 0.25);
             font-weight: 600;
         }
+        .stats-counter i {
+            margin-right: 10px;
+            color: #00d4ff;
+        }
         .stats-counter strong {
             background: linear-gradient(45deg, #00ffea, #00d4ff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            font-size: 2.2rem;
+            font-size: 2.3rem;
             font-weight: 900;
-            text-shadow: 0 0 30px rgba(0, 255, 234, 0.5);
+            text-shadow: 0 0 30px rgba(0, 255, 234, 0.6);
         }
 
-        /* === GAME PREVIEWS TITLE — ABSOLUTE PERFECTION === */
+        /* === GAME PREVIEWS TITLE === */
         .previews-header {
             text-align: center;
             margin: 90px auto 60px;
@@ -63,23 +67,15 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             animation: rainbow 8s ease infinite;
-            text-shadow: 0 0 50px rgba(0, 255, 234, 0.7);
         }
-        @keyframes rainbow {
-            0%   { background-position: 0% 50%; }
-            50%  { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+        @keyframes rainbow { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
         .stars {
             font-size: 4rem;
             animation: twinkle 2.5s infinite;
             color: #ffd700;
             text-shadow: 0 0 30px #ffd700;
         }
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.7; transform: scale(1) rotate(0deg); }
-            50%      { opacity: 1;   transform: scale(1.4) rotate(15deg); }
-        }
+        @keyframes twinkle { 0%,100%{opacity:0.7;transform:scale(1)} 50%{opacity:1;transform:scale(1.4) rotate(15deg)} }
 
         .subtitle {
             font-size: 1.8rem;
@@ -97,85 +93,48 @@
             color: #00ffea;
             font-weight: 900;
             text-shadow: 0 0 40px rgba(0, 255, 234, 0.9);
-            margin: 0 10px;
         }
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50%      { transform: scale(1.25); }
-        }
+        @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.25)} }
 
-        /* === SEARCH + SORT BAR === */
-        .search-sort-container {
-            margin: 50px auto;
-            max-width: 950px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            justify-content: center;
-            align-items: center;
-        }
-        .search-wrapper {
-            position: relative;
-            flex: 1;
-            min-width: 320px;
-            max-width: 550px;
-        }
-        #search-input {
-            width: 100%;
-            padding: 20px 60px 20px 28px;
-            font-size: 1.3rem;
-            border: none;
-            border-radius: 50px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(18px);
-            color: var(--text);
-            box-shadow: 0 12px 50px rgba(0, 212, 255, 0.3);
-            transition: all 0.4s ease;
-        }
-        #search-input:focus {
-            outline: none;
-            transform: scale(1.04);
-            box-shadow: 0 0 40px rgba(0, 212, 255, 0.7);
-            border: 2px solid #00d4ff;
-        }
-        .search-wrapper i {
-            position: absolute;
-            right: 22px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #00d4ff;
-            font-size: 1.7rem;
-            pointer-events: none;
-        }
+        /* === SEARCH + SORT === */
+        .search-sort-container { margin: 50px auto; max-width: 950px; display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
+        .search-wrapper { position: relative; flex: 1; min-width: 320px; max-width: 550px; }
+        #search-input { width: 100%; padding: 20px 60px 20px 28px; font-size: 1.3rem; border: none; border-radius: 50px; background: var(--glass-bg); backdrop-filter: blur(18px); color: var(--text); box-shadow: 0 12px 50px rgba(0,212,255,0.3); transition: all 0.4s; }
+        #search-input:focus { outline: none; transform: scale(1.04); box-shadow: 0 0 40px rgba(0,212,255,0.7); border: 2px solid #00d4ff; }
+        .search-wrapper i { position: absolute; right: 22px; top: 50%; transform: translateY(-50%); color: #00d4ff; font-size: 1.7rem; pointer-events: none; }
+        #sort-select { padding: 20px 28px; font-size: 1.3rem; border: none; border-radius: 50px; background: var(--glass-bg); backdrop-filter: blur(18px); color: var(--text); min-width: 280px; box-shadow: 0 12px 50px rgba(0,212,255,0.3); transition: all 0.4s; }
 
-        #sort-select {
-            padding: 20px 28px;
-            font-size: 1.3rem;
-            border: none;
-            border-radius: 50px;
+        /* === PAGINATION === */
+        .pagination {
+            text-align: center;
+            margin: 70px auto 40px;
+            padding: 20px;
+        }
+        .pagination button {
             background: var(--glass-bg);
-            backdrop-filter: blur(18px);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
             color: var(--text);
-            min-width: 280px;
-            box-shadow: 0 12px 50px rgba(0, 212, 255, 0.3);
+            padding: 14px 22px;
+            margin: 0 8px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            min-width: 56px;
             transition: all 0.4s;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
         }
-        #sort-select:focus {
-            outline: none;
-            box-shadow: 0 0 40px rgba(0, 255, 234, 0.7);
-            transform: translateY(-4px);
-        }
+        .pagination button:hover { background: #00d4ff; color: black; transform: translateY(-5px); box-shadow: 0 15px 40px rgba(0,212,255,0.6); }
+        .pagination button.active { background: linear-gradient(45deg, #00ffea, #00d4ff); color: black; font-weight: bold; transform: scale(1.15); box-shadow: 0 0 35px rgba(0,255,234,0.9); }
+        .pagination button:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
 
-        /* Mobile Perfection */
         @media (max-width: 768px) {
             .main-title { font-size: 3rem; gap: 15px; flex-direction: column; }
-            .stars { font-size: 2.8rem; }
             .subtitle { font-size: 1.4rem; }
             .subtitle strong { font-size: 2rem; }
             .search-sort-container { flex-direction: column; padding: 0 15px; }
             .search-wrapper, #sort-select { width: 100%; max-width: none; }
             .stats-counter { font-size: 1.3rem; padding: 18px; }
-            .stats-counter strong { font-size: 1.8rem; }
         }
     </style>
 </head>
@@ -184,15 +143,13 @@
     <canvas id="particles-canvas"></canvas>
     <div id="mouse-trail"></div>
    
-    <div id="loading-overlay">
-        <div>Loading... Please wait</div>
-    </div>
+    <div id="loading-overlay"><div>Loading... Please wait</div></div>
 
     <header>
         <div class="header-content">
             <img src="yobest_studio_logo.png" alt="Yobest Studio" style="max-height: 50px;">
             <nav>
-                <a href="index.html" class="glass-btn btn-teal"><i class="fas fa-home"></i> Home</a>
+                 <a href="index.html" class="glass-btn btn-teal"><i class="fas fa-home"></i> Home</a>
                 <a href="ai.html" class="glass-btn btn-magenta"><i class="fas fa-robot"></i> AI Tools</a>
                 <a href="contact.html" class="glass-btn btn-yellow"><i class="fas fa-envelope"></i> Contact</a>
                 <a href="donation.html" class="glass-btn btn-gray"><i class="fas fa-heart"></i> Donation</a>
@@ -211,14 +168,13 @@
                     <p>Explore free and premium Roblox game files to enhance your creations.</p>
 
                     <div class="stats-counter">
-                        <span><i class="fas fa-eye"></i>Site Visitors: <strong id="site-visitors">0</strong></span>    |   
-                        <span><i class="fas fa-download"></i>Total Downloads: <strong id="total-downloads">0</strong></span>
+                        <i class="fas fa-robot"></i> Site Visitors: <strong id="site-visitors">0</strong>    |   
+                        <i class="fas fa-download"></i> Total Downloads: <strong id="total-downloads">0</strong>
                     </div>
 
                     <a href="#game-previews" class="glass-btn btn-magenta">Check Out My Games</a>
                 </div>
 
-                <!-- ULTIMATE GAME PREVIEWS SECTION -->
                 <div class="game-previews" id="game-previews">
                     <div class="previews-header">
                         <h2 class="main-title">
@@ -248,12 +204,13 @@
                     </div>
 
                     <div id="video-list" class="video-grid"></div>
+
+                    <div class="pagination" id="pagination"></div>
                 </div>
             </div>
 
             <div class="side-ad right"></div>
         </div>
-
         <div class="bottom-ad"></div>
     </main>
 
@@ -265,6 +222,5 @@
             <a href="https://discord.gg/jKASqrc7H3" target="_blank"><i class="fab fa-discord"></i> Discord</a>
         </div>
     </footer>
-
 </body>
 </html>
