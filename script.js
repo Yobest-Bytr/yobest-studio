@@ -152,11 +152,40 @@ async function fetchYouTubeData() {
     } catch (e) { console.error('YouTube API error:', e); }
 }
 
+function parsePrice(price) {
+    if (price === 'Free') return 0;
+    const num = parseInt(price.replace(/\D/g, ''));
+    return isNaN(num) ? 0 : num;
+}
+
 function loadVideos() {
     const container = document.getElementById('video-list');
     if (!container) return;
-    document.getElementById('video-count').textContent = gamePreviews.length;
-    container.innerHTML = gamePreviews.map(g => `
+
+    const search = document.getElementById('search-input')?.value.toLowerCase() || '';
+    const sort = document.getElementById('sort-select')?.value || '';
+
+    let filtered = gamePreviews.filter(g => g.title?.toLowerCase().includes(search));
+
+    if (sort) {
+        filtered.sort((a, b) => {
+            if (sort === 'price-asc') {
+                return parsePrice(a.price) - parsePrice(b.price);
+            } else if (sort === 'price-desc') {
+                return parsePrice(b.price) - parsePrice(a.price);
+            } else if (sort === 'views-desc') {
+                return (b.views || 0) - (a.views || 0);
+            } else if (sort === 'likes-desc') {
+                return (b.likes || 0) - (a.likes || 0);
+            } else if (sort === 'date-desc') {
+                return new Date(b.publishedAt || '1900-01-01') - new Date(a.publishedAt || '1900-01-01');
+            }
+            return 0;
+        });
+    }
+
+    document.getElementById('video-count').textContent = filtered.length;
+    container.innerHTML = filtered.map(g => `
         <div class="video-card" onclick="openGame('${g.videoLink.split('v=')[1]}')">
             <img src="${g.thumbnail || ''}" loading="lazy" alt="${g.title || 'Game'}">
             <div class="info">
@@ -230,6 +259,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (location.pathname.includes('index.html') || location.pathname === '/') {
         showLoading();
         fetchYouTubeData().then(() => { loadVideos(); hideLoading(); });
+        document.getElementById('search-input')?.addEventListener('input', loadVideos);
+        document.getElementById('sort-select')?.addEventListener('change', loadVideos);
     }
     if (location.pathname.includes('game.html')) {
         showLoading();
