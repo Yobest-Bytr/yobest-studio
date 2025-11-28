@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Yobest Studio - Home</title>
 
-    <!-- Security & Performance Fix -->
     <meta http-equiv="Permissions-Policy" content="accelerometer=(), deviceorientation=(), xr-spatial-tracking=()">
 
     <link rel="stylesheet" href="styles.css">
@@ -16,146 +15,167 @@
     <script src="script.js" defer></script>
 
     <style>
-        /* === STATS COUNTER (Beautiful with Emojis) === */
+        /* === STATS COUNTER === */
         .stats-counter {
-            font-size: 1.4rem;
-            margin: 25px 0;
+            font-size: 1.5rem;
+            margin: 30px 0;
             text-align: center;
             background: var(--glass-bg);
             backdrop-filter: blur(15px);
-            border-radius: 20px;
-            padding: 20px 30px;
+            border-radius: 25px;
+            padding: 22px 40px;
             border: 1px solid var(--glass-border);
             display: inline-block;
-            box-shadow: 0 12px 40px rgba(0, 212, 255, 0.2);
+            box-shadow: 0 15px 50px rgba(0, 212, 255, 0.25);
             font-weight: 600;
         }
         .stats-counter strong {
             background: linear-gradient(45deg, #00ffea, #00d4ff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            font-size: 2rem;
+            font-size: 2.2rem;
             font-weight: 900;
-            text-shadow: 0 0 20px rgba(0, 255, 234, 0.4);
+            text-shadow: 0 0 30px rgba(0, 255, 234, 0.5);
         }
 
-        /* === GAME PREVIEWS TITLE (Rainbow Animated + Sparkle) === */
-        .section-header {
+        /* === GAME PREVIEWS TITLE — ABSOLUTE PERFECTION === */
+        .previews-header {
             text-align: center;
-            margin: 60px 0 50px;
+            margin: 90px auto 60px;
+            padding: 20px;
+            max-width: 1000px;
         }
-        .section h2 {
-            font-size: 3.5rem;
-            font-weight: 800;
-            margin: 0 0 15px 0;
-            display: inline-block;
-            position: relative;
+        .main-title {
+            font-size: 4.8rem;
+            font-weight: 900;
+            margin: 0;
+            line-height: 1.1;
+            letter-spacing: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 25px;
+            flex-wrap: wrap;
         }
-        .gradient-title {
-            background: linear-gradient(90deg, #00ffea, #00d4ff, #8a2be2, #ff00ff, #00ffea);
-            background-size: 300% 300%;
+        .gradient {
+            background: linear-gradient(90deg, #00ffea, #00d4ff, #8a2be2, #ff2be2, #ff0080, #00ffea);
+            background-size: 400% 400%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: rainbowFlow 8s ease infinite;
-            letter-spacing: 2px;
+            animation: rainbow 8s ease infinite;
+            text-shadow: 0 0 50px rgba(0, 255, 234, 0.7);
         }
-        @keyframes rainbowFlow {
+        @keyframes rainbow {
             0%   { background-position: 0% 50%; }
             50%  { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
-        .sparkle {
-            font-size: 2.8rem;
-            margin-left: 15px;
-            animation: sparkle 2.2s infinite;
+        .stars {
+            font-size: 4rem;
+            animation: twinkle 2.5s infinite;
+            color: #ffd700;
+            text-shadow: 0 0 30px #ffd700;
         }
-        @keyframes sparkle {
+        @keyframes twinkle {
             0%, 100% { opacity: 0.7; transform: scale(1) rotate(0deg); }
-            50%      { opacity: 1; transform: scale(1.4) rotate(15deg); }
+            50%      { opacity: 1;   transform: scale(1.4) rotate(15deg); }
         }
 
-        .loaded-count {
-            font-size: 1.5rem;
-            color: #ccc;
-            margin: 0;
+        .subtitle {
+            font-size: 1.8rem;
+            color: #e0e0e0;
+            margin: 25px 0 0;
             font-weight: 500;
         }
-        .loaded-count strong {
+        .subtitle i {
+            color: #00d4ff;
+            margin-right: 12px;
+            animation: pulse 2s infinite;
+        }
+        .subtitle strong {
+            font-size: 2.6rem;
             color: #00ffea;
-            font-size: 2rem;
             font-weight: 900;
-            text-shadow: 0 0 25px rgba(0, 255, 234, 0.7);
+            text-shadow: 0 0 40px rgba(0, 255, 234, 0.9);
+            margin: 0 10px;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50%      { transform: scale(1.25); }
         }
 
-        /* === SEARCH + SORT BAR (Premium Glass Style) === */
+        /* === SEARCH + SORT BAR === */
         .search-sort-container {
-            margin: 40px auto;
-            max-width: 900px;
+            margin: 50px auto;
+            max-width: 950px;
             display: flex;
             flex-wrap: wrap;
-            gap: 18px;
+            gap: 20px;
             justify-content: center;
             align-items: center;
         }
         .search-wrapper {
             position: relative;
             flex: 1;
-            min-width: 300px;
-            max-width: 520px;
+            min-width: 320px;
+            max-width: 550px;
         }
         #search-input {
             width: 100%;
-            padding: 18px 55px 18px 24px;
-            font-size: 1.2rem;
+            padding: 20px 60px 20px 28px;
+            font-size: 1.3rem;
             border: none;
             border-radius: 50px;
             background: var(--glass-bg);
-            backdrop-filter: blur(15px);
+            backdrop-filter: blur(18px);
             color: var(--text);
-            box-shadow: 0 10px 40px rgba(0, 212, 255, 0.25);
+            box-shadow: 0 12px 50px rgba(0, 212, 255, 0.3);
             transition: all 0.4s ease;
         }
         #search-input:focus {
             outline: none;
-            transform: scale(1.03);
-            box-shadow: 0 0 30px rgba(0, 212, 255, 0.6);
+            transform: scale(1.04);
+            box-shadow: 0 0 40px rgba(0, 212, 255, 0.7);
             border: 2px solid #00d4ff;
         }
         .search-wrapper i {
             position: absolute;
-            right: 20px;
+            right: 22px;
             top: 50%;
             transform: translateY(-50%);
             color: #00d4ff;
-            font-size: 1.5rem;
+            font-size: 1.7rem;
             pointer-events: none;
         }
 
         #sort-select {
-            padding: 18px 24px;
-            font-size: 1.2rem;
+            padding: 20px 28px;
+            font-size: 1.3rem;
             border: none;
             border-radius: 50px;
             background: var(--glass-bg);
-            backdrop-filter: blur(15px);
+            backdrop-filter: blur(18px);
             color: var(--text);
-            min-width: 260px;
-            box-shadow: 0 10px 40px rgba(0, 212, 255, 0.25);
+            min-width: 280px;
+            box-shadow: 0 12px 50px rgba(0, 212, 255, 0.3);
             transition: all 0.4s;
         }
         #sort-select:focus {
             outline: none;
-            box-shadow: 0 0 30px rgba(0, 255, 234, 0.6);
-            transform: translateY(-3px);
+            box-shadow: 0 0 40px rgba(0, 255, 234, 0.7);
+            transform: translateY(-4px);
         }
 
+        /* Mobile Perfection */
         @media (max-width: 768px) {
-            .section h2 { font-size: 2.6rem; }
-            .gradient-title { font-size: 2.4rem; }
-            .search-sort-container { flex-direction: column; padding: 0 20px; }
+            .main-title { font-size: 3rem; gap: 15px; flex-direction: column; }
+            .stars { font-size: 2.8rem; }
+            .subtitle { font-size: 1.4rem; }
+            .subtitle strong { font-size: 2rem; }
+            .search-sort-container { flex-direction: column; padding: 0 15px; }
             .search-wrapper, #sort-select { width: 100%; max-width: none; }
-            .stats-counter { font-size: 1.2rem; padding: 16px; }
-            .stats-counter strong { font-size: 1.6rem; }
+            .stats-counter { font-size: 1.3rem; padding: 18px; }
+            .stats-counter strong { font-size: 1.8rem; }
         }
     </style>
 </head>
@@ -190,7 +210,6 @@
                     <h2>Welcome to Yobest Studio!</h2>
                     <p>Explore free and premium Roblox game files to enhance your creations.</p>
 
-                    <!-- Beautiful Stats -->
                     <div class="stats-counter">
                         <span>Site Visitors: <strong id="site-visitors">0</strong></span>    |   
                         <span>Total Downloads: <strong id="total-downloads">0</strong></span>
@@ -199,20 +218,20 @@
                     <a href="#game-previews" class="glass-btn btn-magenta">Check Out My Games</a>
                 </div>
 
-                <!-- GAME PREVIEWS SECTION -->
+                <!-- ULTIMATE GAME PREVIEWS SECTION -->
                 <div class="game-previews" id="game-previews">
-                    <div class="section">
-                        <h2>
-                            <span class="gradient-title">Game Previews</span>
-                            <span class="sparkle">Sparkles</span>
+                    <div class="previews-header">
+                        <h2 class="main-title">
+                            <span class="stars">***</span>
+                            <span class="gradient">Game Previews</span>
+                            <span class="stars">***</span>
                         </h2>
-                        <p class="loaded-count">
-                            <i class="fas fa-film"></i> 
-                            Loaded <strong id="video-count">0</strong> awesome games!
+                        <p class="subtitle">
+                            <i class="fas fa-play-circle"></i>
+                            Loaded <strong id="video-count">0</strong> incredible games for you!
                         </p>
                     </div>
 
-                    <!-- Search + Sort -->
                     <div class="search-sort-container">
                         <div class="search-wrapper">
                             <input type="text" id="search-input" placeholder="Search games by title...">
