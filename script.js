@@ -1,21 +1,21 @@
 // ======================================================
-// YOBEST STUDIO – FULL script.js (WITH PAGINATION!)
-// November 28, 2025 – Enhanced by Grok
+//      YOBEST STUDIO – FULL script.js (2025 FINAL)
+//  Pagination + Supabase + YouTube + game.html + Everything
 // ======================================================
-console.log("%cYobest Studio Loaded – Supabase + Pagination ACTIVE", "color: #00ff88; font-size: 16px; font-weight: bold;");
+console.log("%cYobest Studio Loaded – FULL POWER MODE", "color: #00ffea; font-size: 18px; font-weight: bold;");
 
-// === 1. Load Supabase Client ===
+// ==================== 1. SUPABASE ====================
 const supabaseScript = document.createElement('script');
 supabaseScript.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
 supabaseScript.onload = () => {
     const customScript = document.createElement('script');
-    customScript.src = 'supabase.js';
-    customScript.onload = () => console.log("%cSupabase Connected!", "color: cyan;");
+    customScript.src = 'supabase.js'; // Your Supabase config file
+    customScript.onload = () => console.log("%cSupabase Connected & Ready!", "color: cyan;");
     document.head.appendChild(customScript);
 };
 document.head.appendChild(supabaseScript);
 
-// === 2. Mouse Trail ===
+// ==================== 2. MOUSE TRAIL ====================
 window.updateTrail = function(e) {
     const trail = document.getElementById('mouse-trail');
     if (trail) {
@@ -26,7 +26,7 @@ window.updateTrail = function(e) {
     }
 };
 
-// === 3. FontAwesome ===
+// ==================== 3. FONTAWESOME ====================
 const faCSS = document.createElement('link');
 faCSS.rel = 'stylesheet';
 faCSS.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css';
@@ -34,7 +34,7 @@ faCSS.integrity = 'sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/g
 faCSS.crossOrigin = 'anonymous';
 document.head.appendChild(faCSS);
 
-// === 4. Particles Background (unchanged) ===
+// ==================== 4. PARTICLES BACKGROUND ====================
 const canvas = document.getElementById('particles-canvas');
 if (canvas) {
     const ctx = canvas.getContext('2d');
@@ -99,7 +99,7 @@ if (canvas) {
     animate();
 }
 
-// === 5. Download Tracking ===
+// ==================== 5. DOWNLOAD TRACKING ====================
 document.addEventListener('click', e => {
     const link = e.target.closest('a');
     if (link && (
@@ -113,8 +113,9 @@ document.addEventListener('click', e => {
     }
 });
 
-// === 6. YouTube Data + Game Previews ===
+// ==================== 6. YOUTUBE + GAMES DATA ====================
 const YT_API_KEY = 'AIzaSyChwoHXMqlbmAfeh4lbRUFWx2HjIZ6VV2k';
+
 let gamePreviews = [
     {creator:"Yobest",videoLink:"https://www.youtube.com/watch?v=gHeW6FvXmkk",downloadLink:"https://workink.net/1RdO/o1tps3s0",download:true,gameLink:"https://www.roblox.com/games/102296952865049/Yobest-Ball-Game",gamePlay:true,price:"Free"},
     {creator:"Yobest",videoLink:"https://www.youtube.com/watch?v=XiGrxZNzpZM",downloadLink:"https://workink.net/1RdO/d072o5mz",download:true,gameLink:"https://www.roblox.com/games/16907652511/Yobests-Anime-Guardian-Clash-Up2",gamePlay:true,price:"Free"},
@@ -129,10 +130,10 @@ let gamePreviews = [
     {creator:"Yobest",videoLink:"https://www.youtube.com/watch?v=bW3ILQnV6Rw",downloadLink:"https://workink.net/1RdO/ln08hlhk",download:true,gameLink:"",gamePlay:false,price:"Free"},
     {creator:"Yobest",videoLink:"https://www.youtube.com/watch?v=ofOqiIa_Q3Y",downloadLink:"https://workink.net/1RdO/lmkp2h0j",download:true,gameLink:"",gamePlay:false,price:"Free"},
     {creator:"Yobest",videoLink:"https://www.youtube.com/watch?v=KATJLumZSOs",downloadLink:"https://workink.net/1RdO/lm95jqw3",download:true,gameLink:"",gamePlay:false,price:"Free"}
-    // Add 100+ more games — pagination will handle them all!
+    // Add 100+ more games — pagination handles everything!
 ];
 
-// === PAGINATION SYSTEM (NEW!) ===
+// ==================== 7. PAGINATION SYSTEM ====================
 const itemsPerPage = 9;
 let currentPage = 1;
 
@@ -141,7 +142,6 @@ function parsePrice(price) {
     return parseInt(price.replace(/\D/g, '')) || 999999;
 }
 
-// Render pagination buttons
 function renderPagination(totalItems) {
     const totalPages = Math.ceil(totalItems / itemsPerPage);
     const pagination = document.getElementById('pagination');
@@ -170,25 +170,19 @@ function renderPagination(totalItems) {
     pagination.innerHTML = html;
 }
 
-// Change page + smooth scroll
 function changePage(page) {
-    const filteredCount = gamePreviews.filter(g => 
-        (g.title || '').toLowerCase().includes((document.getElementById('search-input')?.value || '').toLowerCase())
-    ).length;
-
+    const search = (document.getElementById('search-input')?.value || '').toLowerCase();
+    const filteredCount = gamePreviews.filter(g => (g.title || '').toLowerCase().includes(search)).length;
     const totalPages = Math.ceil(filteredCount / itemsPerPage);
     if (page < 1 || page > totalPages) return;
 
     currentPage = page;
     loadVideos();
 
-    document.getElementById('game-previews')?.scrollIntoView({ 
-        behavior: 'smooth', 
-        block: 'start' 
-    });
+    document.getElementById('game-previews')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-// === MAIN loadVideos() WITH PAGINATION ===
+// ==================== 8. FETCH YOUTUBE DATA ====================
 async function fetchYouTubeData() {
     const ids = gamePreviews.map(g => g.videoLink.split('v=')[1]).join(',');
     try {
@@ -205,9 +199,12 @@ async function fetchYouTubeData() {
                 g.thumbnail = video.snippet.thumbnails.maxres?.url || video.snippet.thumbnails.high.url;
             }
         });
-    } catch (e) { console.error('YouTube API error:', e); }
+    } catch (e) {
+        console.error('YouTube API Error:', e);
+    }
 }
 
+// ==================== 9. LOAD VIDEOS (WITH PAGINATION) ====================
 function loadVideos() {
     const container = document.getElementById('video-list');
     if (!container) return;
@@ -233,10 +230,8 @@ function loadVideos() {
         });
     }
 
-    // Update total count
     document.getElementById('video-count').textContent = filtered.length;
 
-    // Pagination
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
     const pageItems = filtered.slice(start, end);
@@ -254,6 +249,7 @@ function loadVideos() {
     renderPagination(filtered.length);
 }
 
+// ==================== 10. OPEN GAME → game.html ====================
 function openGame(id) {
     const game = gamePreviews.find(g => g.videoLink.includes(id));
     if (game) {
@@ -262,11 +258,45 @@ function openGame(id) {
     }
 }
 
-// === game.html Functions (unchanged) ===
-async function loadGameDetails() { /* ... your existing code ... */ }
-async function loadYouTubeComments(videoId) { /* ... your existing code ... */ }
+// ==================== 11. GAME.HTML: LOAD DETAILS & COMMENTS ====================
+async function loadGameDetails() {
+    const game = JSON.parse(sessionStorage.getItem('currentGame') || 'null');
+    if (!game) return location.href = 'index.html';
 
-// === Theme & Loading ===
+    document.getElementById('video-player').src = `https://www.youtube.com/embed/${game.videoLink.split('v=')[1]}?autoplay=1&rel=0&modestbranding=1`;
+    document.getElementById('video-title').textContent = game.title || "Game";
+    document.getElementById('video-views').textContent = Number(game.views || 0).toLocaleString();
+    document.getElementById('video-likes').textContent = Number(game.likes || 0).toLocaleString();
+    document.getElementById('video-date').textContent = new Date(game.publishedAt || Date.now()).toLocaleDateString('en-GB');
+    document.getElementById('video-price').textContent = game.price;
+    document.getElementById('video-description').innerHTML = (game.description || "No description.").replace(/\n/g, '<br>');
+
+    const dl = document.getElementById('download-btn');
+    const play = document.getElementById('try-game-btn');
+    if (game.download) dl.style.display = 'inline-flex'; else dl.style.display = 'none';
+    if (game.gamePlay) play.style.display = 'inline-flex'; else play.style.display = 'none';
+    dl.href = game.downloadLink || '#';
+    play.href = game.gameLink || '#';
+
+    await loadYouTubeComments(game.videoLink.split('v=')[1]);
+}
+
+async function loadYouTubeComments(videoId) {
+    const container = document.getElementById('youtube-comments');
+    if (!container) return;
+    try {
+        const res = await fetch(`https://www.googleapis.com/youtube/v3/commentThreads?key=${YT_API_KEY}&videoId=${videoId}&part=snippet&maxResults=20`);
+        const data = await res.json();
+        container.innerHTML = data.items?.map(i => {
+            const c = i.snippet.topLevelComment.snippet;
+            return `<div class="comment"><div class="comment-header"><strong>${c.authorDisplayName}</strong> <span>${new Date(c.publishedAt).toLocaleDateString()}</span></div><p>${c.textDisplay.replace(/</g,'&lt;')}</p><small>${c.likeCount} likes</small></div>`;
+        }).join('') || '<p>No comments yet.</p>';
+    } catch {
+        container.innerHTML = '<p>Comments failed to load.</p>';
+    }
+}
+
+// ==================== 12. THEME & LOADING ====================
 function toggleTheme() {
     document.body.classList.toggle('light-mode');
     localStorage.setItem('theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
@@ -274,17 +304,19 @@ function toggleTheme() {
 function showLoading() { document.getElementById('loading-overlay')?.style.setProperty('display', 'flex'); }
 function hideLoading() { setTimeout(() => document.getElementById('loading-overlay')?.style.setProperty('display', 'none'), 600); }
 
-// === ON LOAD ===
+// ==================== 13. ON PAGE LOAD ====================
 document.addEventListener('DOMContentLoaded', () => {
     hideLoading();
     if (localStorage.getItem('theme') === 'light') document.body.classList.add('light-mode');
     document.getElementById('theme-toggle')?.addEventListener('click', toggleTheme);
 
+    // Load Supabase counters
     setTimeout(() => {
         if (window.loadCounters) window.loadCounters();
         if (window.trackVisitor) window.trackVisitor();
     }, 1500);
 
+    // INDEX PAGE
     if (location.pathname.includes('index.html') || location.pathname === '/') {
         showLoading();
         fetchYouTubeData().then(() => {
@@ -302,10 +334,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // GAME PAGE
     if (location.pathname.includes('game.html')) {
         showLoading();
-        fetchYouTubeData().then(() => { loadGameDetails(); hideLoading(); });
+        fetchYouTubeData().then(() => {
+            loadGameDetails();
+            hideLoading();
+        });
     }
 });
 
-console.log("%cYobest Studio – PAGINATION + SUPABASE 100% READY!", "color: #00ffff; font-weight: bold;");
+console.log("%cYobest Studio – GOD MODE ACTIVATED", "color: #ff00ff; font-size: 20px; font-weight: bold;");
