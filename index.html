@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Yobest Studio - Home</title>
 
+    <!-- Security & Performance Fix -->
     <meta http-equiv="Permissions-Policy" content="accelerometer=(), deviceorientation=(), xr-spatial-tracking=()">
 
     <link rel="stylesheet" href="styles.css">
@@ -14,101 +15,147 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Montserrat:wght@700&display=swap" rel="stylesheet">
     <script src="script.js" defer></script>
 
-    <!-- NEW: Beautiful Search & Sort Styling -->
     <style>
+        /* === STATS COUNTER (Beautiful with Emojis) === */
         .stats-counter {
             font-size: 1.4rem;
-            margin: 20px 0;
+            margin: 25px 0;
             text-align: center;
             background: var(--glass-bg);
             backdrop-filter: blur(15px);
             border-radius: 20px;
-            padding: 18px;
+            padding: 20px 30px;
             border: 1px solid var(--glass-border);
             display: inline-block;
-            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.15);
+            box-shadow: 0 12px 40px rgba(0, 212, 255, 0.2);
+            font-weight: 600;
         }
         .stats-counter strong {
             background: linear-gradient(45deg, #00ffea, #00d4ff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            font-size: 1.8rem;
-            font-weight: 800;
+            font-size: 2rem;
+            font-weight: 900;
+            text-shadow: 0 0 20px rgba(0, 255, 234, 0.4);
         }
 
+        /* === GAME PREVIEWS TITLE (Rainbow Animated + Sparkle) === */
+        .section-header {
+            text-align: center;
+            margin: 60px 0 50px;
+        }
+        .section h2 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin: 0 0 15px 0;
+            display: inline-block;
+            position: relative;
+        }
+        .gradient-title {
+            background: linear-gradient(90deg, #00ffea, #00d4ff, #8a2be2, #ff00ff, #00ffea);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: rainbowFlow 8s ease infinite;
+            letter-spacing: 2px;
+        }
+        @keyframes rainbowFlow {
+            0%   { background-position: 0% 50%; }
+            50%  { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .sparkle {
+            font-size: 2.8rem;
+            margin-left: 15px;
+            animation: sparkle 2.2s infinite;
+        }
+        @keyframes sparkle {
+            0%, 100% { opacity: 0.7; transform: scale(1) rotate(0deg); }
+            50%      { opacity: 1; transform: scale(1.4) rotate(15deg); }
+        }
+
+        .loaded-count {
+            font-size: 1.5rem;
+            color: #ccc;
+            margin: 0;
+            font-weight: 500;
+        }
+        .loaded-count strong {
+            color: #00ffea;
+            font-size: 2rem;
+            font-weight: 900;
+            text-shadow: 0 0 25px rgba(0, 255, 234, 0.7);
+        }
+
+        /* === SEARCH + SORT BAR (Premium Glass Style) === */
         .search-sort-container {
-            margin: 30px 0 40px;
+            margin: 40px auto;
+            max-width: 900px;
             display: flex;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 18px;
             justify-content: center;
             align-items: center;
         }
-
         .search-wrapper {
             position: relative;
             flex: 1;
-            min-width: 280px;
-            max-width: 500px;
+            min-width: 300px;
+            max-width: 520px;
         }
-
         #search-input {
             width: 100%;
-            padding: 16px 50px 16px 20px;
-            font-size: 1.1rem;
-            border: 2px solid transparent;
+            padding: 18px 55px 18px 24px;
+            font-size: 1.2rem;
+            border: none;
             border-radius: 50px;
             background: var(--glass-bg);
-            backdrop-filter: blur(12px);
+            backdrop-filter: blur(15px);
             color: var(--text);
-            box-shadow: 0 8px 32px rgba(0, 212, 255, 0.2);
+            box-shadow: 0 10px 40px rgba(0, 212, 255, 0.25);
             transition: all 0.4s ease;
         }
-
         #search-input:focus {
             outline: none;
-            border-color: #00d4ff;
-            box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
-            transform: scale(1.02);
+            transform: scale(1.03);
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.6);
+            border: 2px solid #00d4ff;
         }
-
         .search-wrapper i {
             position: absolute;
-            right: 18px;
+            right: 20px;
             top: 50%;
             transform: translateY(-50%);
             color: #00d4ff;
-            font-size: 1.4rem;
+            font-size: 1.5rem;
             pointer-events: none;
         }
 
         #sort-select {
-            padding: 16px 20px;
-            font-size: 1.1rem;
-            border: 2px solid transparent;
+            padding: 18px 24px;
+            font-size: 1.2rem;
+            border: none;
             border-radius: 50px;
             background: var(--glass-bg);
-            backdrop-filter: blur(12px);
+            backdrop-filter: blur(15px);
             color: var(--text);
-            min-width: 220px;
-            box-shadow: 0 8px 32px rgba(0, 212, 255, 0.2);
-            transition: all 0.4s ease;
+            min-width: 260px;
+            box-shadow: 0 10px 40px rgba(0, 212, 255, 0.25);
+            transition: all 0.4s;
         }
-
         #sort-select:focus {
             outline: none;
-            border-color: #00ffea;
-            box-shadow: 0 0 20px rgba(0, 255, 234, 0.5);
+            box-shadow: 0 0 30px rgba(0, 255, 234, 0.6);
+            transform: translateY(-3px);
         }
 
         @media (max-width: 768px) {
-            .search-sort-container {
-                flex-direction: column;
-            }
-            .search-wrapper, #sort-select {
-                width: 100%;
-                max-width: none;
-            }
+            .section h2 { font-size: 2.6rem; }
+            .gradient-title { font-size: 2.4rem; }
+            .search-sort-container { flex-direction: column; padding: 0 20px; }
+            .search-wrapper, #sort-select { width: 100%; max-width: none; }
+            .stats-counter { font-size: 1.2rem; padding: 16px; }
+            .stats-counter strong { font-size: 1.6rem; }
         }
     </style>
 </head>
@@ -125,11 +172,11 @@
         <div class="header-content">
             <img src="yobest_studio_logo.png" alt="Yobest Studio" style="max-height: 50px;">
             <nav>
-                <a href="index.html" class="glass-btn btn-teal"> Home</a>
-                <a href="ai.html" class="glass-btn btn-magenta"> AI Tools</a>
-                <a href="contact.html" class="glass-btn btn-yellow"> Contact</a>
-                <a href="donation.html" class="glass-btn btn-gray"> Donation</a>
-                <button id="theme-toggle" class="glass-btn btn-teal"> Moon Icon</button>
+                <a href="index.html" class="glass-btn btn-teal">Home</a>
+                <a href="ai.html" class="glass-btn btn-magenta">AI Tools</a>
+                <a href="contact.html" class="glass-btn btn-yellow">Contact</a>
+                <a href="donation.html" class="glass-btn btn-gray">Donation</a>
+                <button id="theme-toggle" class="glass-btn btn-teal">Moon</button>
             </nav>
         </div>
     </header>
@@ -143,32 +190,41 @@
                     <h2>Welcome to Yobest Studio!</h2>
                     <p>Explore free and premium Roblox game files to enhance your creations.</p>
 
-                    <!-- Updated Stats with Emojis -->
+                    <!-- Beautiful Stats -->
                     <div class="stats-counter">
-                        <span> Site Visitors: <strong id="site-visitors">0</strong></span>   |  
-                        <span> Total Downloads: <strong id="total-downloads">0</strong></span>
+                        <span>Site Visitors: <strong id="site-visitors">0</strong></span>    |   
+                        <span>Total Downloads: <strong id="total-downloads">0</strong></span>
                     </div>
 
                     <a href="#game-previews" class="glass-btn btn-magenta">Check Out My Games</a>
                 </div>
 
+                <!-- GAME PREVIEWS SECTION -->
                 <div class="game-previews" id="game-previews">
-                    <h2>Game Previews</h2>
-                    <p>Loaded <span id="video-count">0</span> videos!</p>
+                    <div class="section">
+                        <h2>
+                            <span class="gradient-title">Game Previews</span>
+                            <span class="sparkle">Sparkles</span>
+                        </h2>
+                        <p class="loaded-count">
+                            <i class="fas fa-film"></i> 
+                            Loaded <strong id="video-count">0</strong> awesome games!
+                        </p>
+                    </div>
 
-                    <!-- Beautiful Search + Sort -->
+                    <!-- Search + Sort -->
                     <div class="search-sort-container">
                         <div class="search-wrapper">
                             <input type="text" id="search-input" placeholder="Search games by title...">
                             <i class="fas fa-search"></i>
                         </div>
                         <select id="sort-select">
-                            <option value=""> Sort by...</option>
-                            <option value="price-asc"> Price: Low to High</option>
-                            <option value="price-desc"> Price: High to Low</option>
-                            <option value="views-desc"> Most Viewed</option>
-                            <option value="likes-desc"> Most Liked</option>
-                            <option value="date-desc"> Newest First</option>
+                            <option value="">Sort by...</option>
+                            <option value="price-asc">Price: Low to High</option>
+                            <option value="price-desc">Price: High to Low</option>
+                            <option value="views-desc">Most Viewed</option>
+                            <option value="likes-desc">Most Liked</option>
+                            <option value="date-desc">Newest First</option>
                         </select>
                     </div>
 
@@ -185,9 +241,9 @@
     <footer>
         <p>© 2025 Yobest Studio. All Rights Reserved.</p>
         <div class="social-links">
-            <a href="https://youtube.com/@YobestRobloxStudio" target="_blank"> YouTube</a>
-            <a href="https://twitter.com/Yobest_BYTR" target="_blank"> Twitter</a>
-            <a href="https://discord.gg/jKASqrc7H3" target="_blank"> Discord</a>
+            <a href="https://youtube.com/@YobestRobloxStudio" target="_blank">YouTube</a>
+            <a href="https://twitter.com/Yobest_BYTR" target="_blank">Twitter</a>
+            <a href="https://discord.gg/jKASqrc7H3" target="_blank">Discord</a>
         </div>
     </footer>
 
