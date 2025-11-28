@@ -5,21 +5,112 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Yobest Studio - Home</title>
 
-    <!-- FIX: Stop annoying permission policy warnings -->
     <meta http-equiv="Permissions-Policy" content="accelerometer=(), deviceorientation=(), xr-spatial-tracking=()">
 
     <link rel="stylesheet" href="styles.css">
     <script src="https://kit.fontawesome.com/64d58efce2.js" crossorigin="anonymous"></script>
     <link rel="icon" href="yobest_studio_logo.png" type="image/png">
-    
-    <!-- Your ad script (keep if you want) -->
     <script src="https://fpyf8.com/88/tag.min.js" data-zone="152581" async data-cfasync="false"></script>
-    
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Montserrat:wght@700&display=swap" rel="stylesheet">
-
-    <!-- LOAD script.js FIRST with defer → fixes "updateTrail is not defined" -->
     <script src="script.js" defer></script>
+
+    <!-- NEW: Beautiful Search & Sort Styling -->
+    <style>
+        .stats-counter {
+            font-size: 1.4rem;
+            margin: 20px 0;
+            text-align: center;
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 18px;
+            border: 1px solid var(--glass-border);
+            display: inline-block;
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.15);
+        }
+        .stats-counter strong {
+            background: linear-gradient(45deg, #00ffea, #00d4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 1.8rem;
+            font-weight: 800;
+        }
+
+        .search-sort-container {
+            margin: 30px 0 40px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .search-wrapper {
+            position: relative;
+            flex: 1;
+            min-width: 280px;
+            max-width: 500px;
+        }
+
+        #search-input {
+            width: 100%;
+            padding: 16px 50px 16px 20px;
+            font-size: 1.1rem;
+            border: 2px solid transparent;
+            border-radius: 50px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            color: var(--text);
+            box-shadow: 0 8px 32px rgba(0, 212, 255, 0.2);
+            transition: all 0.4s ease;
+        }
+
+        #search-input:focus {
+            outline: none;
+            border-color: #00d4ff;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+            transform: scale(1.02);
+        }
+
+        .search-wrapper i {
+            position: absolute;
+            right: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #00d4ff;
+            font-size: 1.4rem;
+            pointer-events: none;
+        }
+
+        #sort-select {
+            padding: 16px 20px;
+            font-size: 1.1rem;
+            border: 2px solid transparent;
+            border-radius: 50px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            color: var(--text);
+            min-width: 220px;
+            box-shadow: 0 8px 32px rgba(0, 212, 255, 0.2);
+            transition: all 0.4s ease;
+        }
+
+        #sort-select:focus {
+            outline: none;
+            border-color: #00ffea;
+            box-shadow: 0 0 20px rgba(0, 255, 234, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            .search-sort-container {
+                flex-direction: column;
+            }
+            .search-wrapper, #sort-select {
+                width: 100%;
+                max-width: none;
+            }
+        }
+    </style>
 </head>
 <body onmousemove="updateTrail(event)">
 
@@ -34,11 +125,11 @@
         <div class="header-content">
             <img src="yobest_studio_logo.png" alt="Yobest Studio" style="max-height: 50px;">
             <nav>
-                <a href="index.html" class="glass-btn btn-teal"><i class="fas fa-home"></i> Home</a>
-                <a href="ai.html" class="glass-btn btn-magenta"><i class="fas fa-robot"></i> AI Tools</a>
-                <a href="contact.html" class="glass-btn btn-yellow"><i class="fas fa-envelope"></i> Contact</a>
-                <a href="donation.html" class="glass-btn btn-gray"><i class="fas fa-heart"></i> Donation</a>
-                <button id="theme-toggle" class="glass-btn btn-teal"><i class="fas fa-moon"></i></button>
+                <a href="index.html" class="glass-btn btn-teal"> Home</a>
+                <a href="ai.html" class="glass-btn btn-magenta"> AI Tools</a>
+                <a href="contact.html" class="glass-btn btn-yellow"> Contact</a>
+                <a href="donation.html" class="glass-btn btn-gray"> Donation</a>
+                <button id="theme-toggle" class="glass-btn btn-teal"> Moon Icon</button>
             </nav>
         </div>
     </header>
@@ -51,27 +142,36 @@
                 <div class="hero">
                     <h2>Welcome to Yobest Studio!</h2>
                     <p>Explore free and premium Roblox game files to enhance your creations.</p>
-                    <p>
-                        Site Visitors: <strong id="site-visitors">0</strong> | 
-                        Total Downloads: <strong id="total-downloads">0</strong>
-                    </p>
+
+                    <!-- Updated Stats with Emojis -->
+                    <div class="stats-counter">
+                        <span> Site Visitors: <strong id="site-visitors">0</strong></span>   |  
+                        <span> Total Downloads: <strong id="total-downloads">0</strong></span>
+                    </div>
+
                     <a href="#game-previews" class="glass-btn btn-magenta">Check Out My Games</a>
                 </div>
 
                 <div class="game-previews" id="game-previews">
                     <h2>Game Previews</h2>
                     <p>Loaded <span id="video-count">0</span> videos!</p>
-                    <div class="search-sort" style="margin-bottom: 20px; display: flex; gap: 10px;">
-                        <input type="text" id="search-input" placeholder="Search games..." style="padding: 10px; border-radius: 5px; border: 1px solid #ccc; flex: 1;">
-                        <select id="sort-select" style="padding: 10px; border-radius: 5px; border: 1px solid #ccc;">
-                            <option value="">Sort by...</option>
-                            <option value="price-asc">Price (Low to High)</option>
-                            <option value="price-desc">Price (High to Low)</option>
-                            <option value="views-desc">Views (High to Low)</option>
-                            <option value="likes-desc">Likes (High to Low)</option>
-                            <option value="date-desc">Date (Newest First)</option>
+
+                    <!-- Beautiful Search + Sort -->
+                    <div class="search-sort-container">
+                        <div class="search-wrapper">
+                            <input type="text" id="search-input" placeholder="Search games by title...">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <select id="sort-select">
+                            <option value=""> Sort by...</option>
+                            <option value="price-asc"> Price: Low to High</option>
+                            <option value="price-desc"> Price: High to Low</option>
+                            <option value="views-desc"> Most Viewed</option>
+                            <option value="likes-desc"> Most Liked</option>
+                            <option value="date-desc"> Newest First</option>
                         </select>
                     </div>
+
                     <div id="video-list" class="video-grid"></div>
                 </div>
             </div>
@@ -85,15 +185,11 @@
     <footer>
         <p>© 2025 Yobest Studio. All Rights Reserved.</p>
         <div class="social-links">
-            <a href="https://youtube.com/@YobestRobloxStudio" target="_blank"><i class="fab fa-youtube"></i> YouTube</a>
-            <a href="https://twitter.com/Yobest_BYTR" target="_blank"><i class="fab fa-twitter"></i> Twitter</a>
-            <a href="https://discord.gg/jKASqrc7H3" target="_blank"><i class="fab fa-discord"></i> Discord</a>
+            <a href="https://youtube.com/@YobestRobloxStudio" target="_blank"> YouTube</a>
+            <a href="https://twitter.com/Yobest_BYTR" target="_blank"> Twitter</a>
+            <a href="https://discord.gg/jKASqrc7H3" target="_blank"> Discord</a>
         </div>
     </footer>
-
-    <!-- REMOVED: Old Firebase scripts (no longer needed) -->
-    <!-- <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script> -->
-    <!-- <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script> -->
 
 </body>
 </html>
