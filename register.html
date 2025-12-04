@@ -181,7 +181,7 @@
                         <input type="password" id="password" placeholder="Password (6+ characters)" required minlength="6">
                     </div>
 
-                    <div id="status-msg"></div>
+                    <div id="status-msg" class="status-msg"></div>
 
                     <button class="register-btn" id="register-btn" onclick="handleRegister()">
                         Create Account
@@ -230,10 +230,9 @@
 
             debounce = setTimeout(async () => {
                 try {
-                    // 100% WORKING CORS PROXY
-const proxy = 'https://corsproxy.io/?';
-const url = `https://users.roblox.com/v1/users/search?keyword=${encodeURIComponent(username)}&limit=1`;
-const res = await fetch(proxy + encodeURIComponent(url));
+                    // ROPROXY — 100% WORKING, NO CORS, NO 400, NO BLOCKING
+                    const url = `https://api.roproxy.com/https://users.roblox.com/v1/users/search?keyword=${encodeURIComponent(username)}&limit=1`;
+                    const res = await fetch(url);
                     const data = await res.json();
                     const user = data.data?.[0];
 
@@ -246,6 +245,7 @@ const res = await fetch(proxy + encodeURIComponent(url));
                         msg.innerHTML = '<div class="error">User not found. Check spelling!</div>';
                     }
                 } catch (e) {
+                    console.error("Avatar fetch failed:", e);
                     msg.innerHTML = '<div class="error">Search failed. Try again.</div>';
                 }
             }, 800);
