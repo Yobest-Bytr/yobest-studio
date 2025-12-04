@@ -230,31 +230,32 @@
 
             debounce = setTimeout(async () => {
                 try {
-                    // STEP 1: Get user ID
                     const proxy = 'https://corsproxy.io/?';
                     const searchUrl = `https://users.roblox.com/v1/users/search?keyword=${encodeURIComponent(username)}&limit=10`;
-                    const searchRes = await fetch(proxy + encodeURIComponent(searchUrl));
-                    const searchData = await searchRes.json();
+                    const res = await fetch(proxy + encodeURIComponent(searchUrl));
+                    const data = await res.json();
+                    const user = data.data?.[0];
 
-                    const user = searchData.data?.[0];
-                    if (!user) throw new Error("User not found");
+                    if (user) {
+                        const thumbUrl = `https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=${user.id}&size=150x150&format=Png&isCircular=false`;
+                        const thumbRes = await fetch(proxy + encodeURIComponent(thumbUrl));
+                        const thumbData = await thumbRes.json();
 
-                    // STEP 2: Get headshot using user ID
-                    const thumbUrl = `https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=${user.id}&size=150x150&format=Png&isCircular=false`;
-                    const thumbRes = await fetch(proxy + encodeURIComponent(thumbUrl));
-                    const thumbData = await thumbRes.json();
-
-                    const imageUrl = thumbData.data?.[0]?.imageUrl;
-                    if (imageUrl) {
-                        preview.src = imageUrl;
-                        preview.classList.add('rainbow');
-                        msg.innerHTML = `<div class="success">Found! Welcome, ${user.name}!</div>`;
+                        const imageUrl = thumbData.data?.[0]?.imageUrl;
+                        if (imageUrl) {
+                            preview.src = imageUrl;
+                            preview.classList.add('rainbow');
+                            msg.innerHTML = `<div class="success">Found! Welcome, ${user.name}!</div>`;
+                        } else {
+                            throw new Error("No image");
+                        }
                     } else {
-                        throw new Error("No image");
+                        preview.src = 'https://i.imgur.com/8Q3Z2yK.png';
+                        msg.innerHTML = '<div class="error">User not found. Check spelling!</div>';
                     }
                 } catch (e) {
                     preview.src = 'https://i.imgur.com/8Q3Z2yK.png';
-                    msg.innerHTML = '<div class="error">User not found or API failed.</div>';
+                    msg.innerHTML = '<div class="error">Search failed. Try again.</div>';
                 }
             }, 800);
         });
@@ -280,7 +281,7 @@
 
             try {
                 await register(email, password, username);
-                msg.innerHTML = '<div class="success">Account created! Redirecting...</div>';
+                msg.innerHTML = '<div class="success">Success! Logging you in...</div>';
                 setTimeout(() => location.href = 'index.html', 2000);
             } catch (err) {
                 msg.innerHTML = `<div class="error">${err.message || "Registration failed! Try again."}</div>`;
