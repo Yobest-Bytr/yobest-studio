@@ -100,10 +100,50 @@
         /* === SEARCH + SORT === */
         .search-sort-container { margin: 50px auto; max-width: 950px; display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
         .search-wrapper { position: relative; flex: 1; min-width: 320px; max-width: 550px; }
-        #search-input { width: 100%; padding: 20px 60px 20px 28px; font-size: 1.3rem; border: none; border-radius: 50px; background: var(--glass-bg); backdrop-filter: blur(18px); color: var(--text); box-shadow: 0 12px 50px rgba(0,212,255,0.3); transition: all 0.4s; }
-        #search-input:focus { outline: none; transform: scale(1.04); box-shadow: 0 0 40px rgba(0,212,255,0.7); border: 2px solid #00d4ff; }
+        #search-input, #user-search-input { 
+            width: 100%; padding: 20px 60px 20px 28px; font-size: 1.3rem; border: none; border-radius: 50px; 
+            background: var(--glass-bg); backdrop-filter: blur(18px); color: var(--text-light); 
+            box-shadow: 0 12px 50px rgba(0,212,255,0.3); transition: all 0.4s; 
+        }
+        #search-input:focus, #user-search-input:focus { 
+            outline: none; transform: scale(1.04); box-shadow: 0 0 40px rgba(0,212,255,0.7); border: 2px solid #00d4ff; 
+        }
         .search-wrapper i { position: absolute; right: 22px; top: 50%; transform: translateY(-50%); color: #00d4ff; font-size: 1.7rem; pointer-events: none; }
-        #sort-select { padding: 20px 28px; font-size: 1.3rem; border: none; border-radius: 50px; background: var(--glass-bg); backdrop-filter: blur(18px); color: var(--text); min-width: 280px; box-shadow: 0 12px 50px rgba(0,212,255,0.3); transition: all 0.4s; }
+        #sort-select { padding: 20px 28px; font-size: 1.3rem; border: none; border-radius: 50px; background: var(--glass-bg); backdrop-filter: blur(18px); color: var(--text-light); min-width: 280px; box-shadow: 0 12px 50px rgba(0,212,255,0.3); transition: all 0.4s; }
+
+        /* User Search Results */
+        #user-search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--glass-bg);
+            border-radius: 16px;
+            margin-top: 8px;
+            max-height: 400px;
+            overflow-y: auto;
+            z-index: 999;
+            border: 1px solid var(--glass-border);
+            display: none;
+        }
+        .search-result {
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .search-result:hover {
+            background: rgba(0, 212, 255, 0.2);
+            transform: translateX(8px);
+        }
+        .search-result img {
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            border: 2px solid #00d4ff;
+        }
 
         /* === PAGINATION === */
         .pagination {
@@ -115,7 +155,7 @@
             background: var(--glass-bg);
             backdrop-filter: blur(12px);
             border: 1px solid var(--glass-border);
-            color: var(--text);
+            color: var(--text-light);
             padding: 14px 22px;
             margin: 0 8px;
             border-radius: 50px;
@@ -150,18 +190,34 @@
         <div class="header-content">
             <img src="yobest_studio_logo.png" alt="Yobest Studio" style="max-height: 50px;">
             <nav>
-                 <a href="index.html" class="glass-btn btn-teal"><i class="fas fa-home"></i> Home</a>
-                <a href="ai.html" class="glass-btn btn-magenta"><i class="fas fa-robot"></i> AI Tools</a>
-                <a href="contact.html" class="glass-btn btn-yellow"><i class="fas fa-envelope"></i> Contact</a>
-                <a href="donation.html" class="glass-btn btn-gray"><i class="fas fa-heart"></i> Donation</a>
-                <button id="theme-toggle" class="glass-btn btn-teal"><i class="fas fa-moon"></i></button>
+                <a href="index.html" class="glass-btn btn-teal">Home</a>
+                <a href="ai.html" class="glass-btn btn-magenta">AI Tools</a>
+                <a href="contact.html" class="glass-btn btn-yellow">Contact</a>
+                <a href="donation.html" class="glass-btn btn-gray">Donation</a>
+
+                <!-- AUTH SECTION -->
+                <div id="auth-buttons" style="display:flex; gap:12px; align-items:center;">
+                    <a href="login.html" class="glass-btn btn-teal">Login</a>
+                    <a href="register.html" class="glass-btn btn-magenta">Register</a>
+                </div>
+
+                <div id="user-menu" style="display:none; align-items:center; gap:14px;">
+                    <img id="user-avatar" src="" alt="Avatar" style="width:44px; height:44px; border-radius:50%; border:4px solid #00d4ff; box-shadow: var(--glow); object-fit:cover;">
+                    <span id="user-name" style="font-weight:700; font-size:1.1rem;"></span>
+                    <button onclick="logout()" class="glass-btn" style="padding:10px 18px; font-size:0.9rem;">Logout</button>
+                </div>
+
+                <button id="theme-toggle" class="glass-btn btn-teal">Moon</button>
             </nav>
         </div>
     </header>
 
     <main>
         <div class="container">
-            <div class="side-ad left"></div>
+            <div class="side-ad left">
+                <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5259139635500316" data-ad-slot="9337596632" data-ad-format="auto"></ins>
+                <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+            </div>
             
             <div class="main-content">
                 <div class="hero">
@@ -169,11 +225,20 @@
                     <p>Explore free and premium Roblox game files to enhance your creations.</p>
 
                     <div class="stats-counter">
-                        <i class="fa-solid fa-eye-low-vision"></i> Site Visitors: <strong id="site-visitors">0</strong>    |   
-                        <i class="fas fa-download"></i> Total Downloads: <strong id="total-downloads">0</strong>
+                        Site Visitors: <strong id="site-visitors">0</strong>    |   
+                        Total Downloads: <strong id="total-downloads">0</strong>
                     </div>
 
                     <a href="#game-previews" class="glass-btn btn-magenta">Check Out My Games</a>
+                </div>
+
+                <!-- USER SEARCH BAR -->
+                <div class="search-sort-container">
+                    <div class="search-wrapper">
+                        <input type="text" id="user-search-input" placeholder="Search Roblox users... (e.g. lo11iioo)">
+                        <i class="fas fa-search"></i>
+                        <div id="user-search-results"></div>
+                    </div>
                 </div>
 
                 <div class="game-previews" id="game-previews">
@@ -184,7 +249,6 @@
                             <span class="stars">***</span>
                         </h2>
                         <p class="subtitle">
-                            <i class="fas fa-play-circle"></i>
                             Loaded <strong id="video-count">0</strong> incredible games for you!
                         </p>
                     </div>
@@ -210,17 +274,24 @@
                 </div>
             </div>
 
-            <div class="side-ad right"></div>
+            <div class="side-ad right">
+                <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5259139635500316" data-ad-slot="9337596632" data-ad-format="auto"></ins>
+                <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+            </div>
         </div>
-        <div class="bottom-ad"></div>
+
+        <div class="bottom-ad">
+            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5259139635500316" data-ad-slot="9129744892" data-ad-format="auto"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
     </main>
 
     <footer>
         <p>© 2025 Yobest Studio. All Rights Reserved.</p>
         <div class="social-links">
-            <a href="https://youtube.com/@YobestRobloxStudio" target="_blank"><i class="fab fa-youtube"></i> YouTube</a>
-            <a href="https://twitter.com/Yobest_BYTR" target="_blank"><i class="fab fa-twitter"></i> Twitter</a>
-            <a href="https://discord.gg/jKASqrc7H3" target="_blank"><i class="fab fa-discord"></i> Discord</a>
+            <a href="https://youtube.com/@YobestRobloxStudio" target="_blank">YouTube</a>
+            <a href="https://twitter.com/Yobest_BYTR" target="_blank">Twitter</a>
+            <a href="https://discord.gg/jKASqrc7H3" target="_blank">Discord</a>
         </div>
     </footer>
 </body>
