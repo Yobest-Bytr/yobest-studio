@@ -161,10 +161,10 @@
             msg.textContent = 'Please wait...';
 
             try {
-                // THIS IS THE CORRECT WAY — 100% WORKING
+                // THIS IS THE ONLY CORRECT WAY — 100% WORKING
                 const { data, error } = await supabase.auth.signInWithPassword({
-                    email: email,
-                    password: password
+                    email,
+                    password
                 });
 
                 if (error) throw error;
@@ -173,6 +173,7 @@
                 msg.textContent = 'Login successful! Redirecting...';
                 setTimeout(() => location.href = 'index.html', 1500);
             } catch (err) {
+                console.error("Login error:", err);
                 msg.className = 'status-msg error';
                 msg.textContent = err.message || 'Invalid email or password!';
                 btn.disabled = false;
