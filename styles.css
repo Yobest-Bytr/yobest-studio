@@ -38,6 +38,20 @@ body {
     min-height: 100vh;
 }
 
+/* === NITRO PROFILE EFFECTS === */
+.nitro-none { border: 4px solid transparent; }
+.nitro-glow { border: 4px solid #00d4ff; box-shadow: 0 0 30px #00d4ff; animation: pulseGlow 3s infinite; }
+.nitro-rainbow { border: 4px solid transparent; background: linear-gradient(45deg, #ff0080, #ff8c00, #ffd700, #00ff00, #00ffff, #8a2be2) border-box; -webkit-mask: padding-box, border-box; mask: padding-box, border-box; -webkit-mask-composite: destination-out; animation: rainbow 6s linear infinite; }
+.nitro-fire { border: 4px solid #ff2e96; box-shadow: 0 0 40px #ff0080; background: radial-gradient(circle, #ff2e96, transparent); animation: fire 2s infinite; }
+.nitro-galaxy { border: 4px solid #9d4edd; box-shadow: 0 0 50px #8a2be2; animation: galaxy 8s infinite; }
+.nitro-owner { border: 5px double gold; box-shadow: 0 0 60px gold; position: relative; }
+.nitro-owner::after { content:'Crown'; position:absolute; top:-15px; right:-15px; font-size:2rem; }
+
+@keyframes pulseGlow { 0%,100% { box-shadow: 0 0 20px #00d4ff; } 50% { box-shadow: 0 0 50px #00d4ff; } }
+@keyframes rainbow { to { transform: rotate(360deg); } }
+@keyframes fire { 0% { box-shadow: 0 0 40px #ff0080; } 50% { box-shadow: 0 0 80px #ff4500; } 100% { box-shadow: 0 0 40px #ff0080; } }
+@keyframes galaxy { 0% { box-shadow: 0 0 50px #8a2be2; } 50% { box-shadow: 0 0 100px #ff00ff; } 100% { box-shadow: 0 0 50px #8a2be2; } }
+
 /* Animated Background Canvas */
 #particles-canvas {
     position: fixed;
