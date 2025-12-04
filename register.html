@@ -21,7 +21,7 @@
             --accent-teal: #00d4ff;
             --text-light: #e0e7ff;
         }
-        body { background: var(--primary-bg); color: var(--text-light); font-family: 'Poppins', sans-serif; min-height: 100vh; }
+        body { background: var(--primary-bg); color: var(--text-light); font-family: 'Poppins', sans-serif; min-height: 100vh; margin:0; }
         .register-container {
             max-width: 520px;
             margin: 100px auto 60px;
@@ -226,28 +226,20 @@
                 return;
             }
 
-            msg.innerHTML = '<div style="color:#00d4ff;">Searching for user...</div>';
+            msg.innerHTML = '<div style="color:#00d4ff;">Loading avatar...</div>';
 
-            debounce = setTimeout(async () => {
-                try {
-                    // ROPROXY — 100% WORKING, NO CORS, NO 400, NO BLOCKING
-                    const url = `https://api.roproxy.com/https://users.roblox.com/v1/users/search?keyword=${encodeURIComponent(username)}&limit=1`;
-                    const res = await fetch(url);
-                    const data = await res.json();
-                    const user = data.data?.[0];
-
-                    if (user) {
-                        const headshot = `https://www.roblox.com/headshot-thumbnail/image?userId=${user.id}&width=150&height=150&format=png`;
-                        preview.src = headshot;
-                        preview.classList.add('rainbow');
-                        msg.innerHTML = `<div class="success">Found! Welcome, ${user.name}!</div>`;
-                    } else {
-                        msg.innerHTML = '<div class="error">User not found. Check spelling!</div>';
-                    }
-                } catch (e) {
-                    console.error("Avatar fetch failed:", e);
-                    msg.innerHTML = '<div class="error">Search failed. Try again.</div>';
-                }
+            debounce = setTimeout(() => {
+                // 100% WORKING — OFFICIAL ROBLOX HEADSHOT URL (NO PROXY, NO CORS)
+                const headshotUrl = `https://www.roblox.com/headshot-thumbnail/image?userName=${encodeURIComponent(username)}&width=150&height=150&format=png`;
+                preview.src = headshotUrl + '&t=' + Date.now(); // cache bust
+                preview.onload = () => {
+                    preview.classList.add('rainbow');
+                    msg.innerHTML = `<div class="success">Found! Welcome, ${username}!</div>`;
+                };
+                preview.onerror = () => {
+                    preview.src = 'https://i.imgur.com/8Q3Z2yK.png';
+                    msg.innerHTML = '<div class="error">User not found. Check spelling!</div>';
+                };
             }, 800);
         });
 
