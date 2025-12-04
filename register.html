@@ -231,9 +231,9 @@
             debounce = setTimeout(async () => {
                 try {
                     // 100% WORKING CORS PROXY
-                    const proxy = 'https://api.allorigins.win/raw?url=';
-                    const url = `https://users.roblox.com/v1/users/search?keyword=${encodeURIComponent(username)}&limit=1`;
-                    const res = await fetch(proxy + encodeURIComponent(url));
+const proxy = 'https://corsproxy.io/?';
+const url = `https://users.roblox.com/v1/users/search?keyword=${encodeURIComponent(username)}&limit=1`;
+const res = await fetch(proxy + encodeURIComponent(url));
                     const data = await res.json();
                     const user = data.data?.[0];
 
