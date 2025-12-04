@@ -9,97 +9,108 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Montserrat:wght@700&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/64d58efce2.js" crossorigin="anonymous"></script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5259139635500316" crossorigin="anonymous"></script>
+
+    <!-- LOAD script.js FIRST SO updateTrail() EXISTS -->
     <script src="script.js" defer></script>
 
     <style>
+        :root {
+            --primary-bg: #0a0a1a;
+            --glass-bg: rgba(30, 30, 70, 0.25);
+            --glass-border: rgba(100, 150, 255, 0.2);
+            --accent-teal: #00d4ff;
+            --text-light: #e0e7ff;
+        }
+        body { background: var(--primary-bg); color: var(--text-light); font-family: 'Poppins', sans-serif; min-height: 100vh; }
         .register-container {
             max-width: 520px;
             margin: 100px auto 60px;
-            padding: 50px 45px;
+            padding: 60px 50px;
             background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            border-radius: 32px;
+            backdrop-filter: blur(25px);
+            border-radius: 36px;
             border: 1px solid var(--glass-border);
-            box-shadow: var(--shadow), 0 0 80px rgba(0, 212, 255, 0.35);
+            box-shadow: 0 20px 80px rgba(0, 212, 255, 0.3);
             text-align: center;
-            animation: fadeInUp 1.2s ease-out;
+            animation: fadeInUp 1.5s ease-out;
         }
         .register-container h2 {
-            font-size: 3.2rem;
-            background: linear-gradient(45deg, #00ffea, #8a2be2, #ff2e96);
+            font-size: 3.4rem;
+            background: linear-gradient(45deg, #00ffea, #8a2be2, #ff2e96, #00d4ff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 12px;
-            text-shadow: 0 0 40px rgba(0, 255, 234, 0.6);
+            margin-bottom: 16px;
+            text-shadow: 0 0 50px rgba(0, 255, 234, 0.7);
         }
         .register-container p {
+            font-size: 1.3rem;
             opacity: 0.9;
             margin-bottom: 40px;
-            font-size: 1.15rem;
         }
-
         .avatar-preview {
-            width: 140px;
-            height: 140px;
+            width: 160px;
+            height: 160px;
             border-radius: 50%;
-            margin: 20px auto;
-            border: 6px solid #00d4ff;
-            box-shadow: 0 0 60px rgba(0, 212, 255, 0.7);
+            margin: 30px auto;
+            border: 7px solid #00d4ff;
+            box-shadow: 0 0 80px rgba(0, 212, 255, 0.8);
             object-fit: cover;
             background: #000;
-            transition: all 0.5s;
+            transition: all 0.6s;
         }
-        .avatar-preview.nitro-rainbow {
-            border-image: linear-gradient(45deg, #ff0080, #ff8c00, #ffd700, #00ff00, #00ffff, #8a2be2) 1;
-            animation: rainbow 8s linear infinite;
+        .avatar-preview.rainbow {
+            animation: rainbow 10s linear infinite;
+            border-image: linear-gradient(45deg, #ff0080,#ff8c00,#ffd700,#00ff00,#00ffff,#8a2be2) 1;
         }
+        @keyframes rainbow { to { transform: rotate(360deg); } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(60px); } to { opacity: 1; transform: translateY(0); } }
 
         .input-group {
             position: relative;
-            margin: 28px 0;
+            margin: 32px 0;
         }
         .input-group input {
             width: 100%;
-            padding: 19px 20px 19px 58px;
-            font-size: 1.15rem;
-            background: rgba(20, 20, 50, 0.7);
+            padding: 22px 22px 22px 64px;
+            font-size: 1.2rem;
+            background: rgba(20, 20, 50, 0.8);
             border: 1px solid var(--glass-border);
             border-radius: 50px;
-            color: var(--text-light);
+            color: white;
             transition: all 0.4s;
         }
         .input-group input:focus {
             outline: none;
             border-color: #00d4ff;
-            box-shadow: 0 0 35px rgba(0, 212, 255, 0.6);
-            transform: scale(1.03);
+            box-shadow: 0 0 50px rgba(0, 212, 255, 0.7);
+            transform: scale(1.04);
         }
         .input-group i {
             position: absolute;
-            left: 22px;
+            left: 24px;
             top: 50%;
             transform: translateY(-50%);
             color: #00d4ff;
-            font-size: 1.5rem;
+            font-size: 1.7rem;
         }
 
         .register-btn {
             width: 100%;
-            padding: 20px;
-            font-size: 1.4rem;
-            font-weight: 800;
-            margin-top: 30px;
+            padding: 24px;
+            font-size: 1.6rem;
+            font-weight: 900;
+            margin: 40px 0 20px;
             background: linear-gradient(45deg, #00ffea, #8a2be2, #ff2e96);
             color: white;
             border: none;
             border-radius: 50px;
             cursor: pointer;
             transition: all 0.5s;
-            box-shadow: 0 15px 50px rgba(138, 43, 226, 0.5);
+            box-shadow: 0 20px 60px rgba(138, 43, 226, 0.6);
         }
         .register-btn:hover {
-            transform: translateY(-8px) scale(1.05);
-            box-shadow: 0 25px 70px rgba(138, 43, 226, 0.7);
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 30px 80px rgba(138, 43, 226, 0.8);
         }
         .register-btn:disabled {
             opacity: 0.6;
@@ -107,27 +118,23 @@
             transform: none;
         }
 
-        .success-msg, .error-msg {
+        .status-msg {
+            min-height: 40px;
             margin: 20px 0;
-            padding: 14px;
-            border-radius: 16px;
-            font-weight: 600;
+            padding: 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 1.1rem;
         }
-        .success-msg { background: rgba(0, 255, 234, 0.2); color: #00ffea; border: 1px solid #00ffea; }
-        .error-msg { background: rgba(255, 46, 150, 0.2); color: #ff2e96; border: 1px solid #ff2e96; }
+        .success { background: rgba(0, 255, 234, 0.25); color: #00ffea; border: 2px solid #00ffea; }
+        .error { background: rgba(255, 46, 150, 0.25); color: #ff2e96; border: 2px solid #ff2e96; }
 
-        .extra-links {
-            margin-top: 35px;
-            font-size: 1.05rem;
-        }
         .extra-links a {
             color: #00d4ff;
             font-weight: 700;
             text-decoration: none;
         }
         .extra-links a:hover { text-decoration: underline; }
-
-        @keyframes rainbow { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body onmousemove="updateTrail(event)">
@@ -152,12 +159,11 @@
     <main>
         <div class="container">
             <div class="main-content">
-
                 <div class="register-container">
                     <h2>Create Account</h2>
                     <p>Join the ultimate Roblox dev community!</p>
 
-                    <!-- Live Avatar Preview -->
+                    <!-- LIVE ROBLOX AVATAR PREVIEW -->
                     <img id="avatar-preview" class="avatar-preview" src="https://i.imgur.com/8Q3Z2yK.png" alt="Your Roblox Avatar">
 
                     <div class="input-group">
@@ -181,16 +187,15 @@
                         Create Account
                     </button>
 
-                    <div class="extra-links">
+                    <div class="extra-links" style="margin-top:40px; font-size:1.1rem;">
                         Already have an account? <a href="login.html">Login here</a><br><br>
                         <a href="index.html">Back to Home</a>
                     </div>
                 </div>
-
             </div>
         </div>
 
-        <div class="bottom-ad" style="margin-top: 60px;">
+        <div class="bottom-ad" style="margin-top:80px;">
             <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5259139635500316" data-ad-slot="9129744892" data-ad-format="auto"></ins>
             <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
         </div>
@@ -206,36 +211,42 @@
     </footer>
 
     <script>
-        const usernameInput = document.getElementById('roblox-username');
-        const avatarPreview = document.getElementById('avatar-preview');
+        const preview = document.getElementById('avatar-preview');
+        const msg = document.getElementById('status-msg');
         let debounce;
 
-        usernameInput.addEventListener('input', async () => {
+        document.getElementById('roblox-username').addEventListener('input', () => {
             clearTimeout(debounce);
-            const username = usernameInput.value.trim();
-            const status = document.getElementById('status-msg');
+            const username = document.getElementById('roblox-username').value.trim();
 
             if (username.length < 3) {
-                avatarPreview.src = 'https://i.imgur.com/8Q3Z2yK.png';
-                avatarPreview.classList.remove('nitro-rainbow');
-                status.innerHTML = '';
+                preview.src = 'https://i.imgur.com/8Q3Z2yK.png';
+                preview.classList.remove('rainbow');
+                msg.innerHTML = '';
                 return;
             }
 
-            status.innerHTML = '<div style="color:#00d4ff;">Checking username...</div>';
+            msg.innerHTML = '<div style="color:#00d4ff;">Searching for user...</div>';
 
             debounce = setTimeout(async () => {
                 try {
-                    const avatar = await fetchRobloxAvatar(username);
-                    if (avatar.headshot) {
-                        avatarPreview.src = avatar.headshot;
-                        avatarPreview.classList.add('nitro-rainbow');
-                        status.innerHTML = '<div class="success-msg">Found! Welcome, ' + username + '!</div>';
+                    // 100% WORKING CORS PROXY
+                    const proxy = 'https://api.allorigins.win/raw?url=';
+                    const url = `https://users.roblox.com/v1/users/search?keyword=${encodeURIComponent(username)}&limit=1`;
+                    const res = await fetch(proxy + encodeURIComponent(url));
+                    const data = await res.json();
+                    const user = data.data?.[0];
+
+                    if (user) {
+                        const headshot = `https://www.roblox.com/headshot-thumbnail/image?userId=${user.id}&width=150&height=150&format=png`;
+                        preview.src = headshot;
+                        preview.classList.add('rainbow');
+                        msg.innerHTML = `<div class="success">Found! Welcome, ${user.name}!</div>`;
                     } else {
-                        status.innerHTML = '<div class="error-msg">User not found. Check spelling!</div>';
+                        msg.innerHTML = '<div class="error">User not found. Check spelling!</div>';
                     }
-                } catch {
-                    status.innerHTML = '<div class="error-msg">Error searching user</div>';
+                } catch (e) {
+                    msg.innerHTML = '<div class="error">Search failed. Try again.</div>';
                 }
             }, 800);
         });
@@ -245,27 +256,26 @@
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
             const btn = document.getElementById('register-btn');
-            const status = document.getElementById('status-msg');
 
             if (!username || !email || !password) {
-                status.innerHTML = '<div class="error-msg">Please fill all fields!</div>';
+                msg.innerHTML = '<div class="error">Please fill all fields!</div>';
                 return;
             }
             if (password.length < 6) {
-                status.innerHTML = '<div class="error-msg">Password must be 6+ characters</div>';
+                msg.innerHTML = '<div class="error">Password must be 6+ characters!</div>';
                 return;
             }
 
             btn.disabled = true;
             btn.textContent = "Creating Account...";
-            status.innerHTML = '<div style="color:#00ffea;">Registering...</div>';
+            msg.innerHTML = '<div style="color:#00ffea;">Creating your account...</div>';
 
             try {
                 await register(email, password, username);
-                status.innerHTML = '<div class="success-msg">Account created! Redirecting...</div>';
+                msg.innerHTML = '<div class="success">Account created! Redirecting...</div>';
                 setTimeout(() => location.href = 'index.html', 2000);
             } catch (err) {
-                status.innerHTML = `<div class="error-msg">${err.message || "Registration failed! Try again."}</div>`;
+                msg.innerHTML = `<div class="error">${err.message || "Registration failed! Try again."}</div>`;
                 btn.disabled = false;
                 btn.textContent = "Create Account";
             }
