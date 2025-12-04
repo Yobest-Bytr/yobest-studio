@@ -274,6 +274,44 @@ document.getElementById('user-search-input')?.addEventListener('input', async fu
     }, 400);
 });
 
+// ==================== 11. GAME.HTML: LOAD DETAILS & COMMENTS ====================
+async function loadGameDetails() {
+    const game = JSON.parse(sessionStorage.getItem('currentGame') || 'null');
+    if (!game) return location.href = 'index.html';
+
+    document.getElementById('video-player').src = `https://www.youtube.com/embed/${game.videoLink.split('v=')[1]}?autoplay=1&rel=0&modestbranding=1`;
+    document.getElementById('video-title').textContent = game.title || "Game";
+    document.getElementById('video-views').textContent = Number(game.views || 0).toLocaleString();
+    document.getElementById('video-likes').textContent = Number(game.likes || 0).toLocaleString();
+    document.getElementById('video-date').textContent = new Date(game.publishedAt || Date.now()).toLocaleDateString('en-GB');
+    document.getElementById('video-price').textContent = game.price;
+    document.getElementById('video-description').innerHTML = (game.description || "No description.").replace(/\n/g, '<br>');
+
+    const dl = document.getElementById('download-btn');
+    const play = document.getElementById('try-game-btn');
+    if (game.download) dl.style.display = 'inline-flex'; else dl.style.display = 'none';
+    if (game.gamePlay) play.style.display = 'inline-flex'; else play.style.display = 'none';
+    dl.href = game.downloadLink || '#';
+    play.href = game.gameLink || '#';
+
+    await loadYouTubeComments(game.videoLink.split('v=')[1]);
+}
+
+async function loadYouTubeComments(videoId) {
+    const container = document.getElementById('youtube-comments');
+    if (!container) return;
+    try {
+        const res = await fetch(`https://www.googleapis.com/youtube/v3/commentThreads?key=${YT_API_KEY}&videoId=${videoId}&part=snippet&maxResults=20`);
+        const data = await res.json();
+        container.innerHTML = data.items?.map(i => {
+            const c = i.snippet.topLevelComment.snippet;
+            return `<div class="comment"><div class="comment-header"><strong>${c.authorDisplayName}</strong> <span>${new Date(c.publishedAt).toLocaleDateString()}</span></div><p>${c.textDisplay.replace(/</g,'&lt;')}</p><small>${c.likeCount} likes</small></div>`;
+        }).join('') || '<p>No comments yet.</p>';
+    } catch {
+        container.innerHTML = '<p>Comments failed to load.</p>';
+    }
+}
+
 // ==================== 11. THEME & LOADING ====================
 function toggleTheme() {
     document.body.classList.toggle('light-mode');
