@@ -6,11 +6,9 @@
     <title>Login - Yobest Studio</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" href="yobest_studio_logo.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Montserrat:wght@700&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/64d58efce2.js" crossorigin="anonymous"></script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5259139635500316" crossorigin="anonymous"></script>
-
-    <!-- LATEST SUPABASE JS — THIS FIXES 400 ERROR -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="script.js" defer></script>
 
     <style>
@@ -110,16 +108,16 @@
             <div class="main-content">
                 <div class="login-container">
                     <h2>Login to Yobest Studio</h2>
-                    <p>Welcome back, legend!</p>
+                    <p>Enter your Roblox username and password</p>
 
                     <div class="input-group">
-                        <i class="fas fa-envelope"></i>
-                        <input type="email" id="email" placeholder="Your Email" required>
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="username" placeholder="Roblox Username" required>
                     </div>
 
                     <div class="input-group">
                         <i class="fas fa-lock"></i>
-                        <input type="password" id="password" placeholder="Your Password" required minlength="6">
+                        <input type="password" id="password" placeholder="Password" required minlength="6">
                     </div>
 
                     <div id="status-msg" class="status-msg"></div>
@@ -146,21 +144,18 @@
     </footer>
 
     <script>
-        // RECREATE SUPABASE CLIENT LOCALLY — GUARANTEED WORKING
-        const supabase = window.supabase.createClient(
-            'https://felwnjragunwaitlgknq.supabase.co',
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZlbHduanJhZ3Vud2FpdGxna25xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQzMTE4ODEsImV4cCI6MjA3OTg4Nzg4MX0.g80tl7M4mTkOuoj9pebF353AgsarlZgnbvRHzOvokCw'
-        );
+        // Use the global supabase from supabase.js — NO REDECLARATION
+        const { supabase } = window;
 
         async function handleLogin() {
-            const email = document.getElementById('email').value.trim();
+            const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value;
             const btn = document.getElementById('login-btn');
             const msg = document.getElementById('status-msg');
 
-            if (!email || !password) {
+            if (!username || !password) {
                 msg.className = 'status-msg error';
-                msg.textContent = 'Please fill in all fields!';
+                msg.textContent = 'Please fill in both fields!';
                 return;
             }
 
@@ -170,12 +165,24 @@
             msg.textContent = 'Please wait...';
 
             try {
-                const { data, error } = await supabase.auth.signInWithPassword({
-                    email,
-                    password
+                // Find user by roblox_username
+                const { data: profile, error: findError } = await supabase
+                    .from('profiles')
+                    .select('id')
+                    .eq('roblox_username', username)
+                    .single();
+
+                if (findError || !profile) {
+                    throw new Error("Username not found!");
+                }
+
+                // Get email from auth (we stored username as email)
+                const { data: userData, error: authError } = await supabase.auth.signInWithPassword({
+                    email: username + "@yobest.local", // dummy email
+                    password: password
                 });
 
-                if (error) throw error;
+                if (authError) throw authError;
 
                 msg.className = 'status-msg success';
                 msg.textContent = 'Login successful! Welcome back!';
@@ -184,8 +191,8 @@
             } catch (err) {
                 console.error("Login failed:", err);
                 msg.className = 'status-msg error';
-                msg.textContent = err.message === 'Invalid login credentials' 
-                    ? 'Wrong email or password!' 
+                msg.textContent = err.message.includes('Invalid') 
+                    ? 'Wrong password!' 
                     : err.message || 'Login failed!';
                 btn.disabled = false;
                 btn.textContent = 'Login Now';
