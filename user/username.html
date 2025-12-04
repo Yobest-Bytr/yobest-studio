@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@username • Yobest Studio</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="icon" href="../yobest_studio_logo.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Montserrat:wght@900&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/64d58efce2.js" crossorigin="anonymous"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5259139635500316" crossorigin="anonymous"></script>
+    <script src="../script.js" defer></script>
+
+    <style>
+        .profile-container {
+            max-width: 900px;
+            margin: 120px auto 80px;
+            padding: 60px 40px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px);
+            border-radius: 34px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow), 0 0 100px rgba(0, 212, 255, 0.4);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .profile-bg {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle at center, rgba(0,212,255,0.15), transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .profile-header {
+            position: relative;
+            z-index: 1;
+        }
+        .user-avatar {
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 30px;
+            box-shadow: 0 0 80px rgba(0, 212, 255, 0.8);
+            transition: all 0.6s;
+            position: relative;
+            z-index: 2;
+        }
+        .username {
+            font-size: 3.8rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, #00ffea, #8a2be2, #ff2e96, #00d4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 20px 0 10px;
+            letter-spacing: 2px;
+        }
+        .tagline {
+            font-size: 1.4rem;
+            opacity: 0.9;
+            margin-bottom: 40px;
+            color: #00ffea;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 25px;
+            margin: 50px 0;
+        }
+        .stat-box {
+            background: rgba(20, 20, 50, 0.6);
+            padding: 25px;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            transition: all 0.4s;
+        }
+        .stat-box:hover {
+            transform: translateY(-12px);
+            border-color: #00d4ff;
+            box-shadow: 0 20px 50px rgba(0, 212, 255, 0.4);
+        }
+        .stat-box i {
+            font-size: 2.8rem;
+            margin-bottom: 12px;
+            color: #00d4ff;
+        }
+        .stat-num {
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: #00ffea;
+        }
+        .nitro-selector {
+            margin: 50px 0;
+            padding: 30px;
+            background: rgba(138, 43, 226, 0.15);
+            border-radius: 24px;
+            border: 1px dashed #8a2be2;
+        }
+        .nitro-btn {
+            padding: 16px 32px;
+            margin: 10px;
+            border-radius: 50px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.4s;
+            border: 2px solid;
+        }
+        .nitro-none { border-color: #666; background: transparent; }
+        .nitro-glow { border-color: #00d4ff; background: linear-gradient(45deg, #00d4ff, #00ffea); color: black; }
+        .nitro-rainbow { border-image: linear-gradient(45deg, #ff0080,#ff8c00,#ffd700,#00ff00,#00ffff,#8a2be2) 1; }
+        .nitro-fire { border-color: #ff2e96; background: linear-gradient(45deg, #ff0080, #ff4500); color: white; }
+        .nitro-galaxy { border-color: #8a2be2; background: linear-gradient(45deg, #8a2be2, #ff00ff); color: white; }
+        .owner-crown {
+            position: absolute;
+            top: -30px;
+            right: -20px;
+            font-size: 6rem;
+            color: gold;
+            text-shadow: 0 0 40px gold;
+            animation: float 4s infinite;
+        }
+        @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+    </style>
+</head>
+<body onmousemove="updateTrail(event)">
+
+    <canvas id="particles-canvas"></canvas>
+    <div id="mouse-trail"></div>
+    <div id="loading-overlay"><div>Loading Profile...</div></div>
+
+    <header>
+        <div class="header-content">
+            <img src="../yobest_studio_logo.png" alt="Yobest Studio" style="max-height: 50px;">
+            <nav>
+                <a href="../index.html" class="glass-btn btn-teal">Home</a>
+                <a href="../ai.html" class="glass-btn btn-magenta">AI Tools</a>
+                <a href="../contact.html" class="glass-btn btn-yellow">Contact</a>
+                <a href="../donation.html" class="glass-btn btn-gray">Donation</a>
+                <button id="theme-toggle" class="glass-btn btn-teal">Moon</button>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="main-content">
+
+                <div class="profile-container">
+                    <div class="profile-bg"></div>
+                    <div class="profile-header">
+                        <img id="user-avatar" class="user-avatar nitro-none" src="" alt="User Avatar">
+                        <h1 id="username" class="username">Loading...</h1>
+                        <p class="tagline" id="tagline">Roblox Developer • Yobest Studio Member</p>
+                        <div id="owner-crown" style="display:none;" class="owner-crown">Crown</div>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <i class="fas fa-gamepad"></i>
+                            <div class="stat-num" id="games-count">0</div>
+                            <div>Games Owned</div>
+                        </div>
+                        <div class="stat-box">
+                            <i class="fas fa-trophy"></i>
+                            <div class="stat-num">VIP</div>
+                            <div>Membership</div>
+                        </div>
+                        <div class="stat-box">
+                            <i class="fas fa-clock"></i>
+                            <div class="stat-num" id="joined-date">2025</div>
+                            <div>Joined</div>
+                        </div>
+                        <div class="stat-box">
+                            <i class="fas fa-star"></i>
+                            <div class="stat-num" id="nitro-level">None</div>
+                            <div>Nitro Level</div>
+                        </div>
+                    </div>
+
+                    <!-- NITRO EFFECT SELECTOR (Only visible if logged in as this user) -->
+                    <div class="nitro-selector" id="nitro-controls" style="display:none;">
+                        <h3 style="margin-bottom:20px; color:#8a2be2;">Choose Your Nitro Effect</h3>
+                        <button class="nitro-btn nitro-none" onclick="setNitro('none')">None</button>
+                        <button class="nitro-btn nitro-glow" onclick="setNitro('glow')">Glow</button>
+                        <button class="nitro-btn nitro-rainbow" onclick="setNitro('rainbow')">Rainbow</button>
+                        <button class="nitro-btn nitro-fire" onclick="setNitro('fire')">Fire</button>
+                        <button class="nitro-btn nitro-galaxy" onclick="setNitro('galaxy')">Galaxy</button>
+                    </div>
+
+                    <p style="margin-top:50px; opacity:0.8;">
+                        <a href="../index.html" class="glass-btn btn-teal">Back to Home</a>
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="bottom-ad">
+            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5259139635500316" data-ad-slot="9129744892" data-ad-format="auto"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2025 Yobest Studio. All Rights Reserved.</p>
+        <div class="social-links">
+            <a href="https://youtube.com/@YobestRobloxStudio" target="_blank">YouTube</a>
+            <a href="https://twitter.com/Yobest_BYTR" target="_blank">Twitter</a>
+            <a href="https://discord.gg/jKASqrc7H3" target="_blank">Discord</a>
+        </div>
+    </footer>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const username = urlParams.get('u') || window.location.pathname.split('/').pop().replace('.html', '');
+
+        async function loadUserProfile() {
+            document.getElementById('username').textContent = '@' + username;
+
+            try {
+                const avatar = await fetchRobloxAvatar(username);
+                if (avatar.headshot) {
+                    document.getElementById('user-avatar').src = avatar.headshot || avatar.full;
+
+                    // OWNER CROWN FOR lo11iioo
+                    if (username.toLowerCase() === 'lo11iioo') {
+                        document.getElementById('owner-crown').style.display = 'block';
+                        document.getElementById('tagline').textContent = "Owner & Founder • God Tier Dev";
+                        document.getElementById('nitro-level').textContent = "GOD MODE";
+                        document.querySelector('.user-avatar').className = 'user-avatar nitro-owner';
+                    }
+
+                    // Check if current user owns this profile
+                    if (currentUser?.user_metadata?.roblox_username?.toLowerCase() === username.toLowerCase()) {
+                        document.getElementById('nitro-controls').style.display = 'block';
+                        const savedNitro = currentUser.user_metadata.nitro_effect || 'none';
+                        applyNitroEffect(savedNitro);
+                    }
+                }
+            } catch (e) {
+                document.getElementById('username').textContent = "User Not Found";
+            }
+        }
+
+        function applyNitroEffect(effect) {
+            const avatar = document.querySelector('.user-avatar');
+            avatar.className = 'user-avatar nitro-' + effect;
+            document.getElementById('nitro-level').textContent = effect.charAt(0).toUpperCase() + effect.slice(1);
+        }
+
+        async function setNitro(effect) {
+            await updateNitro(effect);
+            applyNitroEffect(effect);
+        }
+
+        // Load profile on start
+        document.addEventListener('DOMContentLoaded', loadUserProfile);
+    </script>
+</body>
+</html>
