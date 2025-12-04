@@ -13,99 +13,112 @@
 
     <style>
         .login-container {
-            max-width: 480px;
-            margin: 120px auto 60px;
-            padding: 50px 40px;
+            max-width: 500px;
+            margin: 120px auto 80px;
+            padding: 60px 50px;
             background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            border-radius: 28px;
+            backdrop-filter: blur(25px);
+            border-radius: 32px;
             border: 1px solid var(--glass-border);
-            box-shadow: var(--shadow), 0 0 60px rgba(0, 212, 255, 0.3);
+            box-shadow: var(--shadow), 0 0 80px rgba(0, 212, 255, 0.4);
             text-align: center;
-            animation: fadeInUp 1s ease-out;
+            animation: fadeInUp 1.2s ease-out;
         }
         .login-container h2 {
-            font-size: 3rem;
-            background: linear-gradient(45deg, #00d4ff, #00ffea);
+            font-size: 3.5rem;
+            background: linear-gradient(45deg, #00d4ff, #00ffea, #8a2be2);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 16px;
+            text-shadow: 0 0 40px rgba(0, 212, 255, 0.6);
         }
         .login-container p {
+            font-size: 1.2rem;
             opacity: 0.9;
             margin-bottom: 40px;
-            font-size: 1.1rem;
+            color: #e0e7ff;
         }
+
         .input-group {
             position: relative;
-            margin: 24px 0;
+            margin: 30px 0;
         }
         .input-group input {
             width: 100%;
-            padding: 18px 20px 18px 56px;
-            font-size: 1.1rem;
-            background: rgba(20, 20, 50, 0.6);
+            padding: 20px 20px 20px 60px;
+            font-size: 1.2rem;
+            background: rgba(20, 20, 50, 0.7);
             border: 1px solid var(--glass-border);
             border-radius: 50px;
-            color: var(--text-light);
+            color: white;
             transition: all 0.4s;
         }
         .input-group input:focus {
             outline: none;
             border-color: #00d4ff;
-            box-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
-            transform: scale(1.02);
+            box-shadow: 0 0 40px rgba(0, 212, 255, 0.6);
+            transform: scale(1.03);
         }
         .input-group i {
             position: absolute;
-            left: 20px;
+            left: 22px;
             top: 50%;
             transform: translateY(-50%);
             color: #00d4ff;
-            font-size: 1.4rem;
+            font-size: 1.6rem;
         }
+
         .login-btn {
             width: 100%;
-            padding: 18px;
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-top: 20px;
+            padding: 22px;
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin: 30px 0 20px;
             background: linear-gradient(45deg, #00d4ff, #00ffea);
             color: black;
             border: none;
             border-radius: 50px;
             cursor: pointer;
-            transition: all 0.4s;
-            box-shadow: 0 10px 40px rgba(0, 212, 255, 0.4);
+            transition: all 0.5s;
+            box-shadow: 0 15px 50px rgba(0, 212, 255, 0.5);
         }
         .login-btn:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 20px 50px rgba(0, 212, 255, 0.6);
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 25px 70px rgba(0, 212, 255, 0.7);
         }
+        .login-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .status-msg {
+            min-height: 30px;
+            margin: 20px 0;
+            padding: 12px;
+            border-radius: 16px;
+            font-weight: 600;
+        }
+        .success { background: rgba(0, 255, 234, 0.2); color: #00ffea; border: 1px solid #00ffea; }
+        .error { background: rgba(255, 46, 150, 0.2); color: #ff2e96; border: 1px solid #ff2e96; }
+
         .extra-links {
             margin-top: 30px;
-            font-size: 1rem;
+            font-size: 1.1rem;
         }
         .extra-links a {
             color: #00d4ff;
+            font-weight: 700;
             text-decoration: none;
-            font-weight: 600;
         }
-        .extra-links a:hover {
-            text-decoration: underline;
-        }
-        .error-msg {
-            color: #ff2e96;
-            font-weight: 600;
-            margin: 16px 0;
-            min-height: 24px;
-        }
+        .extra-links a:hover { text-decoration: underline; }
+
         @media (max-width: 768px) {
             .login-container {
                 margin: 80px 20px;
-                padding: 40px 30px;
+                padding: 50px 30px;
             }
-            .login-container h2 { font-size: 2.5rem; }
+            .login-container h2 { font-size: 2.8rem; }
         }
     </style>
 </head>
@@ -134,26 +147,26 @@
 
                 <div class="login-container">
                     <h2>Login to Yobest Studio</h2>
-                    <p>Welcome back! Enter your credentials to continue.</p>
+                    <p>Welcome back, legend!</p>
 
                     <div class="input-group">
                         <i class="fas fa-envelope"></i>
-                        <input type="email" id="email" placeholder="Email Address" required>
+                        <input type="email" id="email" placeholder="Your Email" required>
                     </div>
 
                     <div class="input-group">
                         <i class="fas fa-lock"></i>
-                        <input type="password" id="password" placeholder="Password" required>
+                        <input type="password" id="password" placeholder="Your Password" required minlength="6">
                     </div>
 
-                    <div class="error-msg" id="error-msg"></div>
+                    <div id="status-msg" class="status-msg"></div>
 
-                    <button class="login-btn" onclick="handleLogin()">
-                        Login
+                    <button class="login-btn" id="login-btn" onclick="handleLogin()">
+                        Login Now
                     </button>
 
                     <div class="extra-links">
-                        Don't have an account? <a href="register.html">Register Now</a><br><br>
+                        Don't have an account? <a href="register.html">Register Here</a><br><br>
                         <a href="index.html">Back to Home</a>
                     </div>
                 </div>
@@ -161,7 +174,7 @@
             </div>
         </div>
 
-        <div class="bottom-ad" style="margin-top: 60px;">
+        <div class="bottom-ad">
             <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5259139635500316" data-ad-slot="9129744892" data-ad-format="auto"></ins>
             <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
         </div>
@@ -180,31 +193,36 @@
         async function handleLogin() {
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
-            const errorMsg = document.getElementById('error-msg');
+            const btn = document.getElementById('login-btn');
+            const msg = document.getElementById('status-msg');
 
             if (!email || !password) {
-                errorMsg.textContent = "Please fill in all fields!";
+                msg.className = 'status-msg error';
+                msg.textContent = 'Please fill in all fields!';
                 return;
             }
 
-            errorMsg.textContent = "Logging in...";
-            
+            btn.disabled = true;
+            btn.textContent = 'Logging in...';
+            msg.className = 'status-msg';
+            msg.textContent = 'Please wait...';
+
             try {
                 await login(email, password);
-                errorMsg.style.color = "#00ffea";
-                errorMsg.textContent = "Success! Redirecting...";
-                setTimeout(() => location.href = 'index.html', 1000);
+                msg.className = 'status-msg success';
+                msg.textContent = 'Login successful! Redirecting...';
+                setTimeout(() => location.href = 'index.html', 1500);
             } catch (err) {
-                errorMsg.style.color = "#ff2e96";
-                errorMsg.textContent = err.message || "Invalid email or password!";
+                msg.className = 'status-msg error';
+                msg.textContent = err.message || 'Invalid email or password!';
+                btn.disabled = false;
+                btn.textContent = 'Login Now';
             }
         }
 
-        // Allow Enter key to login
+        // Allow Enter key
         document.addEventListener('keypress', e => {
-            if (e.key === 'Enter' && document.getElementById('email')?.value) {
-                handleLogin();
-            }
+            if (e.key === 'Enter') handleLogin();
         });
     </script>
 </body>
