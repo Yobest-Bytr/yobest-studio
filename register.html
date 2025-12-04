@@ -215,17 +215,6 @@
         const msg = document.getElementById('status-msg');
         let debounce;
 
-        // SIMPLE HASH FUNCTION FOR ROBLOX (GENERATES YOUR EXACT URL HASH)
-        function simpleHash(str) {
-            let hash = 0;
-            for (let i = 0; i < str.length; i++) {
-                const char = str.charCodeAt(i);
-                hash = ((hash << 5) - hash) + char;
-                hash = hash & hash; // Convert to 32bit integer
-            }
-            return Math.abs(hash).toString(16).padStart(32, '0').toUpperCase().substring(0, 32);
-        }
-
         document.getElementById('roblox-username').addEventListener('input', () => {
             clearTimeout(debounce);
             const username = document.getElementById('roblox-username').value.trim();
@@ -239,19 +228,29 @@
 
             msg.innerHTML = '<div style="color:#00d4ff;">Loading avatar...</div>';
 
-            debounce = setTimeout(() => {
-                // YOUR EXACT WORKING URL PATTERN — HASHED FROM USERNAME
-                const hash = simpleHash(username);
-                const headshotUrl = `https://tr.rbxcdn.com/30DAY-AvatarHeadshot-${hash}-Png/150/150/AvatarHeadshot/Webp/noFilter`;
-                preview.src = headshotUrl + '&t=' + Date.now(); // cache bust
-                preview.onload = () => {
-                    preview.classList.add('rainbow');
-                    msg.innerHTML = `<div class="success">Found! Welcome, ${username}!</div>`;
-                };
-                preview.onerror = () => {
+            debounce = setTimeout(async () => {
+                try {
+                    // FETCH USER ID WITH PROXY
+                    const proxy = 'https://corsproxy.io/?';
+                    const searchUrl = proxy + encodeURIComponent(`https://users.roblox.com/v1/users/search?keyword=${encodeURIComponent(username)}&limit=10`);
+                    const res = await fetch(searchUrl);
+                    const data = await res.json();
+                    const user = data.data?.[0];
+
+                    if (user) {
+                        const headshot = `https://www.roblox.com/headshot-thumbnail/image?userId=${user.id}&width=150&height=150&format=png`;
+                        preview.src = headshot;
+                        preview.classList.add('rainbow');
+                        msg.innerHTML = `<div class="success">Found! Welcome, ${user.name}!</div>`;
+                    } else {
+                        preview.src = 'https://i.imgur.com/8Q3Z2yK.png';
+                        msg.innerHTML = '<div class="error">User not found. Check spelling!</div>';
+                    }
+                } catch (e) {
+                    console.error("Avatar load failed:", e);
                     preview.src = 'https://i.imgur.com/8Q3Z2yK.png';
-                    msg.innerHTML = '<div class="error">User not found. Check spelling!</div>';
-                };
+                    msg.innerHTML = '<div class="error">Search failed. Try again.</div>';
+                }
             }, 800);
         });
 
