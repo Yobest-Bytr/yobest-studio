@@ -6,7 +6,6 @@
     <title>Login - Yobest Studio</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" href="yobest_studio_logo.png" type="image/png">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Montserrat:wght@700&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/64d58efce2.js" crossorigin="anonymous"></script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5259139635500316" crossorigin="anonymous"></script>
     <script src="script.js" defer></script>
@@ -56,7 +55,7 @@
             color: #00d4ff;
             font-size: 1.6rem;
         }
-        .login-btn, .resend-btn {
+        .login-btn {
             width: 100%;
             padding: 22px;
             font-size: 1.5rem;
@@ -67,18 +66,18 @@
             border-radius: 50px;
             cursor: pointer;
             transition: all 0.5s;
-            margin-top: 10px;
         }
-        .login-btn:hover, .resend-btn:hover {
+        .login-btn:hover {
             transform: translateY(-8px) scale(1.05);
             box-shadow: 0 25px 70px rgba(0, 212, 255, 0.7);
         }
         .status-msg {
-            min-height: 30px;
+            min-height: 50px;
             margin: 20px 0;
-            padding: 12px;
+            padding: 16px;
             border-radius: 16px;
             font-weight: 600;
+            font-size: 1.1rem;
         }
         .success { background: rgba(0, 255, 234, 0.2); color: #00ffea; border: 1px solid #00ffea; }
         .error { background: rgba(255, 46, 150, 0.2); color: #ff2e96; border: 1px solid #ff2e96; }
@@ -126,10 +125,6 @@
                         Login Now
                     </button>
 
-                    <button class="resend-btn" id="resend-btn" onclick="resendConfirmation()" style="display:none;">
-                        Resend Confirmation Email
-                    </button>
-
                     <div style="margin-top:30px; font-size:1.1rem;">
                         Don't have an account? <a href="register.html" style="color:#00d4ff; font-weight:700;">Register Here</a>
                     </div>
@@ -152,7 +147,6 @@
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
             const btn = document.getElementById('login-btn');
-            const resendBtn = document.getElementById('resend-btn');
             const msg = document.getElementById('status-msg');
 
             if (!email || !password) {
@@ -173,52 +167,31 @@
                 });
 
                 if (error) {
-                    if (error.message.includes('Email not confirmed')) {
+                    if (error.message === 'Email not confirmed') {
                         msg.className = 'status-msg error';
-                        msg.innerHTML = 'Email not confirmed! Check your inbox.<br><small>Didn\'t get it?</small>';
-                        resendBtn.style.display = 'block';
-                        btn.disabled = false;
-                        btn.textContent = 'Login Now';
+                        msg.innerHTML = 'Email not confirmed! Check your inbox.<br><small>Check spam folder too!</small>';
+                    } else if (error.message === 'Invalid login credentials') {
+                        msg.className = 'status-msg error';
+                        msg.textContent = 'Wrong email or password! Try again.';
                     } else {
-                        throw error;
+                        msg.className = 'status-msg error';
+                        msg.textContent = error.message || 'Login failed!';
                     }
-                } else {
-                    msg.className = 'status-msg success';
-                    msg.textContent = 'Login successful! Redirecting...';
-                    setTimeout(() => location.href = 'index.html', 1500);
+                    btn.disabled = false;
+                    btn.textContent = 'Login Now';
+                    return;
                 }
+
+                msg.className = 'status-msg success';
+                msg.textContent = 'Login successful! Welcome back!';
+                setTimeout(() => location.href = 'index.html', 1500);
+
             } catch (err) {
                 console.error("Login error:", err);
                 msg.className = 'status-msg error';
-                msg.textContent = err.message || 'Invalid email or password!';
+                msg.textContent = 'Network error. Check internet connection.';
                 btn.disabled = false;
                 btn.textContent = 'Login Now';
-            }
-        }
-
-        async function resendConfirmation() {
-            const email = document.getElementById('email').value.trim();
-            const msg = document.getElementById('status-msg');
-
-            if (!email) {
-                msg.className = 'status-msg error';
-                msg.textContent = 'Enter your email first!';
-                return;
-            }
-
-            try {
-                const { error } = await supabase.auth.resend({
-                    type: 'signup',
-                    email: email
-                });
-
-                if (error) throw error;
-
-                msg.className = 'status-msg success';
-                msg.textContent = 'Confirmation email sent! Check your inbox.';
-            } catch (err) {
-                msg.className = 'status-msg error';
-                msg.textContent = 'Failed to resend. Try again.';
             }
         }
 
