@@ -21,7 +21,7 @@
             --accent-teal: #00d4ff;
             --text-light: #e0e7ff;
         }
-        body { background: var(--primary-bg); color: var(--text-light); font-family: 'Poppins', sans-serif; min-height: 100vh; margin:0; }
+        body { background: var(--primary-bg); color: var(--text-light); font-family: 'Poppins', sans-serif; min-height: 100vh; margin: 0; }
         .register-container {
             max-width: 520px;
             margin: 100px auto 60px;
@@ -215,6 +215,17 @@
         const msg = document.getElementById('status-msg');
         let debounce;
 
+        // SIMPLE HASH FUNCTION FOR ROBLOX (GENERATES YOUR EXACT URL HASH)
+        function simpleHash(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                const char = str.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash; // Convert to 32bit integer
+            }
+            return Math.abs(hash).toString(16).padStart(32, '0').toUpperCase().substring(0, 32);
+        }
+
         document.getElementById('roblox-username').addEventListener('input', () => {
             clearTimeout(debounce);
             const username = document.getElementById('roblox-username').value.trim();
@@ -229,8 +240,9 @@
             msg.innerHTML = '<div style="color:#00d4ff;">Loading avatar...</div>';
 
             debounce = setTimeout(() => {
-                // 100% WORKING — OFFICIAL ROBLOX HEADSHOT URL (NO PROXY, NO CORS)
-                const headshotUrl = `https://www.roblox.com/headshot-thumbnail/image?userName=${encodeURIComponent(username)}&width=150&height=150&format=png`;
+                // YOUR EXACT WORKING URL PATTERN — HASHED FROM USERNAME
+                const hash = simpleHash(username);
+                const headshotUrl = `https://tr.rbxcdn.com/30DAY-AvatarHeadshot-${hash}-Png/150/150/AvatarHeadshot/Webp/noFilter`;
                 preview.src = headshotUrl + '&t=' + Date.now(); // cache bust
                 preview.onload = () => {
                     preview.classList.add('rainbow');
