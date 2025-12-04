@@ -56,8 +56,8 @@ supabase.auth.onAuthStateChange(async (event, session) => {
 // LOGIN — 100% WORKING (NO 400 ERROR)
 window.login = async (email, password) => {
     const { data, error } = await supabase.auth.signInWithPassword({
-        email: email,
-        password: password
+        email,
+        password
     });
     if (error) throw error;
     return data;
