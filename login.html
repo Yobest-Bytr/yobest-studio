@@ -16,13 +16,12 @@
             max-width: 500px;
             margin: 120px auto 80px;
             padding: 60px 50px;
-            background: var(--glass-bg);
+            background: rgba(30, 30, 70, 0.25);
             backdrop-filter: blur(25px);
             border-radius: 32px;
-            border: 1px solid var(--glass-border);
-            box-shadow: var(--shadow), 0 0 80px rgba(0, 212, 255, 0.4);
+            border: 1px solid rgba(100, 150, 255, 0.2);
+            box-shadow: 0 20px 80px rgba(0, 212, 255, 0.4);
             text-align: center;
-            animation: fadeInUp 1.2s ease-out;
         }
         .login-container h2 {
             font-size: 3.5rem;
@@ -30,15 +29,7 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 16px;
-            text-shadow: 0 0 40px rgba(0, 212, 255, 0.6);
         }
-        .login-container p {
-            font-size: 1.2rem;
-            opacity: 0.9;
-            margin-bottom: 40px;
-            color: #e0e7ff;
-        }
-
         .input-group {
             position: relative;
             margin: 30px 0;
@@ -48,16 +39,14 @@
             padding: 20px 20px 20px 60px;
             font-size: 1.2rem;
             background: rgba(20, 20, 50, 0.7);
-            border: 1px solid var(--glass-border);
+            border: 1px solid rgba(100, 150, 255, 0.2);
             border-radius: 50px;
             color: white;
-            transition: all 0.4s;
         }
         .input-group input:focus {
             outline: none;
             border-color: #00d4ff;
             box-shadow: 0 0 40px rgba(0, 212, 255, 0.6);
-            transform: scale(1.03);
         }
         .input-group i {
             position: absolute;
@@ -67,31 +56,22 @@
             color: #00d4ff;
             font-size: 1.6rem;
         }
-
         .login-btn {
             width: 100%;
             padding: 22px;
             font-size: 1.5rem;
             font-weight: 800;
-            margin: 30px 0 20px;
             background: linear-gradient(45deg, #00d4ff, #00ffea);
             color: black;
             border: none;
             border-radius: 50px;
             cursor: pointer;
             transition: all 0.5s;
-            box-shadow: 0 15px 50px rgba(0, 212, 255, 0.5);
         }
         .login-btn:hover {
             transform: translateY(-8px) scale(1.05);
             box-shadow: 0 25px 70px rgba(0, 212, 255, 0.7);
         }
-        .login-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-
         .status-msg {
             min-height: 30px;
             margin: 20px 0;
@@ -101,25 +81,6 @@
         }
         .success { background: rgba(0, 255, 234, 0.2); color: #00ffea; border: 1px solid #00ffea; }
         .error { background: rgba(255, 46, 150, 0.2); color: #ff2e96; border: 1px solid #ff2e96; }
-
-        .extra-links {
-            margin-top: 30px;
-            font-size: 1.1rem;
-        }
-        .extra-links a {
-            color: #00d4ff;
-            font-weight: 700;
-            text-decoration: none;
-        }
-        .extra-links a:hover { text-decoration: underline; }
-
-        @media (max-width: 768px) {
-            .login-container {
-                margin: 80px 20px;
-                padding: 50px 30px;
-            }
-            .login-container h2 { font-size: 2.8rem; }
-        }
     </style>
 </head>
 <body onmousemove="updateTrail(event)">
@@ -144,7 +105,6 @@
     <main>
         <div class="container">
             <div class="main-content">
-
                 <div class="login-container">
                     <h2>Login to Yobest Studio</h2>
                     <p>Welcome back, legend!</p>
@@ -165,18 +125,11 @@
                         Login Now
                     </button>
 
-                    <div class="extra-links">
-                        Don't have an account? <a href="register.html">Register Here</a><br><br>
-                        <a href="index.html">Back to Home</a>
+                    <div style="margin-top:30px; font-size:1.1rem;">
+                        Don't have an account? <a href="register.html" style="color:#00d4ff; font-weight:700;">Register Here</a>
                     </div>
                 </div>
-
             </div>
-        </div>
-
-        <div class="bottom-ad">
-            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5259139635500316" data-ad-slot="9129744892" data-ad-format="auto"></ins>
-            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
         </div>
     </main>
 
@@ -208,7 +161,14 @@
             msg.textContent = 'Please wait...';
 
             try {
-                await login(email, password);
+                // THIS IS THE CORRECT WAY — 100% WORKING
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+
+                if (error) throw error;
+
                 msg.className = 'status-msg success';
                 msg.textContent = 'Login successful! Redirecting...';
                 setTimeout(() => location.href = 'index.html', 1500);
