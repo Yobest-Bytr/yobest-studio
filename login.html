@@ -56,7 +56,7 @@
             color: #00d4ff;
             font-size: 1.6rem;
         }
-        .login-btn {
+        .login-btn, .resend-btn {
             width: 100%;
             padding: 22px;
             font-size: 1.5rem;
@@ -67,8 +67,9 @@
             border-radius: 50px;
             cursor: pointer;
             transition: all 0.5s;
+            margin-top: 10px;
         }
-        .login-btn:hover {
+        .login-btn:hover, .resend-btn:hover {
             transform: translateY(-8px) scale(1.05);
             box-shadow: 0 25px 70px rgba(0, 212, 255, 0.7);
         }
@@ -125,6 +126,10 @@
                         Login Now
                     </button>
 
+                    <button class="resend-btn" id="resend-btn" onclick="resendConfirmation()" style="display:none;">
+                        Resend Confirmation Email
+                    </button>
+
                     <div style="margin-top:30px; font-size:1.1rem;">
                         Don't have an account? <a href="register.html" style="color:#00d4ff; font-weight:700;">Register Here</a>
                     </div>
@@ -147,6 +152,7 @@
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
             const btn = document.getElementById('login-btn');
+            const resendBtn = document.getElementById('resend-btn');
             const msg = document.getElementById('status-msg');
 
             if (!email || !password) {
@@ -161,23 +167,58 @@
             msg.textContent = 'Please wait...';
 
             try {
-                // THIS IS THE ONLY CORRECT WAY — 100% WORKING
                 const { data, error } = await supabase.auth.signInWithPassword({
                     email,
                     password
                 });
 
-                if (error) throw error;
-
-                msg.className = 'status-msg success';
-                msg.textContent = 'Login successful! Redirecting...';
-                setTimeout(() => location.href = 'index.html', 1500);
+                if (error) {
+                    if (error.message.includes('Email not confirmed')) {
+                        msg.className = 'status-msg error';
+                        msg.innerHTML = 'Email not confirmed! Check your inbox.<br><small>Didn\'t get it?</small>';
+                        resendBtn.style.display = 'block';
+                        btn.disabled = false;
+                        btn.textContent = 'Login Now';
+                    } else {
+                        throw error;
+                    }
+                } else {
+                    msg.className = 'status-msg success';
+                    msg.textContent = 'Login successful! Redirecting...';
+                    setTimeout(() => location.href = 'index.html', 1500);
+                }
             } catch (err) {
                 console.error("Login error:", err);
                 msg.className = 'status-msg error';
                 msg.textContent = err.message || 'Invalid email or password!';
                 btn.disabled = false;
                 btn.textContent = 'Login Now';
+            }
+        }
+
+        async function resendConfirmation() {
+            const email = document.getElementById('email').value.trim();
+            const msg = document.getElementById('status-msg');
+
+            if (!email) {
+                msg.className = 'status-msg error';
+                msg.textContent = 'Enter your email first!';
+                return;
+            }
+
+            try {
+                const { error } = await supabase.auth.resend({
+                    type: 'signup',
+                    email: email
+                });
+
+                if (error) throw error;
+
+                msg.className = 'status-msg success';
+                msg.textContent = 'Confirmation email sent! Check your inbox.';
+            } catch (err) {
+                msg.className = 'status-msg error';
+                msg.textContent = 'Failed to resend. Try again.';
             }
         }
 
